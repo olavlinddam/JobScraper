@@ -2,7 +2,7 @@ using JobScraper.Domain.Enums;
 
 namespace JobScraper.Domain.Entities;
 
-public class Job
+public class JobListing
 {
     public string Id { get; set; }
     public string Title { get; set; }

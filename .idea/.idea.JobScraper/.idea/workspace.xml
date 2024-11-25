@@ -9,8 +9,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3a4005f-b9f1-479a-8ca4-b52f0e0fe7cd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/JobScraper.Domain/Entitites/Job.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Domain/Class1.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,7 +82,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1732526426463</updated>
-      <workItem from="1732526428889" duration="3218000" />
+      <workItem from="1732526428889" duration="4820000" />
     </task>
     <servers />
   </component>
