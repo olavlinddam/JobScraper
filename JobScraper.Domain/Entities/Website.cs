@@ -2,7 +2,7 @@ namespace JobScraper.Domain.Entities;
 
 public class Website
 {
-    public string Id { get; set; }
+    public int Id { get; set; }
     public string Url { get; set; }
     public string ShortName { get; set; }
     public DateTime LastScraped { get; set; }

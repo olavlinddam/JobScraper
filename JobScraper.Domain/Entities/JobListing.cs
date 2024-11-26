@@ -4,7 +4,7 @@ namespace JobScraper.Domain.Entities;
 
 public class JobListing
 {
-    public string Id { get; set; }
+    public int Id { get; set; }
     public string Title { get; set; }
     public string CompanyName { get; set; }
     public DateTime PostedDate { get; set; }
