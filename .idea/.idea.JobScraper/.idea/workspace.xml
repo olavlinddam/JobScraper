@@ -9,11 +9,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3a4005f-b9f1-479a-8ca4-b52f0e0fe7cd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Commands/StartAllScrapers/StartAllScrapersCommand.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Common/ScrapingResult.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Application/Common/Interfaces/AppDbContext.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Application/Common/Interfaces/IWebsiteRepository.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Commands/StartAllScrapers/StartAllScrapersCommandHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Websites/Persistence/WebsiteConfigurations.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Websites/Persistence/WebsiteRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Class1.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Api/JobScraper.Api.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Api/JobScraper.Api.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Commands/StartAllScrapers/StartAllScrapersCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Commands/StartAllScrapers/StartAllScrapersCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Common/ScrapingResult.cs" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/JobScraper.Application/JobScraper.Application.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/JobScraper.Application.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Domain/Entities/JobListing.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Domain/Entities/JobListing.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Domain/Entities/ScrapingError.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Domain/Entities/ScrapingError.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Domain/Entities/ScrapingPolicy.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Domain/Entities/ScrapingPolicy.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Domain/Entities/Website.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Domain/Entities/Website.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/Class1.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/JobScraper.Infrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/JobScraper.Infrastructure.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,8 +32,14 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -43,7 +60,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors.C#",
+    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors.Diff & Merge",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -89,12 +106,16 @@
       <updated>1732526426463</updated>
       <workItem from="1732526428889" duration="7409000" />
       <workItem from="1732556538346" duration="721000" />
+      <workItem from="1732648097945" duration="272000" />
+      <workItem from="1732648438655" duration="5355000" />
+      <workItem from="1732653803310" duration="1022000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
