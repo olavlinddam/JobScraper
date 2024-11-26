@@ -8,23 +8,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d3a4005f-b9f1-479a-8ca4-b52f0e0fe7cd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/JobScraper.Application/Common/Interfaces/AppDbContext.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JobScraper.Application/Common/Interfaces/IWebsiteRepository.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Commands/StartAllScrapers/StartAllScrapersCommandHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Websites/Persistence/WebsiteConfigurations.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Websites/Persistence/WebsiteRepository.cs" afterDir="false" />
+    <list default="true" id="d3a4005f-b9f1-479a-8ca4-b52f0e0fe7cd" name="Changes" comment=".">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Api/JobScraper.Api.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Api/JobScraper.Api.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Commands/StartAllScrapers/StartAllScrapersCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Commands/StartAllScrapers/StartAllScrapersCommand.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Common/ScrapingResult.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Application/JobScraper.Application.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/JobScraper.Application.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Domain/Entities/JobListing.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Domain/Entities/JobListing.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Domain/Entities/ScrapingError.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Domain/Entities/ScrapingError.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Domain/Entities/ScrapingPolicy.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Domain/Entities/ScrapingPolicy.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Common/Interfaces/IWebsiteRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/Common/Interfaces/IWebsiteRepository.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/JobScraper.Domain/Entities/Website.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Domain/Entities/Website.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/Class1.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/JobScraper.Infrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/JobScraper.Infrastructure.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/Websites/Persistence/WebsiteRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Websites/Persistence/WebsiteRepository.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,8 +96,65 @@
       <workItem from="1732556538346" duration="721000" />
       <workItem from="1732648097945" duration="272000" />
       <workItem from="1732648438655" duration="5355000" />
-      <workItem from="1732653803310" duration="1022000" />
+      <workItem from="1732653803310" duration="2502000" />
     </task>
+    <task id="LOCAL-00001" summary="Setting up the structure for db integration. Configurations are done in the intrastructure layer to separate this from the AppDbContext.cs and the entity itself.">
+      <option name="closed" value="true" />
+      <created>1732654926720</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1732654926720</updated>
+    </task>
+    <task id="LOCAL-00002" summary="removing unused classes">
+      <option name="closed" value="true" />
+      <created>1732654938322</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1732654938322</updated>
+    </task>
+    <task id="LOCAL-00003" summary="navigation properties for ef core mapping">
+      <option name="closed" value="true" />
+      <created>1732655048036</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1732655048036</updated>
+    </task>
+    <task id="LOCAL-00004" summary="packages and references">
+      <option name="closed" value="true" />
+      <created>1732655065058</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1732655065058</updated>
+    </task>
+    <task id="LOCAL-00005" summary="navigation for ef mapping">
+      <option name="closed" value="true" />
+      <created>1732655079472</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1732655079472</updated>
+    </task>
+    <task id="LOCAL-00006" summary="early early implementation far from done">
+      <option name="closed" value="true" />
+      <created>1732655111991</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1732655111991</updated>
+    </task>
+    <task id="LOCAL-00007" summary=".">
+      <option name="closed" value="true" />
+      <created>1732655119063</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1732655119063</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -119,5 +164,13 @@
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="Setting up the structure for db integration. Configurations are done in the intrastructure layer to separate this from the AppDbContext.cs and the entity itself." />
+    <MESSAGE value="removing unused classes" />
+    <MESSAGE value="navigation properties for ef core mapping" />
+    <MESSAGE value="packages and references" />
+    <MESSAGE value="navigation for ef mapping" />
+    <MESSAGE value="early early implementation far from done" />
+    <MESSAGE value="." />
+    <option name="LAST_COMMIT_MESSAGE" value="." />
   </component>
 </project>
