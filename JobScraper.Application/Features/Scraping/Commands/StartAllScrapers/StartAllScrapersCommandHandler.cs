@@ -1,4 +1,5 @@
 using ErrorOr;
+using JobScraper.Application.Common.Interfaces;
 using MediatR;
 
 namespace JobScraper.Application.Features.Scraping.Commands.StartAllScrapers;
@@ -7,9 +8,9 @@ public class StartAllScrapersCommandHandler(IWebsiteRepository _websiteRepositor
     : IRequestHandler<StartAllScrapersCommand, ErrorOr<Success>>
 {
     
-    public Task<ErrorOr<Success>> Handle(StartAllScrapersCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<Success>> Handle(StartAllScrapersCommand request, CancellationToken cancellationToken)
     {
-        var websites = _websiteRepository.GetAllAsync();
+        var websites = await _websiteRepository.GetAllAsync(cancellationToken);
         
         
         throw new NotImplementedException();
