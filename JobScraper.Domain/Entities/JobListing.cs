@@ -15,5 +15,9 @@ public class JobListing
     public DateTime ScrapedDate { get; set; }
     public JobType JobType { get; set; }
     public City City { get; set; }
+    
+    
+    // Navigation
     public string WebsiteId { get; set; }
+    public Website Website { get; set; }
 }
