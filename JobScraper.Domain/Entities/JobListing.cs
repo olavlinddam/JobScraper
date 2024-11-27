@@ -18,6 +18,6 @@ public class JobListing
     
     
     // Navigation
-    public string WebsiteId { get; set; }
+    public int WebsiteId { get; set; }
     public Website Website { get; set; }
 }

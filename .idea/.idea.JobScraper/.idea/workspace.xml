@@ -8,9 +8,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d3a4005f-b9f1-479a-8ca4-b52f0e0fe7cd" name="Changes" comment="some more default stuff">
+    <list default="true" id="d3a4005f-b9f1-479a-8ca4-b52f0e0fe7cd" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/JobScraper.Api/Contracts/Requests/StartAllScrapersRequest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Api/Controllers/ApiController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Api/Controllers/ScrapingController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Api/DependencyInjection.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Application/DependencyInjection.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Common/Persistence/AppDbContext.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/DependencyInjection.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Api/JobScraper.Api.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Api/JobScraper.Api.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Api/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Api/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Api/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Api/appsettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Commands/StartAllScrapers/StartAllScrapersCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Commands/StartAllScrapers/StartAllScrapersCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Application/JobScraper.Application.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/JobScraper.Application.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Domain/Entities/JobListing.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Domain/Entities/JobListing.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Domain/JobScraper.Domain.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Domain/JobScraper.Domain.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/JobScraper.Infrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/JobScraper.Infrastructure.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,6 +39,9 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/91a77de7f65f459ea135487f07db34fe55d28/01/f2706a92/ControllerBase.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
@@ -40,13 +58,13 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "core-scraping",
-    "last_opened_file_path": "/home/olav/Repos/ERPCRM-Integration/OxygenERPCRMIntegration.sln",
+    "last_opened_file_path": "/home/olav/Repos/everforest-dark/everforest-dark.jar",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "configurable.group.appearance",
+    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors.General",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -94,7 +112,15 @@
       <workItem from="1732556538346" duration="721000" />
       <workItem from="1732648097945" duration="272000" />
       <workItem from="1732648438655" duration="5355000" />
-      <workItem from="1732653803310" duration="3145000" />
+      <workItem from="1732653803310" duration="3224000" />
+      <workItem from="1732705628561" duration="8933000" />
+      <workItem from="1732733279235" duration="547000" />
+      <workItem from="1732733833957" duration="79000" />
+      <workItem from="1732733919780" duration="62000" />
+      <workItem from="1732733993622" duration="101000" />
+      <workItem from="1732734119502" duration="114000" />
+      <workItem from="1732734244200" duration="490000" />
+      <workItem from="1732734746699" duration="5304000" />
     </task>
     <task id="LOCAL-00001" summary="Setting up the structure for db integration. Configurations are done in the intrastructure layer to separate this from the AppDbContext.cs and the entity itself.">
       <option name="closed" value="true" />
@@ -176,7 +202,15 @@
       <option name="project" value="LOCAL" />
       <updated>1732656610256</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="remove workspace and tasks from git">
+      <option name="closed" value="true" />
+      <created>1732657021890</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1732657021890</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -195,6 +229,7 @@
     <MESSAGE value="changed id to ints" />
     <MESSAGE value="." />
     <MESSAGE value="some more default stuff" />
-    <option name="LAST_COMMIT_MESSAGE" value="some more default stuff" />
+    <MESSAGE value="remove workspace and tasks from git" />
+    <option name="LAST_COMMIT_MESSAGE" value="remove workspace and tasks from git" />
   </component>
 </project>

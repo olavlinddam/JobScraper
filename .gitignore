@@ -6,3 +6,5 @@ riderModule.iml
 
 .idea/workspace.xml
 .idea/tasks.xml
+
+secrets/

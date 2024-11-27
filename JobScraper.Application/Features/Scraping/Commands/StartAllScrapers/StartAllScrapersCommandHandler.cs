@@ -4,10 +4,15 @@ using MediatR;
 
 namespace JobScraper.Application.Features.Scraping.Commands.StartAllScrapers;
 
-public class StartAllScrapersCommandHandler(IWebsiteRepository _websiteRepository)
-    : IRequestHandler<StartAllScrapersCommand, ErrorOr<Success>>
+public class StartAllScrapersCommandHandler : IRequestHandler<StartAllScrapersCommand, ErrorOr<Success>>
 {
-    
+    private readonly IWebsiteRepository _websiteRepository;
+
+    public StartAllScrapersCommandHandler(IWebsiteRepository websiteRepository)
+    {
+        _websiteRepository = websiteRepository;
+    }
+
     public async Task<ErrorOr<Success>> Handle(StartAllScrapersCommand request, CancellationToken cancellationToken)
     {
         var websites = await _websiteRepository.GetAllAsync(cancellationToken);
