@@ -21,9 +21,8 @@ public static class DependencyInjection
     {
         Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(configuration) // Read configuration from appsettings.json
+            .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Information)
             .Enrich.FromLogContext()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .MinimumLevel.Override("System", LogEventLevel.Warning)
             .WriteTo.Console(new CompactJsonFormatter()) // Structured logging to console
             .WriteTo.File(
                 path: "logs/log-.txt",
@@ -37,7 +36,8 @@ public static class DependencyInjection
         {
             loggingBuilder.ClearProviders();
             loggingBuilder.AddSerilog(dispose: true);
-            ;
         });
+        
+        return services;
     }
 }
