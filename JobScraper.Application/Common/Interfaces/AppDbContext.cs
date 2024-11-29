@@ -12,7 +12,7 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     {
         // Here we are dynamically applying all entity configuration classes from the AppDbContext assembly. 
         // ApplyConfigurationsFromAssembly scans for classes implementing IEntityTypeConfiguration<T> for any entity.
-        // All found configurations are applied to the model when creating it.
+        // All found configurations are applied to theInformation model when creating it.
         // See JobScraper.Infrastructure.Websites.Persistence.WebsiteConfiguration for an example.
         
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);

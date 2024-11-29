@@ -16,8 +16,12 @@ public class StartAllScrapersCommandHandler : IRequestHandler<StartAllScrapersCo
     public async Task<ErrorOr<Success>> Handle(StartAllScrapersCommand request, CancellationToken cancellationToken)
     {
         var websites = await _websiteRepository.GetAllAsync(cancellationToken);
-        
-        
-        throw new NotImplementedException();
+
+        if (!websites.Any())
+        {
+            return Error.NotFound(description: "No websites found");
+        }
+
+        return Result.Success;
     }
 }

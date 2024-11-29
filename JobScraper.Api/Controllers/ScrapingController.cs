@@ -6,9 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobScraper.Api.Controllers;
 
-[Microsoft.AspNetCore.Components.Route("api/scraping")]
+[Route("api/scraping")]
 public class ScrapingController(ISender _mediator) : ApiController
 {
+    [Route("StartAllScrapers")]
     [HttpPost]
     public async Task<IActionResult> StartAllScrapers(StartAllScrapersRequest request)
     {
