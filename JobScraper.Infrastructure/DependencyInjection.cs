@@ -1,4 +1,5 @@
 using JobScraper.Application.Common.Interfaces;
+using JobScraper.Infrastructure.Common.Persistence;
 using JobScraper.Infrastructure.Websites.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

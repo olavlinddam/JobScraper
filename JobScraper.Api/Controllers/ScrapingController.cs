@@ -1,22 +1,30 @@
 using System.Text.Json;
 using JobScraper.Api.Contracts.Requests;
-using JobScraper.Application.Features.Scraping.Commands.StartAllScrapers;
+using JobScraper.Application.Features.Scraping.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobScraper.Api.Controllers;
 
 [Route("api/scraping")]
-public class ScrapingController(ISender _mediator) : ApiController
+public class ScrapingController : ApiController
 {
+    private readonly IScrapingService _scrapingService;
+
+    public ScrapingController(IScrapingService scrapingService)
+    {
+        _scrapingService = scrapingService;
+    }
+
+
     [Route("StartAllScrapers")]
     [HttpPost]
-    public async Task<IActionResult> StartAllScrapers(StartAllScrapersRequest request)
+    public async Task<IActionResult> StartAllScrapers(StartAllScrapersRequest request, bool forceRun = false)
     {
         var startedAt = DateTime.Now;
-        var command = new StartAllScrapersCommand(startedAt, request.ForceRun);
-
-        var result = await _mediator.Send(command);
+        CancellationToken cancellationToken = default;
+        
+        var result = await _scrapingService.StartAllScrapers(cancellationToken, forceRun);
 
         return result.Match(
             success => Ok(new
