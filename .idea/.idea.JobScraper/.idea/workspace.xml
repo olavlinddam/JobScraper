@@ -9,15 +9,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3a4005f-b9f1-479a-8ca4-b52f0e0fe7cd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Persistence/Configurations/CityConfiguration.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Persistence/Configurations/JobListingConfiguration.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Persistence/Configurations/ScrapingErrorConfiguration.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Common/IWebScraperFactory.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Builders/WebScraperFactory.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Scrapers/JobnetScraper.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Domain/Entities/City.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Domain/Entities/City.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Domain/Entities/JobListing.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Domain/Entities/JobListing.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Domain/Entities/ScrapingError.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Domain/Entities/ScrapingError.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/Persistence/ScrapingPolicyConfiguration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Persistence/Configurations/ScrapingPolicyConfiguration.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/Persistence/WebsiteConfigurations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Persistence/Configurations/WebsiteConfigurations.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/DependencyInjection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/JobScraper.Infrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/JobScraper.Infrastructure.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,7 +75,7 @@
     "HTTP Request.StartAllScrapers | #1.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "model-config",
+    "git-widget-placeholder": "jobnet-scraper",
     "last_opened_file_path": "/usr/share/dotnet/dotnet",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
