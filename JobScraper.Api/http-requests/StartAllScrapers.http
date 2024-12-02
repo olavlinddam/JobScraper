@@ -1,0 +1,11 @@
+
+
+POST http://localhost:5247/api/scraping/startallscrapers/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "forceRun": false
+}
+
+###

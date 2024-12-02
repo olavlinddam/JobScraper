@@ -1,10 +1,18 @@
+# .gitignore for your JobScraper project
+
+# Rider
+.idea/
+*.DotSettings.user
+*.sln.DotSettings.user
+
+# .NET
 bin/
 obj/
-/packages/
-riderModule.iml
-/_ReSharper.Caches/
+*.user
+.vs/
 
-.idea/workspace.xml
-.idea/tasks.xml
-
-secrets/
+# User secrets
+*.DotSettings.user
+*.sln.DotSettings.user
+*.user.DotSettings
+JobScraper.sln.DotSettings.user

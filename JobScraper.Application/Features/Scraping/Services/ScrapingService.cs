@@ -18,7 +18,7 @@ public class ScrapingService : IScrapingService
         _logger = logger;
     }
 
-    public async Task<ErrorOr<Success>> StartAllScrapers(CancellationToken cancellationToken, bool forceRun = false)
+    public async Task<ErrorOr<Success>> StartAllScrapers(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Starting all scrapers");   
         

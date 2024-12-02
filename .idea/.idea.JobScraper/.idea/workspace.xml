@@ -9,23 +9,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3a4005f-b9f1-479a-8ca4-b52f0e0fe7cd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Common/IWebScraper.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Common/ScraperStateManager.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Common/ScrapingResult.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Services/IScrapingService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Services/ScrapingService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/.name" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/JobScraper.Api/Controllers/ScrapingController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Api/Controllers/ScrapingController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Common/Interfaces/AppDbContext.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Common/Interfaces/IWebsiteRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/Common/Interfaces/IWebsiteRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Api/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Api/DependencyInjection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Api/JobScraper.Api.http" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Api/http-requests/StartAllScrapers.http" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Api/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Api/Program.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/JobScraper.Application/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/DependencyInjection.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Commands/StartAllScrapers/StartAllScrapersCommand.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Commands/StartAllScrapers/StartAllScrapersCommandHandler.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Application/JobScraper.Application.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/JobScraper.Application.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/DependencyInjection.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/JobScraper.Infrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/JobScraper.Infrastructure.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/Websites/Persistence/WebsiteRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Websites/Persistence/WebsiteRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Services/IScrapingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Services/IScrapingService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Services/ScrapingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Services/ScrapingService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.sln.DotSettings.user" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +26,14 @@
   </component>
   <component name="DpaMonitoringSettings">
     <option name="firstShow" value="false" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTTP Public Environment File" />
+        <option value="JSON File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -45,9 +45,18 @@
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/91a77de7f65f459ea135487f07db34fe55d28/01/f2706a92/ControllerBase.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/JobScraper.Api/Controllers/ScrapingController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/JobScraper.Api/DependencyInjection.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/JobScraper.Api/Program.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/JobScraper.Api/Properties/launchSettings.json" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/JobScraper.Api/appsettings.Development.json" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/JobScraper.Api/appsettings.json" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="HttpClientEndpointsTabState">
+    <option name="cachedRequestData" value="&lt;CachedHttpClientTabRequests&gt;&#10;  &lt;entry key=&quot;6648b8d66299b6f584cbbb1f66b1eb5de7d61f56&quot; value=&quot;###&amp;#10;POST http://localhost:5247/api/scraping/StartAllScrapers&quot; /&gt;&#10;&lt;/CachedHttpClientTabRequests&gt;" />
+  </component>
+  <component name="HttpClientSelectedEnvironments">
+    <file url="file://$PROJECT_DIR$/JobScraper.Api/http-requests/StartAllScrapers.http" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProblemsViewState">
@@ -65,9 +74,9 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;.NET Launch Settings Profile.JobScraper.Api: http.executor&quot;: &quot;Debug&quot;,
+    &quot;HTTP Request.All in StartAllScrapers.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.45808384&quot;,
     &quot;git-widget-placeholder&quot;: &quot;core-scraping&quot;,
     &quot;last_opened_file_path&quot;: &quot;/usr/share/dotnet/dotnet&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -80,6 +89,12 @@
   }
 }</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.JobScraper.Api: http">
+    <configuration name="All in StartAllScrapers" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$PROJECT_DIR$/JobScraper.Api/http-requests/StartAllScrapers.http">
+      <method v="2" />
+    </configuration>
+    <configuration name="StartAllScrapers | #1" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/JobScraper.Api/http-requests/StartAllScrapers.http" executionIdentifier="#1" runType="Run single request">
+      <method v="2" />
+    </configuration>
     <configuration name="JobScraper.Api: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/JobScraper.Api/JobScraper.Api.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net8.0" />
@@ -111,6 +126,12 @@
         <option name="Build" />
       </method>
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="HTTP Request.All in StartAllScrapers" />
+        <item itemvalue="HTTP Request.StartAllScrapers | #1" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -139,6 +160,7 @@
       <workItem from="1732904763631" duration="3268000" />
       <workItem from="1732908585776" duration="7000" />
       <workItem from="1732992701428" duration="8415000" />
+      <workItem from="1733131757198" duration="1445000" />
     </task>
     <task id="LOCAL-00001" summary="Setting up the structure for db integration. Configurations are done in the intrastructure layer to separate this from the AppDbContext.cs and the entity itself.">
       <option name="closed" value="true" />
@@ -260,5 +282,24 @@
     <MESSAGE value="some more default stuff" />
     <MESSAGE value="remove workspace and tasks from git" />
     <option name="LAST_COMMIT_MESSAGE" value="remove workspace and tasks from git" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/JobScraper.Api/Controllers/ScrapingController.cs</url>
+          <line>22</line>
+          <properties documentPath="$PROJECT_DIR$/JobScraper.Api/Controllers/ScrapingController.cs" containingFunctionPresentation="Method 'StartAllScrapers'">
+            <startOffsets>
+              <option value="600" />
+            </startOffsets>
+            <endOffsets>
+              <option value="601" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
