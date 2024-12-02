@@ -14,10 +14,12 @@ public class JobListing
     public string ContactInfo { get; set; }
     public DateTime ScrapedDate { get; set; }
     public JobType JobType { get; set; }
-    public City City { get; set; }
     
     
     // Navigation
     public int WebsiteId { get; set; }
     public Website Website { get; set; }
+    
+    public int CityId { get; set; }
+    public City City { get; set; }
 }

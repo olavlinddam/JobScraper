@@ -2,7 +2,7 @@ using JobScraper.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace JobScraper.Infrastructure.Persistence;
+namespace JobScraper.Infrastructure.Persistence.Configurations;
 
 public class ScrapingPolicyConfiguration : IEntityTypeConfiguration<ScrapingPolicy>
 {
