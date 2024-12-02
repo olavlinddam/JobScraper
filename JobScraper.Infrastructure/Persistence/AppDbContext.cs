@@ -1,18 +1,19 @@
+using JobScraper.Application.Common.Interfaces;
 using JobScraper.Domain.Entities;
-using Npgsql.EntityFrameworkCore.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 
-namespace JobScraper.Infrastructure.Common.Persistence;
+namespace JobScraper.Infrastructure.Persistence;
 
-public class AppDbContext : DbContext
+public class AppDbContext : DbContext, IAppDbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
 
     public DbSet<Website> Websites { get; set; }
+    public DbSet<ScrapingPolicy> ScrapingPolicies { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

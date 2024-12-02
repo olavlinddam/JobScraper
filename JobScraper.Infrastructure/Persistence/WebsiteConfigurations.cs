@@ -2,7 +2,7 @@ using JobScraper.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace JobScraper.Infrastructure.Websites.Persistence;
+namespace JobScraper.Infrastructure.Persistence;
 
 public class WebsiteConfigurations : IEntityTypeConfiguration<Website>
 {

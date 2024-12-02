@@ -9,7 +9,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3a4005f-b9f1-479a-8ca4-b52f0e0fe7cd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Application/Common/Interfaces/IAppDbContext.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Persistence/ScrapingPolicyConfiguration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Api/logs/log-20241202.txt" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Api/logs/log-20241202.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Common/Interfaces/IWebsiteRepository.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Application/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/DependencyInjection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Services/ScrapingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Services/ScrapingService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Domain/Entities/ScrapingPolicy.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Domain/Entities/ScrapingPolicy.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/Common/Persistence/AppDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Persistence/AppDbContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/DependencyInjection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/JobScraper.Infrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/JobScraper.Infrastructure.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/Migrations/20241127200511_Initial.Designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Migrations/20241127200511_Initial.Designer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/Migrations/AppDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Migrations/AppDbContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/Websites/Persistence/WebsiteConfigurations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Persistence/WebsiteConfigurations.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/Websites/Persistence/WebsiteRepository.cs" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,23 +77,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.JobScraper.Api: http.executor&quot;: &quot;Debug&quot;,
-    &quot;HTTP Request.All in StartAllScrapers.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;core-scraping&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/usr/share/dotnet/dotnet&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.JobScraper.Api: http.executor": "Debug",
+    "HTTP Request.All in StartAllScrapers.executor": "Run",
+    "HTTP Request.StartAllScrapers | #1.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "model-config",
+    "last_opened_file_path": "/usr/share/dotnet/dotnet",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.keymap",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.JobScraper.Api: http">
     <configuration name="All in StartAllScrapers" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$PROJECT_DIR$/JobScraper.Api/http-requests/StartAllScrapers.http">
       <method v="2" />
@@ -120,8 +135,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="HTTP Request.All in StartAllScrapers" />
         <item itemvalue="HTTP Request.StartAllScrapers | #1" />
+        <item itemvalue="HTTP Request.All in StartAllScrapers" />
       </list>
     </recent_temporary>
   </component>
