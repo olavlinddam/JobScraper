@@ -9,15 +9,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3a4005f-b9f1-479a-8ca4-b52f0e0fe7cd" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Api/Controllers/ScrapingController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Api/Controllers/ScrapingController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Api/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Api/DependencyInjection.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Api/JobScraper.Api.http" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Api/http-requests/StartAllScrapers.http" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Api/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Api/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Application/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/DependencyInjection.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Services/IScrapingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Services/IScrapingService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Services/ScrapingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Services/ScrapingService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.sln.DotSettings.user" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -161,6 +153,7 @@
       <workItem from="1732908585776" duration="7000" />
       <workItem from="1732992701428" duration="8415000" />
       <workItem from="1733131757198" duration="1445000" />
+      <workItem from="1733133220030" duration="310000" />
     </task>
     <task id="LOCAL-00001" summary="Setting up the structure for db integration. Configurations are done in the intrastructure layer to separate this from the AppDbContext.cs and the entity itself.">
       <option name="closed" value="true" />
