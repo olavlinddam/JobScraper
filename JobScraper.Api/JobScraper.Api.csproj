@@ -19,11 +19,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Contracts\Responses\" />
+      <Folder Include="Contracts\" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\JobScraper.Application\JobScraper.Application.csproj" />
+      <ProjectReference Include="..\JobScraper.Contracts\JobScraper.Contracts.csproj" />
       <ProjectReference Include="..\JobScraper.Infrastructure\JobScraper.Infrastructure.csproj" />
     </ItemGroup>
 

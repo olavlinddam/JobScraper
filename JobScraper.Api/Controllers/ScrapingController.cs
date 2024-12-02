@@ -1,6 +1,6 @@
 using System.Text.Json;
-using JobScraper.Api.Contracts.Requests;
 using JobScraper.Application.Features.Scraping.Services;
+using JobScraper.Contracts.Requests.Scraping;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

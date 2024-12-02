@@ -15,6 +15,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\JobScraper.Contracts\JobScraper.Contracts.csproj" />
       <ProjectReference Include="..\JobScraper.Domain\JobScraper.Domain.csproj" />
     </ItemGroup>
 

@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobScraper.Infrastructure",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobScraper.Domain", "JobScraper.Domain\JobScraper.Domain.csproj", "{06B765D4-A4BF-4D95-85CE-2A669D851C46}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobScraper.Contracts", "JobScraper.Contracts\JobScraper.Contracts.csproj", "{90A00E1F-7EDB-4AED-815A-3FD1F03E1595}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +24,7 @@ Global
 		{728625A3-3EBB-4316-9E04-E6B3FDF215D5} = {34695FFB-1CE0-4DAD-AFA7-D7010AC5FC67}
 		{C013EF7D-C05D-4384-A6F7-AA9A7FF3BE22} = {34695FFB-1CE0-4DAD-AFA7-D7010AC5FC67}
 		{06B765D4-A4BF-4D95-85CE-2A669D851C46} = {34695FFB-1CE0-4DAD-AFA7-D7010AC5FC67}
+		{90A00E1F-7EDB-4AED-815A-3FD1F03E1595} = {34695FFB-1CE0-4DAD-AFA7-D7010AC5FC67}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{BA3076AC-8FD7-4C87-899D-AA702E79252F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -40,5 +43,9 @@ Global
 		{06B765D4-A4BF-4D95-85CE-2A669D851C46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06B765D4-A4BF-4D95-85CE-2A669D851C46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06B765D4-A4BF-4D95-85CE-2A669D851C46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90A00E1F-7EDB-4AED-815A-3FD1F03E1595}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90A00E1F-7EDB-4AED-815A-3FD1F03E1595}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90A00E1F-7EDB-4AED-815A-3FD1F03E1595}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90A00E1F-7EDB-4AED-815A-3FD1F03E1595}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

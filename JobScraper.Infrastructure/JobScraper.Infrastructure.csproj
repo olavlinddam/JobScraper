@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\JobScraper.Application\JobScraper.Application.csproj" />
+      <ProjectReference Include="..\JobScraper.Contracts\JobScraper.Contracts.csproj" />
     </ItemGroup>
 
     <ItemGroup>
