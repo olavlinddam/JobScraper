@@ -30,5 +30,8 @@ public class WebsiteConfigurations : IEntityTypeConfiguration<Website>
 
         builder.HasMany(w => w.ScrapingErrors)
             .WithMany(sc => sc.Websites);
+        
+        builder.HasMany(w => w.SearchTerms)
+            .WithMany(s => s.Websites);
     }
 }

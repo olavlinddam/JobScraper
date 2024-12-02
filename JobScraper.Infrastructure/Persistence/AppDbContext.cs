@@ -12,8 +12,13 @@ public class AppDbContext : DbContext, IAppDbContext
     {
     }
 
-    public DbSet<Website> Websites { get; set; }
+    public DbSet<City> Cities { get; set; }
+    public DbSet<JobListing> JobListings { get; set; }
+    public DbSet<ScrapingError> ScrapingErrors { get; set; }
     public DbSet<ScrapingPolicy> ScrapingPolicies { get; set; }
+    public DbSet<SearchTerm> SearchTerms { get; set; }
+    public DbSet<Website> Websites { get; set; }
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

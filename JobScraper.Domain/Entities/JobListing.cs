@@ -22,4 +22,5 @@ public class JobListing
     
     public int CityId { get; set; }
     public City City { get; set; }
+    public ICollection<SearchTerm> SearchTerms { get; set; }
 }
