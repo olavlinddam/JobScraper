@@ -10,13 +10,13 @@ public class ScrapingService : IScrapingService
 {
     private readonly ILogger<ScrapingService> _logger;
     private readonly ScraperStateManager _scraperStateManager;
-    private readonly IAppDbContext _dbContext;
+    private readonly IWebsiteRepository _websiteRepository;
 
-    public ScrapingService(ScraperStateManager scraperStateManager, ILogger<ScrapingService> logger, IAppDbContext dbContext)
+    public ScrapingService(ScraperStateManager scraperStateManager, ILogger<ScrapingService> logger, IWebsiteRepository websiteRepository)
     {
         _scraperStateManager = scraperStateManager;
         _logger = logger;
-        _dbContext = dbContext;
+        _websiteRepository = websiteRepository;
     }
 
     public async Task<ErrorOr<Success>> StartAllScrapers(CancellationToken cancellationToken)
@@ -24,8 +24,7 @@ public class ScrapingService : IScrapingService
         _logger.LogInformation("Starting all scrapers");   
         
         // Get all relevant data form database
-        var websites = await _dbContext.Websites
-            .Include(w => w.ScrapingPolicy).ToListAsync(cancellationToken);
+        var websites = await _websiteRepository.GetAllWithPoliciesAsync(cancellationToken);
 
         if (!websites.Any())
         {

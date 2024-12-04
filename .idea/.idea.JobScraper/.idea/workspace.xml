@@ -8,9 +8,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d3a4005f-b9f1-479a-8ca4-b52f0e0fe7cd" name="Changes" comment="factory pattern for creating the scrapers.">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Api/logs/log-20241129.txt" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Api/logs/log-20241129.txt" afterDir="false" />
+    <list default="true" id="d3a4005f-b9f1-479a-8ca4-b52f0e0fe7cd" name="Changes" comment="..">
+      <change afterPath="$PROJECT_DIR$/JobScraper.Application/Common/Interfaces/IWebsiteRepository.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure.Tests/ScraperTests/JobnetScraper/BuildUrlTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure.Tests/ScraperTests/JobnetScraper/EncodeLocationTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/AssemblyInfo.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Persistence/Websites/WebsiteRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Api/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Api/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Common/Interfaces/IAppDbContext.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Services/ScrapingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Services/ScrapingService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/StartUp/DependencyInjection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/JobScraper.Infrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/JobScraper.Infrastructure.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/Persistence/AppDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Persistence/AppDbContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/Persistence/Configurations/WebsiteConfigurations.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Persistence/Websites/WebsiteConfigurations.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/Scrapers/JobnetScraper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Scrapers/JobnetScraper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.sln" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.sln.DotSettings.user" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.sln.DotSettings.user" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,24 +78,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET Launch Settings Profile.JobScraper.Api: http.executor&quot;: &quot;Debug&quot;,
-    &quot;HTTP Request.All in StartAllScrapers.executor&quot;: &quot;Run&quot;,
-    &quot;HTTP Request.StartAllScrapers | #1.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;jobnet-scraper&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/usr/share/dotnet/dotnet&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.JobScraper.Api: http.executor": "Debug",
+    "89b5d813-58a3-42d1-b605-23fc0f3615c0.executor": "Debug",
+    "HTTP Request.All in StartAllScrapers.executor": "Run",
+    "HTTP Request.StartAllScrapers | #1.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "jobnet-scraper",
+    "last_opened_file_path": "/usr/share/dotnet/dotnet",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors.Debugger",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.JobScraper.Api: http">
     <configuration name="All in StartAllScrapers" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" path="$PROJECT_DIR$/JobScraper.Api/http-requests/StartAllScrapers.http">
       <method v="2" />
@@ -156,7 +171,7 @@
       <workItem from="1732992701428" duration="8415000" />
       <workItem from="1733131757198" duration="1445000" />
       <workItem from="1733133220030" duration="310000" />
-      <workItem from="1733338207474" duration="692000" />
+      <workItem from="1733338207474" duration="9690000" />
     </task>
     <task id="LOCAL-00001" summary="Setting up the structure for db integration. Configurations are done in the intrastructure layer to separate this from the AppDbContext.cs and the entity itself.">
       <option name="closed" value="true" />
@@ -254,7 +269,23 @@
       <option name="project" value="LOCAL" />
       <updated>1733140516162</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="workspace and logs">
+      <option name="closed" value="true" />
+      <created>1733339464545</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1733339464545</updated>
+    </task>
+    <task id="LOCAL-00014" summary="..">
+      <option name="closed" value="true" />
+      <created>1733339526658</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1733339526658</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -286,7 +317,9 @@
     <MESSAGE value="some more default stuff" />
     <MESSAGE value="remove workspace and tasks from git" />
     <MESSAGE value="factory pattern for creating the scrapers." />
-    <option name="LAST_COMMIT_MESSAGE" value="factory pattern for creating the scrapers." />
+    <MESSAGE value="workspace and logs" />
+    <MESSAGE value=".." />
+    <option name="LAST_COMMIT_MESSAGE" value=".." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -303,6 +336,45 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/JobScraper.Infrastructure.Tests/ScraperTests/JobnetScraper/EncodeLocationTests.cs</url>
+          <line>12</line>
+          <properties documentPath="$PROJECT_DIR$/JobScraper.Infrastructure.Tests/ScraperTests/JobnetScraper/EncodeLocationTests.cs" containingFunctionPresentation="Method 'EncodeLocation_WithSingleWord_ReturnUnencoded'">
+            <startOffsets>
+              <option value="291" />
+            </startOffsets>
+            <endOffsets>
+              <option value="352" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/JobScraper.Infrastructure/Scrapers/JobnetScraper.cs</url>
+          <line>23</line>
+          <properties documentPath="$PROJECT_DIR$/JobScraper.Infrastructure/Scrapers/JobnetScraper.cs" containingFunctionPresentation="Method 'BuildUrl'">
+            <startOffsets>
+              <option value="711" />
+            </startOffsets>
+            <endOffsets>
+              <option value="712" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/JobScraper.Infrastructure.Tests/ScraperTests/JobnetScraper/BuildUrlTests.cs</url>
+          <line>23</line>
+          <properties documentPath="$PROJECT_DIR$/JobScraper.Infrastructure.Tests/ScraperTests/JobnetScraper/BuildUrlTests.cs" containingFunctionPresentation="Method 'BuildUrl_WithSearchTerm_ShouldReturnSingleParameterUrl'">
+            <startOffsets>
+              <option value="622" />
+            </startOffsets>
+            <endOffsets>
+              <option value="691" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="6" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

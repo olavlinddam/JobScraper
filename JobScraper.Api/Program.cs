@@ -1,6 +1,7 @@
 using JobScraper.Api;
 using JobScraper.Application;
 using JobScraper.Infrastructure;
+using JobScraper.Infrastructure.StartUp;
 using Serilog;
 using Serilog.Settings.Configuration;
 
