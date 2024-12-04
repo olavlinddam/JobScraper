@@ -9,12 +9,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d3a4005f-b9f1-479a-8ca4-b52f0e0fe7cd" name="Changes" comment="factory pattern for creating the scrapers.">
-      <change afterPath="$PROJECT_DIR$/JobScraper.Application/Features/Scraping/Common/IWebScraperFactory.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Builders/WebScraperFactory.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/Scrapers/JobnetScraper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.JobScraper/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/DependencyInjection.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/JobScraper.Infrastructure/JobScraper.Infrastructure.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Infrastructure/JobScraper.Infrastructure.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/JobScraper.Api/logs/log-20241129.txt" beforeDir="false" afterPath="$PROJECT_DIR$/JobScraper.Api/logs/log-20241129.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -160,6 +156,7 @@
       <workItem from="1732992701428" duration="8415000" />
       <workItem from="1733131757198" duration="1445000" />
       <workItem from="1733133220030" duration="310000" />
+      <workItem from="1733338207474" duration="692000" />
     </task>
     <task id="LOCAL-00001" summary="Setting up the structure for db integration. Configurations are done in the intrastructure layer to separate this from the AppDbContext.cs and the entity itself.">
       <option name="closed" value="true" />
@@ -299,10 +296,10 @@
           <line>22</line>
           <properties documentPath="$PROJECT_DIR$/JobScraper.Api/Controllers/ScrapingController.cs" containingFunctionPresentation="Method 'StartAllScrapers'">
             <startOffsets>
-              <option value="600" />
+              <option value="605" />
             </startOffsets>
             <endOffsets>
-              <option value="601" />
+              <option value="606" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="1" />
