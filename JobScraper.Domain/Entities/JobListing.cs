@@ -1,5 +1,6 @@
 using JobScraper.Domain.Enums;
 
+
 namespace JobScraper.Domain.Entities;
 
 public class JobListing
@@ -9,7 +10,7 @@ public class JobListing
     public string CompanyName { get; set; }
     public DateTime PostedDate { get; set; }
     public DateTime ExpirationDate { get; set; }
-    public string Uri { get; set; }
+    public string Url { get; set; }
     public string Description { get; set; }
     public string ContactInfo { get; set; }
     public DateTime ScrapedDate { get; set; }

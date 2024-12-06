@@ -17,7 +17,7 @@ public class JobListingConfiguration : IEntityTypeConfiguration<JobListing>
 
         builder.Property(l => l.ExpirationDate);
 
-        builder.Property(l => l.Uri);
+        builder.Property(l => l.Url);
 
         builder.Property(l => l.Description);
 
