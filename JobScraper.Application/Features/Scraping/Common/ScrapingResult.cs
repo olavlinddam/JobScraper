@@ -2,20 +2,29 @@ namespace JobScraper.Application.Features.Scraping.Common;
 
 public record ScrapingResult
 {
-    public bool Success { get; }
-    public string? Content { get; }
-    public string? Error { get; }
+    public ScrapedJobData? ScrapedJob { get; set; }
+    public FailedJobScrape? FailedJobScrape { get; set; }
+}
 
-    private ScrapingResult(bool success, string? content = null, string? error = null)
-    {
-        Success = success;
-        Content = content;
-        Error = error;
-    }
+public record ScrapedJobData
+{
+    public string Title { get; set; }
+    public string CompanyName { get; set; }
+    public DateTime DatePublished { get; set; }
+    public string WorkHours { get; set; }
+    public DateTime ExpirationDate { get; set; }
+    public string Url { get; set; }
+    public string Description { get; set; }
+    public DateTime ScrapedDate { get; set; }
+    public int ZipCode { get; set; }
+    public string City { get; set; }
+    public string Link { get; set; }
+}
 
-    public static ScrapingResult Succeeded(string content) =>
-        new(true, content);
-
-    public static ScrapingResult Failed(string error) =>
-        new(false, error: error);
+public record FailedJobScrape
+{
+    public DateTime TimeStamp { get; set; }
+    public string Message { get; set; }
+    public string StackTrace { get; set; }
+    public string Type { get; set; }
 }

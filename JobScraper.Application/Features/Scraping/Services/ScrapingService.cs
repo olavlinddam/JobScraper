@@ -9,20 +9,18 @@ namespace JobScraper.Application.Features.Scraping.Services;
 public class ScrapingService : IScrapingService
 {
     private readonly ILogger<ScrapingService> _logger;
-    private readonly ScraperStateManager _scraperStateManager;
     private readonly IWebsiteRepository _websiteRepository;
 
-    public ScrapingService(ScraperStateManager scraperStateManager, ILogger<ScrapingService> logger, IWebsiteRepository websiteRepository)
+    public ScrapingService(ILogger<ScrapingService> logger, IWebsiteRepository websiteRepository)
     {
-        _scraperStateManager = scraperStateManager;
         _logger = logger;
         _websiteRepository = websiteRepository;
     }
 
     public async Task<ErrorOr<Success>> StartAllScrapers(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Starting all scrapers");   
-        
+        _logger.LogInformation("Starting all scrapers");
+
         // Get all relevant data form database
         var websites = await _websiteRepository.GetAllWithPoliciesAsync(cancellationToken);
 
@@ -34,14 +32,7 @@ public class ScrapingService : IScrapingService
 
         foreach (var website in websites)
         {
-            if (_scraperStateManager.TryStartScraping(website.Id))
-            {
-                _logger.LogInformation("Starting scraper with id {Id}", website.Id);
-                
-                
-                
-                _scraperStateManager.StopScraping(website.Id);
-            }
+            _logger.LogInformation("Starting scraper with id {Id}", website.Id);
         }
 
         return Result.Success;

@@ -1,6 +1,5 @@
 using JobScraper.Application.Common.Interfaces;
 using JobScraper.Application.Features.Scraping.Common;
-using JobScraper.Infrastructure.Builders;
 using JobScraper.Infrastructure.Persistence;
 using JobScraper.Infrastructure.Persistence.Websites;
 using Microsoft.EntityFrameworkCore;
@@ -18,8 +17,6 @@ public static class DependencyInjection
         // https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-9.0&tabs=linux
         
         services.AddDbContext<AppDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("LocalDb")));
-        
-        services.TryAddScoped<IWebScraperFactory, WebScraperFactory>();
         
         services.TryAddScoped<IWebsiteRepository, WebsiteRepository>();
         
