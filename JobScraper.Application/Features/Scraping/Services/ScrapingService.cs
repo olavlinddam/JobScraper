@@ -34,6 +34,11 @@ public class ScrapingService : BackgroundService, IScrapingService, IDisposable
         foreach (var website in websites)
         {
             _logger.LogInformation("Starting scraper with id {Id}", website.Id);
+            
+            // resolve scraper type
+            // start each scraper in parallel
+            // store the scraped jobs in the database
+            // store the errors in the database
         }
 
         return Result.Success;
