@@ -1,7 +1,9 @@
 using JobScraper.Application.Common.Interfaces;
 using JobScraper.Application.Features.Scraping.Common;
+using JobScraper.Application.Features.Scraping.Scrapers;
 using JobScraper.Infrastructure.Persistence;
 using JobScraper.Infrastructure.Persistence.Websites;
+using JobScraper.Infrastructure.Scrapers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +21,10 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("LocalDb")));
         
         services.TryAddScoped<IWebsiteRepository, WebsiteRepository>();
+        
+        
+        // Scraper
+        services.TryAddScoped<IJobnetScraper, JobnetScraper>();
         
         return services;
     }

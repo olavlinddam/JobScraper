@@ -5,7 +5,7 @@ using ErrorOr;
 
 namespace JobScraper.Application.Features.Scraping.Scrapers;
 
-public interface IJobScraper
+public interface IJobnetScraper 
 {
     Task<ErrorOr<List<ScrapingResult>>> ScrapePageAsync(Website website, ScrapeRequest scrapeRequest, CancellationToken cancellationToken);
 }

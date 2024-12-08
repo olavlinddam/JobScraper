@@ -11,18 +11,30 @@ using ScrapingResult = JobScraper.Application.Features.Scraping.Common.ScrapingR
 
 namespace JobScraper.Infrastructure.Scrapers;
 
-public class JobnetScraper : IJobScraper, IDisposable
+public class JobnetScraper : IJobnetScraper, IDisposable
 {
-    private readonly IWebDriver _driver;
+    private IWebDriver? _driver;
     private readonly ILogger<JobnetScraper> _logger;
 
     public JobnetScraper(ILogger<JobnetScraper> logger)
     {
         _logger = logger;
+    }
+
+    private IWebDriver? GetDriver()
+    {
+        if (_driver != null) return _driver;
 
         var chromeOptions = new ChromeOptions();
-        // chromeOptions.AddArgument("headless");
+        chromeOptions.AddArgument("headless");
         _driver = new ChromeDriver(chromeOptions);
+
+        if (_driver == null)
+        {
+            throw new InvalidOperationException();
+        }
+
+        return _driver;
     }
 
     public async Task<ErrorOr<List<ScrapingResult>>> ScrapePageAsync(Website website, ScrapeRequest scrapeRequest,
@@ -57,22 +69,27 @@ public class JobnetScraper : IJobScraper, IDisposable
                 FailedJobScrape = new FailedJobScrape
                 {
                     Message = e.Message,
-                    StackTrace = e.StackTrace,
+                    StackTrace = e.StackTrace ?? "No stack trace found.",
                     TimeStamp = DateTime.Now,
                     Type = "WebdriverTimeoutError"
                 }
             };
             scrapingResults.Add(scrapingResult);
-            return scrapingResults;
+            return scrapingResults; 
         }
         catch (NoSuchElementException e)
         {
-            _logger.LogError("No such element found at {siteTitle}: {e}", _driver.Title, e);
+            _logger.LogError("No such element found at {siteTitle}: {e}", _driver?.Title, e);
             throw;
         }
         catch (OperationCanceledException e)
         {
             _logger.LogError("The operation was canceled due to: {e}.", e);
+            throw;
+        }
+        catch (InvalidOperationException e)
+        {
+            _logger.LogError("Failed to initialize the web driver for {siteTitle}: {e}", _driver?.Title, e);
             throw;
         }
         catch (Exception e)
@@ -138,36 +155,56 @@ public class JobnetScraper : IJobScraper, IDisposable
 
     private async Task<IReadOnlyCollection<IWebElement>> GetListings(string url, CancellationToken cancellationToken)
     {
-        await _driver.Navigate().GoToUrlAsync(url).WaitAsync(cancellationToken);
+        var driver = GetDriver();
+        await driver.Navigate().GoToUrlAsync(url).WaitAsync(cancellationToken); // null check is in GetDriver()
         HandleCookiePopUp(cancellationToken);
         cancellationToken.ThrowIfCancellationRequested();
 
-        var listings = _driver.FindElements(By.ClassName("job-ad-summary"));
+        var listings = driver.FindElements(By.ClassName("job-ad-summary"));
         return listings;
     }
 
     private void HandleCookiePopUp(CancellationToken cancellationToken)
     {
-        // Use WebDriverWait to handle waiting for the cookie pop up
-        var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(5));
-
-        // Wait until either the pop up is found or timeout occurs
-        var cookiePopup = wait.Until(d =>
+        try
         {
-            // Check if the operation was cancelled during wait
-            cancellationToken.ThrowIfCancellationRequested();
-            try
-            {
-                return d.FindElement(By.Id("cc-b-custom"));
-            }
-            catch (NoSuchElementException) 
-            {
-                // Caught as part of the polling mechanism
-                return null;
-            }
-        });
+            // Use WebDriverWait to handle waiting for the cookie pop up
+            var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(5));
 
-        cookiePopup?.Click();
+            // Wait until either the pop up is found or timeout occurs
+            var cookiePopup = wait.Until(d =>
+            {
+                // Check if the operation was cancelled during wait
+                cancellationToken.ThrowIfCancellationRequested();
+                try
+                {
+                    return d.FindElement(By.Id("cc-b-custom"));
+                }
+                catch (NoSuchElementException)
+                {
+                    return null;
+                }
+            });
+
+            if (cookiePopup == null) return;
+
+            cookiePopup.Click();
+            _logger.LogDebug("Clicking on cookie popup");
+        }
+        catch (WebDriverTimeoutException)
+        {
+            _logger.LogDebug("No cookie popup found within timeout - continuing");
+            // Just continue if no popup found
+        }
+        catch (OperationCanceledException)
+        {
+            throw; // Re-throw cancellation
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Unexpected error handling cookie popup - continuing");
+            // Continue despite other errors with the popup
+        }
     }
 
     internal static ScrapingResult ParseListing(IWebElement listing)
@@ -188,10 +225,8 @@ public class JobnetScraper : IJobScraper, IDisposable
                 .Text;
             var expirationDate = jobAdDetails
                 .FindElement(By.CssSelector("div.job-ad-ansogningsfrist>span.job-ad-footer-label")).Text;
-            var location = jobAdDetails.FindElement(By.CssSelector("span[.ng-binding.ng-scope]")).Text;
+            var location = jobAdDetails.FindElement(By.ClassName("job-ad-location")).Text;
 
-            var locationParts = location.Split(" ");
-            var city = locationParts.Last();
 
             return new ScrapingResult()
             {
@@ -200,13 +235,11 @@ public class JobnetScraper : IJobScraper, IDisposable
                     Title = title,
                     CompanyName = company,
                     Description = description,
-                    City = location.Split(" ").Last(),
-                    ZipCode = int.Parse(location.Split(" ").Last()),
-                    DatePublished = DateTime.Parse(datePublished),
-                    ExpirationDate = DateTime.Parse(expirationDate),
-                    ScrapedDate = DateTime.Today,
+                    Location = location,
+                    DatePublished = datePublished,
+                    ExpirationDate = expirationDate,
                     WorkHours = workHours,
-                    Link = href
+                    Url = href
                 },
                 FailedJobScrape = null
             };
@@ -227,5 +260,5 @@ public class JobnetScraper : IJobScraper, IDisposable
         }
     }
 
-    public void Dispose() => _driver.Dispose();
+    public void Dispose() => _driver?.Dispose();
 }
