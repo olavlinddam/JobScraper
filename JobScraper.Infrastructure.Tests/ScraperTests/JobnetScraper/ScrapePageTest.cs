@@ -15,14 +15,12 @@ public class ScrapePageTest
         var loggerMock = new Mock<ILogger<Scrapers.JobnetScraper>>();
         var scraper = new Scrapers.JobnetScraper(loggerMock.Object); // Real scraper, mock logger
 
-        var website = new Website()
-        {
-            Url = "https://job.jobnet.dk/CV/FindWork?Offset=0&SortValue=BestMatch"
-        };
-        var scrapeRequest = new ScrapeRequest();
+        var url = "https://job.jobnet.dk/CV/FindWork?Offset=0&SortValue=BestMatch";
+        var searchTerms = new List<string> { "Systemudvikling, programmering og design" };
+        var scrapeRequest = new ScrapeRequest(url, searchTerms);
 
         // Act
-        await scraper.ScrapePageAsync(website, scrapeRequest, CancellationToken.None);
+        await scraper.ScrapePageAsync(scrapeRequest, CancellationToken.None);
 
         // Assert
         // Add assertions about what was scraped
