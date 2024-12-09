@@ -122,7 +122,7 @@ public class JobnetScraper : IJobnetScraper
         var urls = new List<string>();
         foreach (var searchTerm in scrapeRequest.SearchTerms)
         {
-            var parameter = EncodeSearchTerm(searchTerm);
+            var parameter = $"SearchString={EncodeSearchTerm(searchTerm)}";
             var url = $"{scrapeRequest.WebsiteBaseUrl}&{string.Join("&", parameter)}";
             urls.Add(url);
         }
