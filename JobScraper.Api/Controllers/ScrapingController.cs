@@ -24,7 +24,7 @@ public class ScrapingController : ApiController
         var startedAt = DateTime.Now;
         CancellationToken cancellationToken = default;
         
-        var result = await _scrapingService.ScrapeAllWebsites(cancellationToken);
+        var result = await _scrapingService.InitiateScrape(cancellationToken);
 
         return result.Match(
             success => Ok(new
