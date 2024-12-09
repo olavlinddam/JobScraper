@@ -9,7 +9,7 @@ A .NET-based web scraping application that aggregates danish job postings from m
 - Rate limiting and scraping policies per website
 - Geographic data support for job locations
 - Error tracking and logging with Serilog
-- Clean Architecture implementation with three layers
+- Clean Architecture implementation
 - Support for multiple search parameters (location, job type, distance)
 
 ## Tech Stack
@@ -40,7 +40,6 @@ JobScraper/
 
 - .NET 8 SDK
 - PostgreSQL
-- Chrome/Chromium (for Selenium WebDriver)
 - User Secrets configured with connection string
 
 ### Setup
@@ -48,27 +47,32 @@ JobScraper/
 1. Clone the repository
 2. Set up the database connection string in user secrets:
    ```bash
-   dotnet user-secrets set "ConnectionStrings:LocalDb" "your-connection-string"
+   [Jobscraper.Api]$ dotnet user-secrets set "ConnectionStrings:LocalDb" "your-connection-string"
    ```
-3. Run database migrations
+3. Run database migrations:
+   ```bash
+   [Jobscraper.Infrastructure]$ dotnet ef database update
+   ```
 4. Start the application
 
 ## API Endpoints
 
-### Scraping
-
-- POST `/api/scraping/StartAllScrapers` - Start scraping jobs from all configured websites (not fully implemented)
+Not yet implemented
 
 ## TODO
 
+### Phase 1 (MVP)
 - [ ] Complete JobnetScraper implementation (parsing and storing results)
-- [ ] Add job search API endpoints
 - [ ] Implement deduplication logic
-- [ ] Add more job sites (create new scrapers)
+- [ ] Add job search API endpoints
+- [ ] Add user interface for displaying job listings
+
+
+### Phase 2
 - [ ] Set up CI/CD pipeline
-- [ ] Add comprehensive test coverage
+- [ ] Add more job sites (create new scrapers)
 - [ ] Create admin interface for managing scrapers and viewing errors
-- [ ] Add rate limiting middleware
-- [ ] Implement robots.txt parsing and respect
 - [ ] Add search term tracking and analytics
 - [ ] Create documentation for adding new scrapers
+- [ ] Add rate limiting middleware
+
