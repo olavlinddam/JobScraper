@@ -5,5 +5,5 @@ namespace JobScraper.Application.Features.Scraping.Services;
 
 public interface IScrapingService
 {
-    public Task<ErrorOr<Success>> ScrapeAllWebsites(CancellationToken cancellationToken);
+    public Task<ErrorOr<Success>> InitiateScrape(CancellationToken cancellationToken);
 }

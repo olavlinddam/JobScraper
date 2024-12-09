@@ -3,6 +3,7 @@ using JobScraper.Application.Common.Interfaces.Repositories;
 using JobScraper.Application.Features.Scraping.Common;
 using JobScraper.Application.Features.Scraping.Scrapers;
 using JobScraper.Contracts.Requests.Scraping;
+using JobScraper.Domain.Entities;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -30,7 +31,7 @@ public class ScrapingService : BackgroundService, IScrapingService, IDisposable
             {
                 _logger.LogInformation("ScrapingService initialized");
 
-                var scrapingResults = await ScrapeAllWebsites(cancellationToken);
+                var scrapingResults = await InitiateScrape(cancellationToken);
 
 
                 await Task.Delay(TimeSpan.FromMinutes(120), cancellationToken); // TODO: NOT HARDCODE THE TIMER
@@ -50,41 +51,61 @@ public class ScrapingService : BackgroundService, IScrapingService, IDisposable
         }
     }
 
-    public async Task<ErrorOr<Success>> ScrapeAllWebsites(CancellationToken cancellationToken)
+    public async Task<ErrorOr<Success>> InitiateScrape(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Starting all scrapers");
+        
         var websites = (await _websiteRepository.GetAllWithPoliciesAndSearchTermsAsync(cancellationToken)).ToList();
-
         if (websites.Count == 0)
         {
             _logger.LogError("No websites in database");
             return Error.NotFound("No websites found");
         }
 
-        // Running the scrapes in parallel to scrape all sites faster
-        var scrapingTasks = websites.Select(async website =>
+        var scrapeResults = await ScrapeWebsitesAsync(websites, cancellationToken);
+        var (successfulScrapes, failedScrapes) = SortScrapeResults(scrapeResults);
+        if (successfulScrapes == null && failedScrapes == null)
         {
-            _logger.LogInformation("Scraping website {website}", website.ShortName);
-            var scraper = _webScraperFactory.TryCreateWebScraper(website.ShortName);
-            var scrapeRequest = new ScrapeRequest(website.Url, website.ShortName, website.SearchTerms.Select(s => s.Value).ToList());
-            return await scraper.ScrapePageAsync(scrapeRequest, cancellationToken);
-        });
-
-        var allResults = await Task.WhenAll(scrapingTasks);
-        _logger.LogInformation("All websites scraped");
+            return Error.NotFound("No scraping results found");
+        }
         
-        var successfulScrapes = allResults.SelectMany(r => r)
-            .Where(r => r.ScrapedJob != null)
-            .Select(r => r.ScrapedJob);
         
-        var failedScrapes = allResults.SelectMany(r => r)
-            .Where(r => r.FailedJobScrape != null)
-            .Select(r => r.FailedJobScrape);
         
         // Map to entities
         // Filter duplicates
 
         return Result.Success;
+    }
+
+    internal static (IEnumerable<ScrapedJobData?> successfulScrapes, IEnumerable<FailedJobScrape?> failedScrapes)
+        SortScrapeResults(List<ScrapingResult>[] scrapeResults)
+    {
+        var successfulScrapes = scrapeResults.SelectMany(r => r)
+            .Where(r => r.ScrapedJob != null)
+            .Select(r => r.ScrapedJob);
+        
+        var failedScrapes = scrapeResults.SelectMany(r => r)
+            .Where(r => r.FailedJobScrape != null)
+            .Select(r => r.FailedJobScrape);
+        
+        return (successfulScrapes, failedScrapes);
+    }
+
+    private async Task<List<ScrapingResult>[]> ScrapeWebsitesAsync(List<Website> websites, CancellationToken cancellationToken)
+    {
+        // Running the scrapes in parallel to scrape all sites faster
+        var scrapingTasks = websites.Select(async website =>
+        {
+            _logger.LogInformation("Scraping website {website}", website.ShortName);
+            var scraper = _webScraperFactory.TryCreateWebScraper(website.ShortName);
+            var scrapeRequest = new ScrapeRequest(website.Url, website.SearchTerms.Select(s => s.Value).ToList());
+            return await scraper.ScrapePageAsync(scrapeRequest, cancellationToken);
+        });
+
+        var allResults = await Task.WhenAll(scrapingTasks);
+        _logger.LogInformation("All websites scraped");
+
+        return allResults;
     }
 }
 
