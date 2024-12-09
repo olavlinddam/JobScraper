@@ -21,7 +21,7 @@ public class BuildUrlTests
         };
         
         // Act
-        var result = Scrapers.JobnetScraper.BuildUrl(website, scrapeRequest);
+        var result = Scrapers.JobnetScraper.BuildUrls(website, scrapeRequest);
         
         // Assert
         Assert.AreEqual("https://job.jobnet.dk/CV/FindWork?Offset=0&SortValue=BestMatch&SearchString=%2522Systemudvikling,%2520programmering%2520og%2520design%2522", result);
@@ -43,7 +43,7 @@ public class BuildUrlTests
         };
         
         // Act
-        var result = Scrapers.JobnetScraper.BuildUrl(website, scrapeRequest);
+        var result = Scrapers.JobnetScraper.BuildUrls(website, scrapeRequest);
         
         // Assert
         Assert.AreEqual("https://job.jobnet.dk/CV/FindWork?Offset=0&SortValue=BestMatch&LocationZip=5000&SearchInGeoDistance=50", result);

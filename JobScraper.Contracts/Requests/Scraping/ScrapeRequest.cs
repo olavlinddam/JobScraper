@@ -1,9 +1,3 @@
 namespace JobScraper.Contracts.Requests.Scraping;
 
-public record ScrapeRequest
-{
-    public string? SearchTerm { get; set; }
-    public string? Location { get; set; }
-    public string? DistanceFromLocation { get; set; }
-    public bool FullTimeOnly { get; set; }
-}
+public record ScrapeRequest(string WebsiteBaseUrl, string WebsiteShortName, List<string> SearchTerms);

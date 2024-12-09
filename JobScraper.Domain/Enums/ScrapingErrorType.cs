@@ -4,6 +4,7 @@ public enum ScrapingErrorType
 {
     RateLimitExceeded,
     ParseError,
+    InvalidInput,
     NetworkError,
     WebdriverTimeoutError,
     AuthenticationError

@@ -1,8 +1,8 @@
-using JobScraper.Application.Common.Interfaces;
+using JobScraper.Application.Common.Interfaces.Repositories;
 using JobScraper.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace JobScraper.Infrastructure.Persistence.Websites;
+namespace JobScraper.Infrastructure.Persistence.Repositories;
 
 public class WebsiteRepository : IWebsiteRepository
 {
@@ -19,9 +19,10 @@ public class WebsiteRepository : IWebsiteRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Website>> GetAllWithPoliciesAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<Website>> GetAllWithPoliciesAndSearchTermsAsync(CancellationToken cancellationToken)
     {
         return await _context.Websites.Include(w => w.ScrapingPolicy)
+            .Include(w => w.SearchTerms)
             .ToListAsync(cancellationToken);
     }
 }

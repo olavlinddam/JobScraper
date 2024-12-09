@@ -1,4 +1,5 @@
 using ErrorOr;
+using JobScraper.Application.Features.Scraping.Common;
 
 namespace JobScraper.Application.Features.Scraping.Services;
 
