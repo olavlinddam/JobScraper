@@ -74,18 +74,19 @@ public class ScrapingService : BackgroundService, IScrapingService
             return Error.NotFound("No scraping results found");
         }
 
-        var recentExistingListings = (_jobListingRepository.GetRecentListings(cancellationToken)).ToList();
-        var (newListings, existingMatches) = SeparateNewAndExistingListings(successfulScrapes, recentExistingListings);
+        var recentExistingListingsFromDb = _jobListingRepository.GetRecentListings(cancellationToken).ToList();
+        var (newListings, existingScrapedListings) = SeparateNewAndExistingListings(successfulScrapes, recentExistingListingsFromDb);
 
         // Map to entities
         var newJobListings = _scrapeResultMapper.MapToJobListings(newListings);
 
+        AddNewSearchTermsToExistingListings(existingScrapedListings, recentExistingListingsFromDb)
 
         return Result.Success;
     }
 
-    internal static (List<ScrapedJobData> newListings, Dictionary<ScrapedJobData, JobListing> existingMatches)
-        SeparateNewAndExistingListings(List<ScrapedJobData?> successfulScrapes, List<JobListing> recentExistingListings)
+    internal static (List<ScrapedJobData> newListings, Dictionary<ScrapedJobData, JobListing> existingScrapedListings)
+        SeparateNewAndExistingListings(List<ScrapedJobData?> successfulScrapes, List<JobListing> recentExistingListingsFromDb)
     {
         var newListings = new List<ScrapedJobData>();
         var existingMatches = new Dictionary<ScrapedJobData, JobListing>();
@@ -93,7 +94,7 @@ public class ScrapingService : BackgroundService, IScrapingService
         foreach (var scrapedListing in successfulScrapes)
         {
             var scrapedListingCity = LocationParser.ExtractCityName(scrapedListing.Location);
-            var matchingListing = recentExistingListings.FirstOrDefault(
+            var matchingListing = recentExistingListingsFromDb.FirstOrDefault(
                 existingListing => existingListing.Title == scrapedListing.Title &&
                                    existingListing.CompanyName == scrapedListing.CompanyName &&
                                    existingListing.City.Name == scrapedListingCity ||
@@ -158,7 +159,7 @@ public class ScrapingService : BackgroundService, IScrapingService
             return await scraper.ScrapePageAsync(scrapeRequest, cancellationToken);
         });
 
-        List<ScrapingResult>[] allResults = await Task.WhenAll(scrapingTasks);
+        var allResults = await Task.WhenAll(scrapingTasks);
         _logger.LogInformation("All websites scraped");
 
         return allResults;
