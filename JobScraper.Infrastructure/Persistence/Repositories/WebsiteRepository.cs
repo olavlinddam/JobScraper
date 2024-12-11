@@ -21,8 +21,10 @@ public class WebsiteRepository : IWebsiteRepository
 
     public async Task<IEnumerable<Website>> GetAllWithPoliciesAndSearchTermsAsync(CancellationToken cancellationToken)
     {
-        return await _context.Websites.Include(w => w.ScrapingPolicy)
+         var websites = await _context.Websites.Include(w => w.ScrapingPolicy)
             .Include(w => w.SearchTerms)
             .ToListAsync(cancellationToken);
+         
+         return websites;
     }
 }

@@ -22,6 +22,7 @@ public static class DependencyInjection
         services.AddDbContext<AppDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("LocalDb")));
 
         services.TryAddScoped<IWebsiteRepository, WebsiteRepository>();
+        services.TryAddScoped<IJobListingRepository, JobListingRepository>();
 
 
         // Scrapers

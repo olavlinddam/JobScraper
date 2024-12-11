@@ -12,17 +12,18 @@ public class ScrapeResultMapper : IScrapeResultMapper
         var jobListings = new List<JobListing>();
         foreach (var scrapedJob in scrapedJobs)
         {
-            var joblisting = new JobListing();
-            joblisting.Title = scrapedJob.Title;
-            joblisting.CompanyName = scrapedJob.CompanyName;
-            joblisting.PostedDate = DateTime.Parse(scrapedJob.DatePublished);
-            joblisting.ExpirationDate = DateTime.Parse(scrapedJob.ExpirationDate);
-            joblisting.Url = scrapedJob.Url;
-            joblisting.Description = scrapedJob.Description;
-            joblisting.ScrapedDate = scrapedJob.ScrapedDate;
-            joblisting.JobType = ParseJobType(scrapedJob.WorkHours);
-            joblisting.Website = website;
-            
+            var jobListing = new JobListing
+            {
+                Title = scrapedJob.Title,
+                CompanyName = scrapedJob.CompanyName,
+                PostedDate = DateTime.Parse(scrapedJob.DatePublished),
+                ExpirationDate = DateTime.Parse(scrapedJob.ExpirationDate),
+                Url = scrapedJob.Url,
+                Description = scrapedJob.Description,
+                ScrapedDate = scrapedJob.ScrapedDate,
+                JobType = ParseJobType(scrapedJob.WorkHours),
+                Website = website
+            };
         }
     }
 

@@ -5,6 +5,6 @@ namespace JobScraper.Application.Features.Scraping.Mappers;
 
 public interface IScrapeResultMapper
 {
-    IEnumerable<JobListing> MapToJobListings(IEnumerable<ScrapedJobData> scrapedJobs);
+    IEnumerable<JobListing> MapToJobListings(IEnumerable<ScrapedJobData?> scrapedJobs);
     IEnumerable<ScrapingError> MapToScrapingErrors(IEnumerable<FailedJobScrape> failedJobScrapes);
 }
