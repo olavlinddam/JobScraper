@@ -19,6 +19,11 @@ public class WebsiteRepository : IWebsiteRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task<List<Website>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        return await _context.Websites.ToListAsync(cancellationToken);
+    }
+
     public async Task<IEnumerable<Website>> GetWithSearchTerms(CancellationToken cancellationToken)
     {
          var websites = await _context.Websites

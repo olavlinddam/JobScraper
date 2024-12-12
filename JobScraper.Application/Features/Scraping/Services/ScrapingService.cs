@@ -1,7 +1,7 @@
 using ErrorOr;
 using JobScraper.Application.Common.Interfaces.Repositories;
 using JobScraper.Application.Features.Scraping.Common;
-using JobScraper.Application.Features.Scraping.Mappers;
+using JobScraper.Application.Features.Scraping.Mapping;
 using JobScraper.Contracts.Requests.Scraping;
 using JobScraper.Domain.Entities;
 using Microsoft.Extensions.Hosting;
@@ -18,19 +18,16 @@ public class ScrapingService : BackgroundService, IScrapingService
     private readonly ISearchTermRepository _searchTermRepository;
 
     private readonly IWebScraperFactory _webScraperFactory;
-    private readonly IScrapeResultMapper _scrapeResultMapper;
 
 
     public ScrapingService(ILogger<ScrapingService> logger, IWebsiteRepository websiteRepository,
         IWebScraperFactory webScraperFactory, IJobListingRepository jobListingRepository,
-        IScrapeResultMapper scrapeResultMapper, ICityRepository cityRepository,
-        ISearchTermRepository searchTermRepository)
+        ICityRepository cityRepository, ISearchTermRepository searchTermRepository)
     {
         _logger = logger;
         _websiteRepository = websiteRepository;
         _webScraperFactory = webScraperFactory;
         _jobListingRepository = jobListingRepository;
-        _scrapeResultMapper = scrapeResultMapper;
         _cityRepository = cityRepository;
         _searchTermRepository = searchTermRepository;
     }
@@ -109,7 +106,7 @@ public class ScrapingService : BackgroundService, IScrapingService
         var existingScrapedListings = UpdateExistingListingsSearchTerms(existingScrapedListingsDict);
 
         var newListings =
-            _scrapeResultMapper.MapToJobListings(scrapedListingsNotInDb, cities, websites, searchTerms);
+            ScrapeResultMapper.MapToJobListings(scrapedListingsNotInDb, cities, websites, searchTerms);
 
         if (existingScrapedListings.Count > 0)
         {
@@ -124,7 +121,7 @@ public class ScrapingService : BackgroundService, IScrapingService
 
     private async Task HandleNewCities(List<ScrapedJobData?> successfulScrapes, CancellationToken cancellationToken)
     {
-        var citiesFromScrape = successfulScrapes.Select(scrapedJob => _scrapeResultMapper.MapToCities(scrapedJob))
+        var citiesFromScrape = successfulScrapes.Select(scrapedJob => ScrapeResultMapper.MapToCities(scrapedJob))
             .ToList();
         var existingCities = await _cityRepository.GetAll(cancellationToken);
         var newCities = ExtractNewCities(existingCities, citiesFromScrape);
@@ -161,7 +158,7 @@ public class ScrapingService : BackgroundService, IScrapingService
         {
             if (existingListing.SearchTerms.Select(s => s.Value).Contains(scrapedListing.SearchTerm)) continue;
 
-            var searchTerm = _scrapeResultMapper.MapToSearchTerm(scrapedListing, existingListing);
+            var searchTerm = ScrapeResultMapper.MapToSearchTerm(scrapedListing, existingListing);
             existingListing.SearchTerms.Add(searchTerm);
         }
 

@@ -3,11 +3,11 @@ using JobScraper.Contracts.Requests.Scraping;
 using JobScraper.Domain.Entities;
 using JobScraper.Domain.Enums;
 
-namespace JobScraper.Application.Features.Scraping.Mappers;
+namespace JobScraper.Application.Features.Scraping.Mapping;
 
-public class ScrapeResultMapper : IScrapeResultMapper
+public static class ScrapeResultMapper 
 {
-    public List<JobListing> MapToJobListings(List<ScrapedJobData> scrapedJobs, List<City> cities,
+    public static List<JobListing> MapToJobListings(List<ScrapedJobData> scrapedJobs, List<City> cities,
         List<Website> websites, List<SearchTerm> searchTerms)
     {
         var jobListings = new List<JobListing>();
@@ -39,21 +39,16 @@ public class ScrapeResultMapper : IScrapeResultMapper
         return jobListings;
     }
 
-    public IEnumerable<JobListing> MapToJobListings(IEnumerable<ScrapedJobData?> scrapedJobs)
+
+    public static IEnumerable<ScrapingError> MapToScrapingErrors(IEnumerable<FailedJobScrape> failedJobScrapes)
     {
         throw new NotImplementedException();
     }
 
-    public IEnumerable<ScrapingError> MapToScrapingErrors(IEnumerable<FailedJobScrape> failedJobScrapes)
-    {
-        throw new NotImplementedException();
-    }
-
-    public SearchTerm MapToSearchTerm(ScrapedJobData scrapedJobData, JobListing jobListing)
+    public static SearchTerm MapToSearchTerm(ScrapedJobData scrapedJobData, JobListing jobListing)
     {
         var newSearchTerm = new SearchTerm()
         {
-            City = jobListing.City,
             JobListings = new List<JobListing> { jobListing },
             MatchingJobsCount = 1,
             Value = scrapedJobData.SearchTerm,
@@ -63,7 +58,7 @@ public class ScrapeResultMapper : IScrapeResultMapper
         return newSearchTerm;
     }
 
-    public City MapToCities(ScrapedJobData scrapedJobData)
+    public static City MapToCities(ScrapedJobData scrapedJobData)
     {
         return new City
         {
