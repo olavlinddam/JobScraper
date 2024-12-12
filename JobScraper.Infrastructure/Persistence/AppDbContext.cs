@@ -1,4 +1,3 @@
-using JobScraper.Application.Common.Interfaces;
 using JobScraper.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
@@ -15,7 +14,6 @@ public class AppDbContext : DbContext
     public DbSet<City> Cities { get; set; }
     public DbSet<JobListing> JobListings { get; set; }
     public DbSet<ScrapingError> ScrapingErrors { get; set; }
-    public DbSet<ScrapingPolicy> ScrapingPolicies { get; set; }
     public DbSet<SearchTerm> SearchTerms { get; set; }
     public DbSet<Website> Websites { get; set; }
     

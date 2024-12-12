@@ -19,10 +19,6 @@ public class WebsiteConfigurations : IEntityTypeConfiguration<Website>
         builder.Property(w => w.ShortName).IsRequired().HasMaxLength(100);
 
         builder.Property(w => w.LastScraped);
-
-        builder.HasOne(x => x.ScrapingPolicy)
-            .WithMany(sp => sp.Websites)
-            .HasForeignKey(x => x.ScrapingPolicyId);
         
         builder.HasMany(w => w.JobsListings)
             .WithOne(j => j.Website)

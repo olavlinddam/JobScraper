@@ -19,9 +19,9 @@ public class WebsiteRepository : IWebsiteRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<IEnumerable<Website>> GetAllWithPoliciesAndSearchTermsAsync(CancellationToken cancellationToken)
+    public async Task<IEnumerable<Website>> GetWithSearchTerms(CancellationToken cancellationToken)
     {
-         var websites = await _context.Websites.Include(w => w.ScrapingPolicy)
+         var websites = await _context.Websites
             .Include(w => w.SearchTerms)
             .ToListAsync(cancellationToken);
          
