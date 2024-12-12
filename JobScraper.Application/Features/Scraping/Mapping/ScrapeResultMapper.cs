@@ -27,11 +27,30 @@ public class ScrapeResultMapper : IScrapeResultMapper
         }
     }
 
+    public IEnumerable<JobListing> MapToJobListings(IEnumerable<ScrapedJobData?> scrapedJobs)
+    {
+        throw new NotImplementedException();
+    }
+
     public IEnumerable<ScrapingError> MapToScrapingErrors(IEnumerable<FailedJobScrape> failedJobScrapes)
     {
         throw new NotImplementedException();
     }
-    
+
+    public SearchTerm MapToSearchTerm(ScrapedJobData scrapedJobData, JobListing jobListing)
+    {
+        var newSearchTerm = new SearchTerm()
+        {
+            City = jobListing.City,
+            JobListings = new List<JobListing> { jobListing },
+            MatchingJobsCount = 1,
+            Value = scrapedJobData.SearchTerm,
+            Websites = new List<Website> { jobListing.Website },
+            LastUsed = DateTime.Now,
+        };
+        return newSearchTerm;
+    }
+
     private static JobType ParseJobType(string workHours)
     {
         return workHours.ToLower() switch

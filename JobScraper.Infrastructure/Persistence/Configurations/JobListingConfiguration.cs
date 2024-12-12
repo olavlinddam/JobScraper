@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using JobScraper.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

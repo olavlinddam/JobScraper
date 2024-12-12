@@ -76,14 +76,28 @@ public class ScrapingService : BackgroundService, IScrapingService
 
         var recentExistingListingsFromDb = _jobListingRepository.GetRecentListings(cancellationToken).ToList();
         var (newListings, existingScrapedListings) = SeparateNewAndExistingListings(successfulScrapes, recentExistingListingsFromDb);
+        existingScrapedListings = AddNewSearchTermsToExistingListings(existingScrapedListings);
 
         // Map to entities
         var newJobListings = _scrapeResultMapper.MapToJobListings(newListings);
 
-        AddNewSearchTermsToExistingListings(existingScrapedListings, recentExistingListingsFromDb)
 
         return Result.Success;
     }
+
+    private Dictionary<ScrapedJobData,JobListing> AddNewSearchTermsToExistingListings(
+        Dictionary<ScrapedJobData,JobListing> existingScrapedListings)
+    {
+        foreach (var (scrapedListing, existingListing) in existingScrapedListings)
+        {
+            if (existingListing.SearchTerms.Select(s => s.Value).Contains(scrapedListing.SearchTerm)) continue;
+            
+            var searchTerm = _scrapeResultMapper.MapToSearchTerm(scrapedListing, existingListing);
+            existingListing.SearchTerms.Add(searchTerm);
+        }
+        return existingScrapedListings;
+    }
+
 
     internal static (List<ScrapedJobData> newListings, Dictionary<ScrapedJobData, JobListing> existingScrapedListings)
         SeparateNewAndExistingListings(List<ScrapedJobData?> successfulScrapes, List<JobListing> recentExistingListingsFromDb)
@@ -134,34 +148,31 @@ public class ScrapingService : BackgroundService, IScrapingService
     }
 
     internal static (List<ScrapedJobData?> successfulScrapes, List<FailedJobScrape?> failedScrapes)
-        SortScrapeResults(List<ScrapingResult>[] scrapeResults)
+        SortScrapeResults(List<ScrapingResult> scrapeResults)
     {
-        var successfulScrapes = scrapeResults.SelectMany(r => r)
-            .Where(r => r.ScrapedJob != null)
-            .Select(r => r.ScrapedJob).ToList();
-
-        var failedScrapes = scrapeResults.SelectMany(r => r)
-            .Where(r => r.FailedJobScrape != null)
-            .Select(r => r.FailedJobScrape).ToList();
+        var successfulScrapes = scrapeResults.Select(r => r.ScrapedJobData)
+            .Where(scrapedJobData => scrapedJobData != null).ToList();
+        
+        var failedScrapes = scrapeResults.Select(r => r.FailedJobScrape)
+            .Where(failedScrape => failedScrape != null).ToList();
 
         return (successfulScrapes, failedScrapes);
     }
 
-    private async Task<List<ScrapingResult>[]> ScrapeWebsitesAsync(IEnumerable<Website> websites,
+    private async Task<List<ScrapingResult>> ScrapeWebsitesAsync(IEnumerable<Website> websites,
         CancellationToken cancellationToken)
     {
-        // Running the scrapes in parallel to scrape all sites faster
-        var scrapingTasks = websites.Select(async website =>
+        var scrapingResultsForAllWebsites = new List<ScrapingResult>();
+        foreach (var website in websites)
         {
             _logger.LogInformation("Scraping website {website}", website.ShortName);
             var scraper = _webScraperFactory.TryCreateWebScraper(website.ShortName);
             var scrapeRequest = new ScrapeRequest(website.Url, website.SearchTerms.Select(s => s.Value).ToList());
-            return await scraper.ScrapePageAsync(scrapeRequest, cancellationToken);
-        });
-
-        var allResults = await Task.WhenAll(scrapingTasks);
+            var result = await scraper.ScrapePageAsync(scrapeRequest, cancellationToken);
+            scrapingResultsForAllWebsites.AddRange(result);
+        }
         _logger.LogInformation("All websites scraped");
 
-        return allResults;
+        return scrapingResultsForAllWebsites;
     }
 }

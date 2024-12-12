@@ -41,10 +41,11 @@ public class JobnetScraper : IJobnetScraper
         var scrapingResultsFromAllSearchTerms = new List<ScrapingResult>();
         try
         {
-            var urls = BuildUrls(scrapeRequest);
-            foreach (var url in urls)
+            foreach (var searchTerm in scrapeRequest.SearchTerms)
             {
+                var url = BuildUrl(searchTerm, scrapeRequest.WebsiteBaseUrl);
                 var scrapingResultForSpecificSearchTerm = await StartScrapeAsync(url, cancellationToken);
+                scrapingResultForSpecificSearchTerm = AddSearchTermToScrapingResult(scrapingResultForSpecificSearchTerm, searchTerm);
                 scrapingResultsFromAllSearchTerms.AddRange(scrapingResultForSpecificSearchTerm.Value);
             }
 
@@ -52,16 +53,8 @@ public class JobnetScraper : IJobnetScraper
         }
         catch (WebDriverTimeoutException e)
         {
-            var scrapingResult = new ScrapingResult(
-                ScrapedJob: null,
-                FailedJobScrape: new FailedJobScrape(
-                    Scraper: "jobnet",
-                    TimeStamp: DateTime.Now,
-                    Message: e.Message,
-                    StackTrace: e.StackTrace ?? "No stack trace found.",
-                    Type: "WebdriverTimeoutError"
-                )
-            );
+            var scrapingResult =
+                CreateFailedScrape(e.Message, e.StackTrace ?? "No stack trace found", "DriverTimeOutError");
             scrapingResultsFromAllSearchTerms.Add(scrapingResult);
             return scrapingResultsFromAllSearchTerms;
         }
@@ -82,9 +75,20 @@ public class JobnetScraper : IJobnetScraper
         }
         catch (Exception e)
         {
-            _logger.LogError("An unexpected error occured when scraping {website}: {e}", scrapeRequest.WebsiteBaseUrl, e);
+            _logger.LogError("An unexpected error occured when scraping {website}: {e}", scrapeRequest.WebsiteBaseUrl,
+                e);
             throw;
         }
+    }
+
+    internal static ErrorOr<List<ScrapingResult>> AddSearchTermToScrapingResult(ErrorOr<List<ScrapingResult>> scrapingResultForSpecificSearchTerm, string searchTerm)
+    {
+        foreach (var successfulScrape in scrapingResultForSpecificSearchTerm.Value.Select(x => x.ScrapedJobData))
+        {
+            successfulScrape.SearchTerm = searchTerm;
+        }
+
+        return scrapingResultForSpecificSearchTerm;
     }
 
     private async Task<ErrorOr<List<ScrapingResult>>> StartScrapeAsync(string url, CancellationToken cancellationToken)
@@ -94,16 +98,8 @@ public class JobnetScraper : IJobnetScraper
         var listings = await GetListings(url, cancellationToken);
         if (listings.Count == 0)
         {
-            var failedScrape = new ScrapingResult(
-                ScrapedJob: null,
-                FailedJobScrape: new FailedJobScrape(
-                    Scraper: "jobnet",
-                    Message: $"No job listings found for {url}",
-                    StackTrace: null,
-                    TimeStamp: DateTime.Now,
-                    Type: "InvalidInput"
-                )
-            );
+            var message = $"no job listings found for {url}";
+            var failedScrape = CreateFailedScrape(message, null, "InvalidInput");
             scrapingResults.Add(failedScrape);
             return scrapingResults;
         }
@@ -117,17 +113,11 @@ public class JobnetScraper : IJobnetScraper
         return scrapingResults;
     }
 
-    internal static List<string> BuildUrls(ScrapeRequest scrapeRequest)
+    internal static string BuildUrl(string searchTerm, string baseUrl)
     {
-        var urls = new List<string>();
-        foreach (var searchTerm in scrapeRequest.SearchTerms)
-        {
-            var parameter = $"SearchString={EncodeSearchTerm(searchTerm)}";
-            var url = $"{scrapeRequest.WebsiteBaseUrl}&{string.Join("&", parameter)}";
-            urls.Add(url);
-        }
-
-        return urls;
+        var parameter = $"SearchString={EncodeSearchTerm(searchTerm)}";
+        var url = $"{baseUrl}&{string.Join("&", parameter)}";
+        return url;
     }
 
     internal static string EncodeSearchTerm(string searchTerm)
@@ -230,35 +220,42 @@ public class JobnetScraper : IJobnetScraper
                 .FindElement(By.CssSelector("div.job-ad-ansogningsfrist>span.job-ad-footer-label")).Text;
             var location = jobAdDetails.FindElement(By.ClassName("job-ad-location")).Text;
 
-            return new ScrapingResult(
-                ScrapedJob: new ScrapedJobData(
-                    Title: title,
-                    CompanyName: company,
-                    Description: description,
-                    Location: location,
-                    DatePublished: datePublished,
-                    ExpirationDate: expirationDate,
-                    WorkHours: workHours,
-                    Url: href,
-                    ScrapedDate: DateTime.Today),
-                    FailedJobScrape: null);
+            return new ScrapingResult()
+            {
+                ScrapedJobData = new ScrapedJobData()
+                {
+                    Title = title,
+                    CompanyName = company,
+                    Description = description,
+                    Location = location,
+                    DatePublished = datePublished,
+                    ExpirationDate = expirationDate,
+                    WorkHours = workHours,
+                    Url = href,
+                    ScrapedDate = DateTime.Today
+                },
+                FailedJobScrape = null
+            };
         }
         catch (Exception e)
         {
             return CreateFailedScrape(e.Message, e.StackTrace, "ParseError");
         }
     }
-    
-private static ScrapingResult CreateFailedScrape(string message, string? stackTrace, string type) =>
-    new(
-        ScrapedJob: null,
-        FailedJobScrape: new FailedJobScrape(
-        Scraper: "jobnet",
-        TimeStamp: DateTime.Now,
-        Message: message,
-        StackTrace: stackTrace,
-        Type: type
-    ));
+
+    private static ScrapingResult CreateFailedScrape(string message, string? stackTrace, string type) =>
+        new()
+        {
+            ScrapedJobData = null,
+            FailedJobScrape = new FailedJobScrape
+            {
+                Scraper = "jobnet",
+                TimeStamp = DateTime.Now,
+                Message = message,
+                StackTrace = stackTrace,
+                Type = type
+            }
+        };
 
 
     public void Dispose() => _driver?.Dispose();

@@ -1,4 +1,5 @@
 using JobScraper.Application.Common.Interfaces.Repositories;
+using JobScraper.Application.Features.Scraping.Common;
 using JobScraper.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
