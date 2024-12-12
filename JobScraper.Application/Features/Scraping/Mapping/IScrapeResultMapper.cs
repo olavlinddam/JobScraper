@@ -8,4 +8,6 @@ public interface IScrapeResultMapper
     IEnumerable<JobListing> MapToJobListings(IEnumerable<ScrapedJobData?> scrapedJobs);
     IEnumerable<ScrapingError> MapToScrapingErrors(IEnumerable<FailedJobScrape> failedJobScrapes);
     SearchTerm MapToSearchTerm(ScrapedJobData scrapedJobData, JobListing jobListing);
+    
+    City MapToCities(ScrapedJobData scrapedJobData);
 }

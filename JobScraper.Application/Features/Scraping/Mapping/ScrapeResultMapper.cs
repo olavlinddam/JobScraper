@@ -1,3 +1,4 @@
+using JobScraper.Application.Features.Scraping.Common;
 using JobScraper.Contracts.Requests.Scraping;
 using JobScraper.Domain.Entities;
 using JobScraper.Domain.Enums;
@@ -49,6 +50,16 @@ public class ScrapeResultMapper : IScrapeResultMapper
             LastUsed = DateTime.Now,
         };
         return newSearchTerm;
+    }
+
+    public City MapToCities(ScrapedJobData scrapedJobData)
+    {
+        return new City
+        {
+            Name = LocationParser.ExtractCityName(scrapedJobData.Location),
+            Zip = LocationParser.ExtractZipCode(scrapedJobData.Location),
+            Country = "Denmark",
+        };
     }
 
     private static JobType ParseJobType(string workHours)
