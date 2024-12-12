@@ -9,6 +9,6 @@ public interface IScrapeResultMapper
     SearchTerm MapToSearchTerm(ScrapedJobData scrapedJobData, JobListing jobListing);
     
     City MapToCities(ScrapedJobData scrapedJobData);
-    IEnumerable<ScrapedJobData?> MapToJobListings(List<ScrapedJobData> scrapedListingsNotInDb, List<City> cities,
-        List<Website> websites, Task<List<SearchTerm>> searchTerms);
+    List<JobListing> MapToJobListings(List<ScrapedJobData> scrapedListingsNotInDb, List<City> cities,
+        List<Website> websites, List<SearchTerm> searchTerms);
 }

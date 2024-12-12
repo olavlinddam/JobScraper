@@ -7,12 +7,19 @@ namespace JobScraper.Application.Features.Scraping.Mappers;
 
 public class ScrapeResultMapper : IScrapeResultMapper
 {
-    public IEnumerable<ScrapedJobData?> MapToJobListings(List<ScrapedJobData> scrapedJobs, List<City> cities,
-        List<Website> websites, Task<List<SearchTerm>> searchTerms)
+    public List<JobListing> MapToJobListings(List<ScrapedJobData> scrapedJobs, List<City> cities,
+        List<Website> websites, List<SearchTerm> searchTerms)
     {
         var jobListings = new List<JobListing>();
         foreach (var scrapedJob in scrapedJobs)
         {
+            var website = websites.FirstOrDefault(x => x.Url == scrapedJob.WebsiteBaseUrl);
+            var city = cities.FirstOrDefault(city => city.Zip == LocationParser.ExtractZipCode(scrapedJob.Location));
+            if (website == null || city == null)
+            {
+                continue;
+            }
+            
             var jobListing = new JobListing
             {
                 Title = scrapedJob.Title,
@@ -23,11 +30,13 @@ public class ScrapeResultMapper : IScrapeResultMapper
                 Description = scrapedJob.Description,
                 ScrapedDate = scrapedJob.ScrapedDate,
                 JobType = ParseJobType(scrapedJob.WorkHours),
-                Website = websites.FirstOrDefault(x => x.Url == scrapedJob.WebsiteBaseUrl),
-                City = cities.FirstOrDefault(city => city.Zip == LocationParser.ExtractZipCode(scrapedJob.Location)),
-                SearchTerms = 
+                Website = website,
+                City = city,
+                SearchTerms = searchTerms.Where(s => s.Value.Contains(scrapedJob.SearchTerm)).ToList()
             };
+            jobListings.Add(jobListing);
         }
+        return jobListings;
     }
 
     public IEnumerable<JobListing> MapToJobListings(IEnumerable<ScrapedJobData?> scrapedJobs)

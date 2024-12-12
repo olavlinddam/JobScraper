@@ -19,5 +19,9 @@
       <ProjectReference Include="..\JobScraper.Domain\JobScraper.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Features\WebsiteManagement\" />
+    </ItemGroup>
+
 
 </Project>

@@ -20,14 +20,27 @@ public class JobListingRepository : IJobListingRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public IQueryable<JobListing> GetRecentListings(CancellationToken cancellationToken)
+    public async Task AddRangeAsync(IEnumerable<JobListing> jobListings, CancellationToken cancellationToken)
     {
-        var latestListings = _context.JobListings
+        await _context.AddRangeAsync(jobListings, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<List<JobListing>> GetRecentListings(CancellationToken cancellationToken)
+    {
+        var latestListings = await _context.JobListings
             .Where(l => l.ExpirationDate > DateTime.Now)
             .Include(l => l.SearchTerms)
             .OrderByDescending(l => l.ScrapedDate)
-            .Take(100);
+            .Take(100)
+            .ToListAsync(cancellationToken);
         
         return latestListings;
+    }
+
+    public async Task UpdateRangeAsync(IEnumerable<JobListing> jobListings, CancellationToken cancellationToken)
+    {
+        _context.Update(jobListings);
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }
