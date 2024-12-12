@@ -23,6 +23,7 @@ public static class DependencyInjection
 
         services.TryAddScoped<IWebsiteRepository, WebsiteRepository>();
         services.TryAddScoped<IJobListingRepository, JobListingRepository>();
+        services.TryAddScoped<ICityRepository, CityRepository>();
 
 
         // Scrapers
