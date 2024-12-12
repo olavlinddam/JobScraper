@@ -14,18 +14,22 @@ public class ScrapingService : BackgroundService, IScrapingService
     private readonly ILogger<ScrapingService> _logger;
     private readonly IWebsiteRepository _websiteRepository;
     private readonly IJobListingRepository _jobListingRepository;
+    private readonly ICityRepository _cityRepository;
+    
     private readonly IWebScraperFactory _webScraperFactory;
     private readonly IScrapeResultMapper _scrapeResultMapper;
+    
 
     public ScrapingService(ILogger<ScrapingService> logger, IWebsiteRepository websiteRepository,
         IWebScraperFactory webScraperFactory, IJobListingRepository jobListingRepository,
-        IScrapeResultMapper scrapeResultMapper)
+        IScrapeResultMapper scrapeResultMapper, ICityRepository cityRepository)
     {
         _logger = logger;
         _websiteRepository = websiteRepository;
         _webScraperFactory = webScraperFactory;
         _jobListingRepository = jobListingRepository;
         _scrapeResultMapper = scrapeResultMapper;
+        _cityRepository = cityRepository;
     }
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
@@ -74,16 +78,51 @@ public class ScrapingService : BackgroundService, IScrapingService
             return Error.NotFound("No scraping results found");
         }
 
-        var recentExistingListingsFromDb = _jobListingRepository.GetRecentListings(cancellationToken).ToList();
-        var (newListings, existingScrapedListings) = SeparateNewAndExistingListings(successfulScrapes, recentExistingListingsFromDb);
-        existingScrapedListings = AddNewSearchTermsToExistingListings(existingScrapedListings);
-
-        // Map to entities
-        var newJobListings = _scrapeResultMapper.MapToJobListings(newListings);
-
-
+        var newCities = HandleNewCities(successfulScrapes, cancellationToken);
+        var newJobListings = HandleScrapedListings(successfulScrapes, cancellationToken);
+        
         return Result.Success;
     }
+
+    private List<JobListing> HandleScrapedListings(List<ScrapedJobData?> successfulScrapes, CancellationToken cancellationToken)
+    {
+        var recentExistingListings = _jobListingRepository.GetRecentListings(cancellationToken).ToList();
+        var (newListings, existingScrapedListings) = SeparateNewAndExistingListings(successfulScrapes, recentExistingListings);
+        existingScrapedListings = AddNewSearchTermsToExistingListings(existingScrapedListings);
+        
+        
+        
+        var newJobListings = _scrapeResultMapper.MapToJobListings(newListings);
+    }
+
+    private async Task<List<City>> HandleNewCities(List<ScrapedJobData?> successfulScrapes, CancellationToken cancellationToken)
+    {
+        if (successfulScrapes.Count == 0)
+        {
+            return new List<City>();
+        }
+
+        var citiesFromScrape = successfulScrapes.Select(scrapedJob => _scrapeResultMapper.MapToCities(scrapedJob)).ToList();
+        
+        var existingCities = await _cityRepository.GetAll(cancellationToken);
+        if (existingCities.Count == 0)
+        {
+            return citiesFromScrape;
+        }
+        
+        var newCities = ExtractNewCities(existingCities, citiesFromScrape);
+        
+        await _cityRepository.AddRangeAsync(newCities, cancellationToken);
+        return await _cityRepository.GetAll(cancellationToken);
+    }
+
+    private IEnumerable<City> ExtractNewCities(List<City> existingCities, List<City> citiesFromScrape)
+    {
+        var existingZipCodes = existingCities.Select(existingCity => existingCity.Zip);
+        var newCities = citiesFromScrape.Where(scrapedCity => !existingZipCodes.Contains(scrapedCity.Zip)).ToList();
+        return newCities;
+    }
+
 
     private Dictionary<ScrapedJobData,JobListing> AddNewSearchTermsToExistingListings(
         Dictionary<ScrapedJobData,JobListing> existingScrapedListings)
@@ -119,32 +158,7 @@ public class ScrapingService : BackgroundService, IScrapingService
             else
                 newListings.Add(scrapedListing);
         }
-
         return (newListings, existingMatches);
-        // if (successfulScrapes.Count == 0) return new List<ScrapedJobData?>();
-        //
-        // return successfulScrapes.Where(newListing =>
-        //     !recentExistingListings.Any(existingListing =>
-        //         (existingListing.Url == newListing?.Url ||
-        //          (existingListing.CompanyName == newListing?.CompanyName &&
-        //           existingListing.Title == newListing.Title &&
-        //           existingListing.City.Name == LocationParser.ExtractCityName(newListing.Location)))));
-
-        // var newListings = new List<ScrapedJobData>(); //
-        // foreach (var scrapedListing in successfulScrapes)
-        // {
-        //     var scrapedListingCity = scrapedListing.Location.Split(' ').Last();
-        //     var matchingListing = recentExistingListings.FirstOrDefault(
-        //         existingListing => existingListing.Title == scrapedListing.Title &&
-        //         existingListing.CompanyName == scrapedListing.CompanyName &&
-        //         existingListing.City.Name == scrapedListingCity ||
-        //         existingListing.Url == scrapedListing.Url);
-        //     
-        //     if (matchingListing != null) continue;
-        //     
-        //     newListings.Add(scrapedListing);
-        // }
-        // return newListings;
     }
 
     internal static (List<ScrapedJobData?> successfulScrapes, List<FailedJobScrape?> failedScrapes)
