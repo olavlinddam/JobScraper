@@ -45,7 +45,10 @@ public class JobnetScraper : IJobnetScraper
             {
                 var url = BuildUrl(searchTerm, scrapeRequest.WebsiteBaseUrl);
                 var scrapingResultForSpecificSearchTerm = await StartScrapeAsync(url, cancellationToken);
-                scrapingResultForSpecificSearchTerm = AddSearchTermToScrapingResult(scrapingResultForSpecificSearchTerm, searchTerm);
+                scrapingResultForSpecificSearchTerm =
+                    AddSearchTermAndBaseUrlToScrapingResult(scrapingResultForSpecificSearchTerm, searchTerm,
+                        scrapeRequest.WebsiteBaseUrl);
+                
                 scrapingResultsFromAllSearchTerms.AddRange(scrapingResultForSpecificSearchTerm.Value);
             }
 
@@ -81,11 +84,13 @@ public class JobnetScraper : IJobnetScraper
         }
     }
 
-    internal static ErrorOr<List<ScrapingResult>> AddSearchTermToScrapingResult(ErrorOr<List<ScrapingResult>> scrapingResultForSpecificSearchTerm, string searchTerm)
+    internal static ErrorOr<List<ScrapingResult>> AddSearchTermAndBaseUrlToScrapingResult(
+        ErrorOr<List<ScrapingResult>> scrapingResultForSpecificSearchTerm, string baseurl, string searchTerm)
     {
         foreach (var successfulScrape in scrapingResultForSpecificSearchTerm.Value.Select(x => x.ScrapedJobData))
         {
             successfulScrape.SearchTerm = searchTerm;
+            successfulScrape.WebsiteBaseUrl = baseurl;
         }
 
         return scrapingResultForSpecificSearchTerm;

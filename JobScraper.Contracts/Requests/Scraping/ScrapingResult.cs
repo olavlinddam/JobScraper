@@ -14,6 +14,7 @@ public class ScrapedJobData
     public string WorkHours { get; set; }
     public string ExpirationDate { get; set; }
     public string Url { get; set; }
+    public string WebsiteBaseUrl { get; set; }
     public string Description { get; set; }
 
     public string Location { get; set; }

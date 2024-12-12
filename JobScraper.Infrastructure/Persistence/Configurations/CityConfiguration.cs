@@ -13,8 +13,6 @@ public class CityConfiguration : IEntityTypeConfiguration<City>
         builder.Property(c => c.Name);
         
         builder.Property(c => c.Country);
-        
-        builder.Property(c => c.Region);
 
         builder.Property(c => c.Zip);
         
