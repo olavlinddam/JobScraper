@@ -14,6 +14,7 @@ public static class DependencyInjection
     {
         services.TryAddScoped<IScrapingService, ScrapingService>();
         services.TryAddScoped<IWebsiteManagementService, WebsiteManagementService>();
+        services.TryAddScoped<IWebScraperFactory, WebScraperFactory>();
 
         return services;
     }
