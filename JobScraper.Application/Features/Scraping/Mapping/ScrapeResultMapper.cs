@@ -45,18 +45,18 @@ public static class ScrapeResultMapper
         throw new NotImplementedException();
     }
 
-    public static SearchTerm MapToSearchTerm(ScrapedJobData scrapedJobData, JobListing jobListing)
-    {
-        var newSearchTerm = new SearchTerm()
-        {
-            JobListings = new List<JobListing> { jobListing },
-            MatchingJobsCount = 1,
-            Value = scrapedJobData.SearchTerm,
-            Websites = new List<Website> { jobListing.Website },
-            LastUsed = DateTime.Now,
-        };
-        return newSearchTerm;
-    }
+    // public static SearchTerm MapToSearchTerm(ScrapedJobData scrapedJobData, JobListing jobListing)
+    // {
+    //     var newSearchTerm = new SearchTerm()
+    //     {
+    //         JobListings = new List<JobListing> { jobListing },
+    //         MatchingJobsCount = 1,
+    //         Value = scrapedJobData.SearchTerm,
+    //         Websites = new List<Website> { jobListing.Website },
+    //         LastUsed = DateTime.Now,
+    //     };
+    //     return newSearchTerm;
+    // }
 
     public static City MapToCities(ScrapedJobData scrapedJobData)
     {
