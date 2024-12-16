@@ -26,11 +26,12 @@ public class JobListingRepository : IJobListingRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<List<JobListing>> GetRecentListings(CancellationToken cancellationToken)
+    public async Task<List<JobListing>> GetRecentListingsWithWebsitesAndSearchTerms(CancellationToken cancellationToken)
     {
         var latestListings = await _context.JobListings
             .Where(l => l.ExpirationDate > DateTime.Now)
             .Include(l => l.SearchTerms)
+            .Include(l => l.Website)
             .OrderByDescending(l => l.ScrapedDate)
             .Take(100)
             .ToListAsync(cancellationToken);

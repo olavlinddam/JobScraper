@@ -8,6 +8,6 @@ public interface IJobListingRepository
     Task AddAsync(JobListing listing, CancellationToken cancellationToken);
     Task AddRangeAsync(IEnumerable<JobListing> jobListings, CancellationToken cancellationToken);
 
-    Task<List<JobListing>> GetRecentListings(CancellationToken cancellationToken);
+    Task<List<JobListing>> GetRecentListingsWithWebsitesAndSearchTerms(CancellationToken cancellationToken);
     Task UpdateRangeAsync(IEnumerable<JobListing> jobListings, CancellationToken cancellationToken);
 }
