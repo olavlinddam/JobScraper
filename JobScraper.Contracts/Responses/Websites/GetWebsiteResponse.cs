@@ -4,5 +4,5 @@ public record GetWebsiteResponse(
     int Id,
     string Url,
     string ShortName,
-    DateTime LastScraped
+    DateTime? LastScraped
 );

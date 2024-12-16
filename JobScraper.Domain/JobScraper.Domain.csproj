@@ -15,5 +15,9 @@
         <HintPath>..\..\..\.nuget\packages\erroror\2.0.1\lib\net6.0\ErrorOr.dll</HintPath>
       </Reference>
     </ItemGroup>
+    
+    <ItemGroup>
+      <InternalsVisibleTo Include="JobScraper.Domain.Tests" />
+    </ItemGroup>
 
 </Project>

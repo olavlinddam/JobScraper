@@ -20,7 +20,7 @@ public static class WebsiteMapper
             Id: website.Id,
             ShortName: website.ShortName,
             Url: website.Url,
-            LastScraped: website.LastScraped
+            LastScraped: website.LastScraped ?? null
         );
     }
 }
