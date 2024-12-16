@@ -97,7 +97,7 @@ public class ScrapingService : BackgroundService, IScrapingService
     {
         // Fetch required entities from db
         var cities = await _cityRepository.GetAll(cancellationToken);
-        var recentExistingListings = await _jobListingRepository.GetRecentListings(cancellationToken);
+        var recentExistingListings = await _jobListingRepository.GetRecentListingsWithWebsitesAndSearchTerms(cancellationToken);
         var searchTerms = await _searchTermRepository.GetAllAsync(cancellationToken);
 
         var (scrapedListingsNotInDb, existingScrapedListingsDict) =
@@ -157,9 +157,12 @@ public class ScrapingService : BackgroundService, IScrapingService
         foreach (var (scrapedListing, existingListing) in existingScrapedListings)
         {
             if (existingListing.SearchTerms.Select(s => s.Value).Contains(scrapedListing.SearchTerm)) continue;
+            
+            var searchTermToBeAddedToExistingListing = existingListing.Website.SearchTerms.FirstOrDefault(
+                st => st.Value == scrapedListing.SearchTerm);
 
-            var searchTerm = ScrapeResultMapper.MapToSearchTerm(scrapedListing, existingListing);
-            existingListing.SearchTerms.Add(searchTerm);
+            if (searchTermToBeAddedToExistingListing != null)
+                existingListing.SearchTerms.Add(searchTermToBeAddedToExistingListing);
         }
 
         return existingScrapedListings.Select(l => l.Value).ToList();
