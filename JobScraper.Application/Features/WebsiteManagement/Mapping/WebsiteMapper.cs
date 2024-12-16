@@ -1,3 +1,4 @@
+using ErrorOr;
 using JobScraper.Contracts.Requests.Websites;
 using JobScraper.Contracts.Responses.Websites;
 using JobScraper.Domain.Entities;
@@ -6,14 +7,10 @@ namespace JobScraper.Application.Features.WebsiteManagement.Mapping;
 
 public static class WebsiteMapper
 {
-    public static Website MapFromWebsiteRequestToWebsite(AddWebsiteRequest request)
+    public static ErrorOr<Website> MapFromWebsiteRequestToWebsite(AddWebsiteRequest request)
     {
-        return new Website
-        {
-            Url = request.Url,
-            ShortName = request.ShortName,
-            SearchTerms = request.SearchTerms.Select(st => new SearchTerm { Value = st }).ToList(),
-        };
+        var result = Website.Create(request.Url, request.ShortName, request.SearchTerms);
+        return result;
     }
 
     public static GetWebsiteResponse MapToWebsiteResponse(Website website)
