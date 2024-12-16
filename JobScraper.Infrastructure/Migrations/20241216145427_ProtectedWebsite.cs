@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -8,29 +7,28 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace JobScraper.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class ProtectedWebsite : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "City",
+                name: "Cities",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Region = table.Column<string>(type: "text", nullable: false),
                     Country = table.Column<string>(type: "text", nullable: false),
-                    Zip = table.Column<string>(type: "text", nullable: false)
+                    Zip = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_City", x => x.Id);
+                    table.PrimaryKey("PK_Cities", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ScrapingError",
+                name: "ScrapingErrors",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -39,28 +37,26 @@ namespace JobScraper.Infrastructure.Migrations
                     Message = table.Column<string>(type: "text", nullable: false),
                     StackTrace = table.Column<string>(type: "text", nullable: false),
                     RetryCount = table.Column<int>(type: "integer", nullable: false),
-                    ErrorType = table.Column<int>(type: "integer", nullable: false),
-                    WebsiteId = table.Column<string>(type: "text", nullable: false)
+                    ErrorType = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ScrapingError", x => x.Id);
+                    table.PrimaryKey("PK_ScrapingErrors", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ScrapingPolicy",
+                name: "SearchTerms",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    RequestsPerMinute = table.Column<int>(type: "integer", nullable: false),
-                    ShouldRespectRobotsTxt = table.Column<bool>(type: "boolean", nullable: false),
-                    CooldownPeriod = table.Column<TimeSpan>(type: "interval", nullable: false),
-                    AllowedPaths = table.Column<List<string>>(type: "text[]", nullable: false)
+                    Value = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    LastUsed = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    MatchingJobsCount = table.Column<int>(type: "integer", nullable: false, defaultValue: 0)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ScrapingPolicy", x => x.Id);
+                    table.PrimaryKey("PK_SearchTerms", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -71,22 +67,15 @@ namespace JobScraper.Infrastructure.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Url = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
                     ShortName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    LastScraped = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    ScrapingPolicyId = table.Column<int>(type: "integer", nullable: false)
+                    LastScraped = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Websites", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Websites_ScrapingPolicy_ScrapingPolicyId",
-                        column: x => x.ScrapingPolicyId,
-                        principalTable: "ScrapingPolicy",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "JobListing",
+                name: "JobListings",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -95,29 +84,28 @@ namespace JobScraper.Infrastructure.Migrations
                     CompanyName = table.Column<string>(type: "text", nullable: false),
                     PostedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ExpirationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Uri = table.Column<string>(type: "text", nullable: false),
+                    Url = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    ContactInfo = table.Column<string>(type: "text", nullable: false),
                     ScrapedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     JobType = table.Column<int>(type: "integer", nullable: false),
-                    CityId = table.Column<int>(type: "integer", nullable: false),
-                    WebsiteId = table.Column<int>(type: "integer", nullable: false)
+                    WebsiteId = table.Column<int>(type: "integer", nullable: false),
+                    CityId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_JobListing", x => x.Id);
+                    table.PrimaryKey("PK_JobListings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_JobListing_City_CityId",
+                        name: "FK_JobListings_Cities_CityId",
                         column: x => x.CityId,
-                        principalTable: "City",
+                        principalTable: "Cities",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_JobListing_Websites_WebsiteId",
+                        name: "FK_JobListings_Websites_WebsiteId",
                         column: x => x.WebsiteId,
                         principalTable: "Websites",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -131,9 +119,9 @@ namespace JobScraper.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_ScrapingErrorWebsite", x => new { x.ScrapingErrorsId, x.WebsitesId });
                     table.ForeignKey(
-                        name: "FK_ScrapingErrorWebsite_ScrapingError_ScrapingErrorsId",
+                        name: "FK_ScrapingErrorWebsite_ScrapingErrors_ScrapingErrorsId",
                         column: x => x.ScrapingErrorsId,
-                        principalTable: "ScrapingError",
+                        principalTable: "ScrapingErrors",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -144,15 +132,68 @@ namespace JobScraper.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "SearchTermWebsite",
+                columns: table => new
+                {
+                    SearchTermsId = table.Column<int>(type: "integer", nullable: false),
+                    WebsitesId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SearchTermWebsite", x => new { x.SearchTermsId, x.WebsitesId });
+                    table.ForeignKey(
+                        name: "FK_SearchTermWebsite_SearchTerms_SearchTermsId",
+                        column: x => x.SearchTermsId,
+                        principalTable: "SearchTerms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SearchTermWebsite_Websites_WebsitesId",
+                        column: x => x.WebsitesId,
+                        principalTable: "Websites",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "JobListingSearchTerm",
+                columns: table => new
+                {
+                    JobListingsId = table.Column<int>(type: "integer", nullable: false),
+                    SearchTermsId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_JobListingSearchTerm", x => new { x.JobListingsId, x.SearchTermsId });
+                    table.ForeignKey(
+                        name: "FK_JobListingSearchTerm_JobListings_JobListingsId",
+                        column: x => x.JobListingsId,
+                        principalTable: "JobListings",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_JobListingSearchTerm_SearchTerms_SearchTermsId",
+                        column: x => x.SearchTermsId,
+                        principalTable: "SearchTerms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_JobListing_CityId",
-                table: "JobListing",
+                name: "IX_JobListings_CityId",
+                table: "JobListings",
                 column: "CityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_JobListing_WebsiteId",
-                table: "JobListing",
+                name: "IX_JobListings_WebsiteId",
+                table: "JobListings",
                 column: "WebsiteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JobListingSearchTerm_SearchTermsId",
+                table: "JobListingSearchTerm",
+                column: "SearchTermsId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScrapingErrorWebsite_WebsitesId",
@@ -160,31 +201,43 @@ namespace JobScraper.Infrastructure.Migrations
                 column: "WebsitesId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Websites_ScrapingPolicyId",
-                table: "Websites",
-                column: "ScrapingPolicyId");
+                name: "IX_SearchTerms_Value",
+                table: "SearchTerms",
+                column: "Value",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SearchTermWebsite_WebsitesId",
+                table: "SearchTermWebsite",
+                column: "WebsitesId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "JobListing");
+                name: "JobListingSearchTerm");
 
             migrationBuilder.DropTable(
                 name: "ScrapingErrorWebsite");
 
             migrationBuilder.DropTable(
-                name: "City");
+                name: "SearchTermWebsite");
 
             migrationBuilder.DropTable(
-                name: "ScrapingError");
+                name: "JobListings");
+
+            migrationBuilder.DropTable(
+                name: "ScrapingErrors");
+
+            migrationBuilder.DropTable(
+                name: "SearchTerms");
+
+            migrationBuilder.DropTable(
+                name: "Cities");
 
             migrationBuilder.DropTable(
                 name: "Websites");
-
-            migrationBuilder.DropTable(
-                name: "ScrapingPolicy");
         }
     }
 }

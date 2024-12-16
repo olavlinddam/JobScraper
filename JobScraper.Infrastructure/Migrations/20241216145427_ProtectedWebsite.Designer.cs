@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace JobScraper.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241202103433_model-config")]
-    partial class modelconfig
+    [Migration("20241216145427_ProtectedWebsite")]
+    partial class ProtectedWebsite
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,21 @@ namespace JobScraper.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("JobListingSearchTerm", b =>
+                {
+                    b.Property<int>("JobListingsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SearchTermsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("JobListingsId", "SearchTermsId");
+
+                    b.HasIndex("SearchTermsId");
+
+                    b.ToTable("JobListingSearchTerm");
+                });
 
             modelBuilder.Entity("JobScraper.Domain.Entities.City", b =>
                 {
@@ -41,17 +56,12 @@ namespace JobScraper.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Region")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Zip")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Zip")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
-                    b.ToTable("City");
+                    b.ToTable("Cities");
                 });
 
             modelBuilder.Entity("JobScraper.Domain.Entities.JobListing", b =>
@@ -66,10 +76,6 @@ namespace JobScraper.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("CompanyName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ContactInfo")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -93,7 +99,7 @@ namespace JobScraper.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Uri")
+                    b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -106,7 +112,7 @@ namespace JobScraper.Infrastructure.Migrations
 
                     b.HasIndex("WebsiteId");
 
-                    b.ToTable("JobListing");
+                    b.ToTable("JobListings");
                 });
 
             modelBuilder.Entity("JobScraper.Domain.Entities.ScrapingError", b =>
@@ -136,10 +142,10 @@ namespace JobScraper.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ScrapingError");
+                    b.ToTable("ScrapingErrors");
                 });
 
-            modelBuilder.Entity("JobScraper.Domain.Entities.ScrapingPolicy", b =>
+            modelBuilder.Entity("JobScraper.Domain.Entities.SearchTerm", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -147,18 +153,25 @@ namespace JobScraper.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<TimeSpan>("CooldownPeriod")
-                        .HasColumnType("interval");
+                    b.Property<DateTime?>("LastUsed")
+                        .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("RequestsPerMinute")
-                        .HasColumnType("integer");
+                    b.Property<int>("MatchingJobsCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
 
-                    b.Property<bool>("ShouldRespectRobotsTxt")
-                        .HasColumnType("boolean");
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ScrapingPolicies");
+                    b.HasIndex("Value")
+                        .IsUnique();
+
+                    b.ToTable("SearchTerms");
                 });
 
             modelBuilder.Entity("JobScraper.Domain.Entities.Website", b =>
@@ -172,9 +185,6 @@ namespace JobScraper.Infrastructure.Migrations
                     b.Property<DateTime>("LastScraped")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("ScrapingPolicyId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("ShortName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -186,8 +196,6 @@ namespace JobScraper.Infrastructure.Migrations
                         .HasColumnType("character varying(2000)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ScrapingPolicyId");
 
                     b.ToTable("Websites");
                 });
@@ -205,6 +213,36 @@ namespace JobScraper.Infrastructure.Migrations
                     b.HasIndex("WebsitesId");
 
                     b.ToTable("ScrapingErrorWebsite");
+                });
+
+            modelBuilder.Entity("SearchTermWebsite", b =>
+                {
+                    b.Property<int>("SearchTermsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("WebsitesId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("SearchTermsId", "WebsitesId");
+
+                    b.HasIndex("WebsitesId");
+
+                    b.ToTable("SearchTermWebsite");
+                });
+
+            modelBuilder.Entity("JobListingSearchTerm", b =>
+                {
+                    b.HasOne("JobScraper.Domain.Entities.JobListing", null)
+                        .WithMany()
+                        .HasForeignKey("JobListingsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("JobScraper.Domain.Entities.SearchTerm", null)
+                        .WithMany()
+                        .HasForeignKey("SearchTermsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("JobScraper.Domain.Entities.JobListing", b =>
@@ -226,17 +264,6 @@ namespace JobScraper.Infrastructure.Migrations
                     b.Navigation("Website");
                 });
 
-            modelBuilder.Entity("JobScraper.Domain.Entities.Website", b =>
-                {
-                    b.HasOne("JobScraper.Domain.Entities.ScrapingPolicy", "ScrapingPolicy")
-                        .WithMany("Websites")
-                        .HasForeignKey("ScrapingPolicyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ScrapingPolicy");
-                });
-
             modelBuilder.Entity("ScrapingErrorWebsite", b =>
                 {
                     b.HasOne("JobScraper.Domain.Entities.ScrapingError", null)
@@ -252,14 +279,24 @@ namespace JobScraper.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SearchTermWebsite", b =>
+                {
+                    b.HasOne("JobScraper.Domain.Entities.SearchTerm", null)
+                        .WithMany()
+                        .HasForeignKey("SearchTermsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("JobScraper.Domain.Entities.Website", null)
+                        .WithMany()
+                        .HasForeignKey("WebsitesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("JobScraper.Domain.Entities.City", b =>
                 {
                     b.Navigation("JobListings");
-                });
-
-            modelBuilder.Entity("JobScraper.Domain.Entities.ScrapingPolicy", b =>
-                {
-                    b.Navigation("Websites");
                 });
 
             modelBuilder.Entity("JobScraper.Domain.Entities.Website", b =>
