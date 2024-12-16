@@ -4,19 +4,23 @@ using JobScraper.Application.Features.WebsiteManagement.Mapping;
 using JobScraper.Contracts.Requests.Websites;
 using JobScraper.Contracts.Responses.Websites;
 using JobScraper.Domain.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace JobScraper.Application.Features.WebsiteManagement.Services;
 
 public class WebsiteManagementService : IWebsiteManagementService
 {
+    private readonly ILogger<WebsiteManagementService> _logger;
     private readonly IWebsiteRepository _websiteRepository;
 
-    public WebsiteManagementService(IWebsiteRepository websiteWebsiteRepository)
+    public WebsiteManagementService(IWebsiteRepository websiteWebsiteRepository, ILogger<WebsiteManagementService> logger)
     {
         _websiteRepository = websiteWebsiteRepository;
+        _logger = logger;
     }
 
-    public async Task<ErrorOr<GetWebsiteResponse>> CreateWebsiteAsync(AddWebsiteRequest request, CancellationToken cancellationToken = default)
+    public async Task<ErrorOr<GetWebsiteResponse>> CreateWebsiteAsync(AddWebsiteRequest request,
+        CancellationToken cancellationToken)
     {
         try
         {
@@ -25,18 +29,24 @@ public class WebsiteManagementService : IWebsiteManagementService
             {
                 return Error.Conflict("Website already exists");
             }
+
+            var createResult = WebsiteMapper.MapFromWebsiteRequestToWebsite(request);
+
+            if (createResult.IsError)
+            {
+                return createResult.Errors;
+            }
             
-            var website = WebsiteMapper.MapFromWebsiteRequestToWebsite(request);
-            // TODO: Validate...
-            
+            var website = createResult.Value;
+
             await _websiteRepository.AddAsync(website, cancellationToken);
             var websiteResponse = WebsiteMapper.MapToWebsiteResponse(website);
-            
+
             return websiteResponse;
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError("An unexpected error occured while creating new website: {e}", e);
             throw;
         }
     }

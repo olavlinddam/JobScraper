@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobScraper.Api.Controllers;
 
-[Microsoft.AspNetCore.Components.Route("api/website")]
+[Route("api/website")]
 public class WebsiteController : ApiController
 {
     private readonly IWebsiteManagementService _websiteManagementService;
@@ -14,6 +14,7 @@ public class WebsiteController : ApiController
         _websiteManagementService = websiteManagementService;
     }
 
+    [Route("create")]
     [HttpPost]
     public async Task<IActionResult> CreateWebsite(AddWebsiteRequest request)
     {
