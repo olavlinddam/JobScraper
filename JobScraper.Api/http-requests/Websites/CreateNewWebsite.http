@@ -1,0 +1,10 @@
+POST http://localhost:5247/api/website/create
+Content-Type: application/json
+
+{
+    "url": "https://job.jobnet.dk/CV/FindWork?Offset=0&SortValue=BestMatch",
+    "shortName": "jobnet",
+    "searchTerms": [
+            "Systemudvikling, programmering og design"
+    ]
+}
