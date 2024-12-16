@@ -75,4 +75,5 @@ Not yet implemented
 - [ ] Add search term tracking and analytics
 - [ ] Create documentation for adding new scrapers
 - [ ] Add rate limiting middleware
+- [ ] Add global error handling middleware
 
