@@ -12,7 +12,7 @@ public class ScrapePageTest
     {
         // Arrange
         var loggerMock = new Mock<ILogger<Scrapers.JobnetScraper>>();
-        var scraper = new Scrapers.JobnetScraper(loggerMock.Object); // Real scraper, mock logger
+        var scraper = new Scrapers.JobnetScraper(loggerMock.Object);
 
         var url = "https://job.jobnet.dk/CV/FindWork?Offset=0&SortValue=BestMatch";
         var searchTerms = new List<string> { "Systemudvikling, programmering og design" };

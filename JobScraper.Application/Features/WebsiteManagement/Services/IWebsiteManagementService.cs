@@ -9,5 +9,8 @@ public interface IWebsiteManagementService
 {
     Task<ErrorOr<GetWebsiteResponse>> CreateWebsiteAsync(AddWebsiteRequest request, CancellationToken cancellationToken);
     
-    Task<ErrorOr<Website>> GetWebsiteAsync(int id, CancellationToken cancellationToken);
+    Task<ErrorOr<GetWebsiteResponse>> GetWebsiteAsync(int id, CancellationToken cancellationToken);
+
+    Task<ErrorOr<GetWebsiteResponse>> UpdateWebsiteAsync(UpdateWebsiteRequest request,
+        CancellationToken cancellationToken);
 }

@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using ErrorOr;
 
 namespace JobScraper.Domain.Entities;
@@ -39,6 +40,9 @@ public class Website
         if (urlValidationErrors.IsError)
             errors.AddRange(urlValidationErrors.Errors);
 
+        var shortnameValidationErrors = ValidateShortName(shortName);
+        if (shortnameValidationErrors.IsError)
+            errors.AddRange(shortnameValidationErrors.Errors);
 
         var searchTermValidationResult = ValidateSearchTerms(searchTerms);
         if (searchTermValidationResult.IsError)
@@ -53,6 +57,23 @@ public class Website
 
         var website = new Website(url, shortName, validSearchTerms);
         return website;
+    }
+
+    internal static ErrorOr<Success> ValidateShortName(string shortName)
+    {
+        var errors = new List<Error>();
+        
+        if (string.IsNullOrWhiteSpace(shortName))
+            errors.Add(Error.Validation(code: "Website.InvalidShortName", description: "ShortName cannot be empty."));
+        
+        var match = Regex.Match(shortName, @"^[a-zA-Z0-9_\-\.]+$");
+        if (!match.Success)
+            errors.Add(Error.Validation(code: "Website.InvalidShortName", description: $"ShortName is invalid {match.Value}"));
+        
+        if (errors.Count != 0)
+            return errors;
+
+        return Result.Success;
     }
 
     internal static ErrorOr<List<SearchTerm>> ValidateSearchTerms(List<string> searchTerms)
@@ -107,15 +128,39 @@ public class Website
         return Result.Success;
     }
 
-    public void AddSearchTerms(List<SearchTerm> searchTerms)
+    public ErrorOr<Website> UpdateWebsite(string? newUrl, string? newShortName, List<string>? newSearchTerms)
     {
-        var existingSearchTermValues = SearchTerms.Select(s => s.Value).ToList();
-        foreach (var searchTerm in searchTerms)
+        var errors = new List<Error>();
+
+        if (newUrl != null)
         {
-            if (existingSearchTermValues.Contains(searchTerm.Value))
-                continue;
-            
-            SearchTerms.Add(searchTerm);
+            var urlValidationErrors = ValidateUrl(newUrl);
+            if (urlValidationErrors.IsError)
+                errors.AddRange(urlValidationErrors.Errors);
         }
+
+        if (newShortName != null)
+        {
+            var shortnameValidationErrors = ValidateShortName(newShortName);
+            if (shortnameValidationErrors.IsError)
+                errors.AddRange(shortnameValidationErrors.Errors);
+        }
+
+        if (newSearchTerms != null)
+        {
+            var searchTermValidationResult = ValidateSearchTerms(newSearchTerms);
+            if (searchTermValidationResult.IsError)
+                errors.AddRange(searchTermValidationResult.Errors);
+            var validSearchTerms = searchTermValidationResult.Value;
+            SearchTerms.Clear();
+            SearchTerms = validSearchTerms;
+        }
+
+        if (errors.Count != 0)
+        {
+            return errors;
+        }
+
+        return this;
     }
 }

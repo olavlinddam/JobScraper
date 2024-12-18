@@ -32,4 +32,9 @@ public class WebsiteRepository : IWebsiteRepository
          
          return websites;
     }
+
+    public async Task<Website?> GetByIdAsync(int id, CancellationToken cancellationToken)
+    {
+        return await _context.Websites.FirstOrDefaultAsync(w => w.Id == id, cancellationToken);
+    }
 }

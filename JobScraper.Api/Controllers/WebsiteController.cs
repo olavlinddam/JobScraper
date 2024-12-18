@@ -28,8 +28,23 @@ public class WebsiteController : ApiController
                 website),
             Problem);
     }
+    
+    [Route("update")]
+    [HttpPost]
+    public async Task<IActionResult> UpdateWebsite(UpdateWebsiteRequest request)
+    {
+        CancellationToken cancellationToken = default;
+        var result = await _websiteManagementService.UpdateWebsiteAsync(request, cancellationToken);
 
-    [HttpGet("{id}")]
+        return result.Match(
+            website => CreatedAtAction(
+                nameof(GetWebsite),
+                new { id = website.Id },
+                website),
+            Problem);
+    }
+
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetWebsite(int id)
     {
         CancellationToken cancellationToken = default;
