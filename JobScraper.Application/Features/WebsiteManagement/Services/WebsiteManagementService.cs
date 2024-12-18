@@ -121,4 +121,28 @@ public class WebsiteManagementService : IWebsiteManagementService
             throw;
         }
     }
+    
+    public async Task<ErrorOr<Success>> DeleteWebsiteAsync(int id,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var website = await _websiteRepository.GetByIdAsync(id, cancellationToken);
+            if (website == null)
+                return Error.NotFound($"Website with id: {id} was not found");
+
+            await _websiteRepository.DeleteAsync(website, cancellationToken);
+            return Result.Success;
+        }
+        catch (DbException e)
+        {
+            _logger.LogError("A unexpected database error occured while fetching website: {e}", e);
+            throw;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("An unexpected error occured while fetching website: {e}", e);
+            throw;
+        }
+    }
 }

@@ -1,6 +1,6 @@
 using JobScraper.Domain.Entities;
 
-namespace JobScraper.Domain.Tests.UnitTests.SearchTermTests;
+namespace JobScraper.Domain.UnitTests.SearchTermTests;
 
 [TestClass]
 public class SearchTermTests

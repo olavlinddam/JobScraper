@@ -2,7 +2,7 @@ using JobScraper.Contracts.Requests.Scraping;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace JobScraper.Infrastructure.Tests.UnitTests.ScraperTests.JobnetScraper;
+namespace JobScraper.Infrastructure.UnitTests.ScraperTests.JobnetScraper;
 
 [TestClass]
 public class ScrapePageTest

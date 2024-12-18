@@ -1,7 +1,7 @@
 using ErrorOr;
 using JobScraper.Domain.Entities;
 
-namespace JobScraper.Domain.Tests.UnitTests.WebsiteTests;
+namespace JobScraper.Domain.UnitTests.WebsiteTests;
 
 [TestClass]
 public class ValidateUrlTests

@@ -17,7 +17,7 @@
     </ItemGroup>
     
     <ItemGroup>
-      <InternalsVisibleTo Include="JobScraper.Domain.Tests" />
+      <InternalsVisibleTo Include="JobScraper.Domain.UnitTests" />
     </ItemGroup>
 
 </Project>

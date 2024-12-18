@@ -89,6 +89,7 @@ public class JobnetScraper : IJobnetScraper
     {
         foreach (var successfulScrape in scrapingResultForSpecificSearchTerm.Value.Select(x => x.ScrapedJobData))
         {
+            if (successfulScrape == null) continue;
             successfulScrape.SearchTerm = searchTerm;
             successfulScrape.WebsiteBaseUrl = baseurl;
         }
@@ -166,13 +167,10 @@ public class JobnetScraper : IJobnetScraper
     {
         try
         {
-            // Use WebDriverWait to handle waiting for the cookie pop up
             var wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(5));
 
-            // Wait until either the pop up is found or timeout occurs
             var cookiePopup = wait.Until(d =>
             {
-                // Check if the operation was cancelled during wait
                 cancellationToken.ThrowIfCancellationRequested();
                 try
                 {
@@ -194,13 +192,14 @@ public class JobnetScraper : IJobnetScraper
             _logger.LogDebug("No cookie popup found within timeout - continuing");
             // Just continue if no popup found
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException e)
         {
-            throw; // Re-throw cancellation
+            _logger.LogError("The operation was canceled due to cancellation: {e}", e);
+            throw; 
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            _logger.LogWarning(ex, "Unexpected error handling cookie popup - continuing");
+            _logger.LogWarning("Unexpected error handling cookie popup, continuing: {e}", e);
             // Continue despite other errors with the popup
         }
     }
@@ -248,7 +247,7 @@ public class JobnetScraper : IJobnetScraper
         }
     }
 
-    private static ScrapingResult CreateFailedScrape(string message, string? stackTrace, string type) =>
+    internal static ScrapingResult CreateFailedScrape(string message, string? stackTrace, string type) =>
         new()
         {
             ScrapedJobData = null,

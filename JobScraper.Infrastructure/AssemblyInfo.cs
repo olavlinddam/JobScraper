@@ -1,3 +1,3 @@
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("JobScraper.Infrastructure.Tests")]
+[assembly: InternalsVisibleTo("JobScraper.Infrastructure.UnitTests")]

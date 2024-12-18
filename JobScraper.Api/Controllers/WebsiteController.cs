@@ -28,9 +28,9 @@ public class WebsiteController : ApiController
                 website),
             Problem);
     }
-    
+
     [Route("update")]
-    [HttpPost]
+    [HttpPut]
     public async Task<IActionResult> UpdateWebsite(UpdateWebsiteRequest request)
     {
         CancellationToken cancellationToken = default;
@@ -45,15 +45,29 @@ public class WebsiteController : ApiController
     }
 
     [HttpGet("{id:int}")]
+    public async Task<IActionResult> DeleteWebsite(int id)
+    {
+        CancellationToken cancellationToken = default;
+        var result = await _websiteManagementService.DeleteWebsiteAsync(id, cancellationToken);
+
+        return result.Match(
+            _ => Ok(new
+            {
+                message = $"Successfully deleted website with id {id}.",
+            }),
+            Problem);
+    }
+
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> GetWebsite(int id)
     {
         CancellationToken cancellationToken = default;
         var result = await _websiteManagementService.GetWebsiteAsync(id, cancellationToken);
-        
+
         return result.Match(
             website => CreatedAtAction(
                 nameof(GetWebsite),
-                new { id = website.Id },  
+                new { id = website.Id },
                 website),
             Problem);
     }

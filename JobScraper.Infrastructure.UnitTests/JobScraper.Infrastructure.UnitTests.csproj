@@ -24,10 +24,6 @@
     <ItemGroup>
       <ProjectReference Include="..\JobScraper.Infrastructure\JobScraper.Infrastructure.csproj" />
     </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="UnitTests\" />
-    </ItemGroup>
 
 
 </Project>

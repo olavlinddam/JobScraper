@@ -1,4 +1,4 @@
-namespace JobScraper.Infrastructure.Tests.UnitTests.ScraperTests.JobnetScraper;
+namespace JobScraper.Infrastructure.UnitTests.ScraperTests.JobnetScraper;
 
 [TestClass]
 public class EncodeSearchTermTests

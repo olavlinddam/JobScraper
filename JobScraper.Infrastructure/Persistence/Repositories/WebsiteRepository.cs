@@ -37,4 +37,10 @@ public class WebsiteRepository : IWebsiteRepository
     {
         return await _context.Websites.FirstOrDefaultAsync(w => w.Id == id, cancellationToken);
     }
+
+    public async Task DeleteAsync(Website website, CancellationToken cancellationToken)
+    {
+        _context.Websites.Remove(website);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }
