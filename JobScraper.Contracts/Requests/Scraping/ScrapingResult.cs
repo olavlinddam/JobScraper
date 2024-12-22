@@ -10,9 +10,9 @@ public class ScrapedJobData
 {
     public string Title { get; set; }
     public string CompanyName { get; set; }
-    public string DatePublished { get; set; }
+    public DateTime? DatePublished { get; set; }
     public string WorkHours { get; set; }
-    public string ExpirationDate { get; set; }
+    public DateTime? ExpirationDate { get; set; }
     public string Url { get; set; }
     public string WebsiteBaseUrl { get; set; }
     public string Description { get; set; }

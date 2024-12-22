@@ -24,11 +24,15 @@ public static class ScrapeResultMapper
             {
                 Title = scrapedJob.Title,
                 CompanyName = scrapedJob.CompanyName,
-                PostedDate = DateTime.Parse(scrapedJob.DatePublished),
-                ExpirationDate = DateTime.Parse(scrapedJob.ExpirationDate),
+                PostedDate = (scrapedJob.DatePublished.HasValue 
+                    ? DateTime.SpecifyKind(scrapedJob.DatePublished.Value, DateTimeKind.Utc)
+                    : DateTime.UtcNow),
+                ExpirationDate = (scrapedJob.ExpirationDate.HasValue 
+                    ? DateTime.SpecifyKind(scrapedJob.ExpirationDate.Value, DateTimeKind.Utc)
+                    : DateTime.UtcNow.AddDays(30)), // Placeholder her indtil en bedre ide om hvad vi så gør kommer 
                 Url = scrapedJob.Url,
                 Description = scrapedJob.Description,
-                ScrapedDate = scrapedJob.ScrapedDate,
+                ScrapedDate = DateTime.SpecifyKind(scrapedJob.ScrapedDate, DateTimeKind.Utc),
                 JobType = ParseJobType(scrapedJob.WorkHours),
                 Website = website,
                 City = city,

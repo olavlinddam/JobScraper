@@ -42,6 +42,7 @@ public class ScrapingService : BackgroundService, IScrapingService
 
                 var scrapingResults = await InitiateScrape(cancellationToken);
 
+                _logger.LogInformation("Finished scraping for all websites");
 
                 await Task.Delay(TimeSpan.FromMinutes(120), cancellationToken); // TODO: NOT HARDCODE THE TIMER
             }
@@ -110,11 +111,13 @@ public class ScrapingService : BackgroundService, IScrapingService
 
         if (existingScrapedListings.Count > 0)
         {
+            _logger.LogInformation("Updated {count} existing listings", existingScrapedListingsDict.Count);
             await _jobListingRepository.UpdateRangeAsync(existingScrapedListings, cancellationToken);
         }
 
         if (newListings.Count > 0)
         {
+            _logger.LogInformation("Found {count} existing listings", newListings.Count);
             await _jobListingRepository.AddRangeAsync(newListings, cancellationToken);
         }
     }
@@ -217,10 +220,8 @@ public class ScrapingService : BackgroundService, IScrapingService
             var scrapeRequest = new ScrapeRequest(website.Url, website.SearchTerms.Select(s => s.Value).ToList());
             var result = await scraper.ScrapePageAsync(scrapeRequest, cancellationToken);
             scrapingResultsForAllWebsites.AddRange(result);
+            _logger.LogInformation("Finished scraping website {website}", website.ShortName);
         }
-
-        _logger.LogInformation("All websites scraped");
-
         return scrapingResultsForAllWebsites;
     }
 }

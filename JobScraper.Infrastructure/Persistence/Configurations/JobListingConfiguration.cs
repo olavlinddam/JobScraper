@@ -12,16 +12,16 @@ public class JobListingConfiguration : IEntityTypeConfiguration<JobListing>
 
         builder.Property(l => l.CompanyName);
 
-        builder.Property(l => l.PostedDate);
+        builder.Property(l => l.PostedDate).HasColumnType("timestamp with time zone");
 
-        builder.Property(l => l.ExpirationDate);
+        builder.Property(l => l.ExpirationDate).HasColumnType("timestamp with time zone");
 
         builder.Property(l => l.Url);
 
         builder.Property(l => l.Description);
 
 
-        builder.Property(l => l.ScrapedDate);
+        builder.Property(l => l.ScrapedDate).HasColumnType("timestamp with time zone");
 
         builder.Property(l => l.JobType);
 

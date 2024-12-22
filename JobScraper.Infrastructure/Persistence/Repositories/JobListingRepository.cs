@@ -29,7 +29,7 @@ public class JobListingRepository : IJobListingRepository
     public async Task<List<JobListing>> GetRecentListingsWithWebsitesAndSearchTerms(CancellationToken cancellationToken)
     {
         var latestListings = await _context.JobListings
-            .Where(l => l.ExpirationDate > DateTime.Now)
+            .Where(l => l.ExpirationDate > DateTime.UtcNow)
             .Include(l => l.SearchTerms)
             .Include(l => l.Website)
             .OrderByDescending(l => l.ScrapedDate)

@@ -1,9 +1,12 @@
+using System.Globalization;
 using ErrorOr;
 using JobScraper.Application.Features.Scraping.Scrapers;
 using JobScraper.Contracts.Requests.Scraping;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using ScrapingResult = JobScraper.Contracts.Requests.Scraping.ScrapingResult;
 
@@ -13,23 +16,28 @@ public class JobnetScraper : IJobnetScraper
 {
     private IWebDriver? _driver;
     private readonly ILogger<JobnetScraper> _logger;
+    private readonly IConfiguration _configuration;
 
-    public JobnetScraper(ILogger<JobnetScraper> logger)
+    public JobnetScraper(ILogger<JobnetScraper> logger, IConfiguration configuration)
     {
         _logger = logger;
+        _configuration = configuration;
     }
 
     private IWebDriver? GetDriver()
     {
         if (_driver != null) return _driver;
 
+        var seleniumUrl = _configuration["SeleniumUrl"] ??
+                          throw new InvalidOperationException("SeleniumUrl not configured");
         var chromeOptions = new ChromeOptions();
-        chromeOptions.AddArgument("headless");
-        _driver = new ChromeDriver(chromeOptions);
+        chromeOptions.AddArgument("--headless");
+
+        _driver = new RemoteWebDriver(new Uri(seleniumUrl), chromeOptions);
 
         if (_driver == null)
         {
-            throw new InvalidOperationException();
+            throw new InvalidOperationException("Failed to initialize chrome driver");
         }
 
         return _driver;
@@ -46,9 +54,9 @@ public class JobnetScraper : IJobnetScraper
                 var url = BuildUrl(searchTerm, scrapeRequest.WebsiteBaseUrl);
                 var scrapingResultForSpecificSearchTerm = await StartScrapeAsync(url, cancellationToken);
                 scrapingResultForSpecificSearchTerm =
-                    AddSearchTermAndBaseUrlToScrapingResult(scrapingResultForSpecificSearchTerm, searchTerm,
-                        scrapeRequest.WebsiteBaseUrl);
-                
+                    AddSearchTermAndBaseUrlToScrapingResult(scrapingResultForSpecificSearchTerm,
+                        scrapeRequest.WebsiteBaseUrl, searchTerm);
+
                 scrapingResultsFromAllSearchTerms.AddRange(scrapingResultForSpecificSearchTerm.Value);
             }
 
@@ -195,7 +203,7 @@ public class JobnetScraper : IJobnetScraper
         catch (OperationCanceledException e)
         {
             _logger.LogError("The operation was canceled due to cancellation: {e}", e);
-            throw; 
+            throw;
         }
         catch (Exception e)
         {
@@ -220,8 +228,7 @@ public class JobnetScraper : IJobnetScraper
                 .Text;
             var workHours = jobAdDetails.FindElement(By.CssSelector("div.job-ad-workhours>span.job-ad-footer-label"))
                 .Text;
-            var expirationDate = jobAdDetails
-                .FindElement(By.CssSelector("div.job-ad-ansogningsfrist>span.job-ad-footer-label")).Text;
+            var expirationDate = jobAdDetails.FindElement(By.CssSelector("div.job-ad-ansogningsfrist")).Text;
             var location = jobAdDetails.FindElement(By.ClassName("job-ad-location")).Text;
 
             return new ScrapingResult()
@@ -232,8 +239,8 @@ public class JobnetScraper : IJobnetScraper
                     CompanyName = company,
                     Description = description,
                     Location = location,
-                    DatePublished = datePublished,
-                    ExpirationDate = expirationDate,
+                    DatePublished = ParseDatePublished(datePublished),
+                    ExpirationDate = ParseExpirationDate(expirationDate),
                     WorkHours = workHours,
                     Url = href,
                     ScrapedDate = DateTime.Today
@@ -261,6 +268,52 @@ public class JobnetScraper : IJobnetScraper
             }
         };
 
+internal static DateTime? ParseExpirationDate(string fullText)
+{
+    var split = fullText.Split(':');
+
+    if (split.Length <= 1) return null;
+    
+    var datePart = split[1].Trim();
+    var daDk = CultureInfo.GetCultureInfo("da-DK");
+        
+    var possibleFormats = new[] { "dd. MMMM yyyy", "d. MMMM yyyy" };
+        
+    if (DateTime.TryParseExact(
+            datePart, 
+            possibleFormats, 
+            daDk, 
+            DateTimeStyles.None, 
+            out var parsedDate))
+    {
+        return parsedDate;
+    }
+    return null;
+}
+
+    internal static DateTime? ParseDatePublished(string fullText)
+    {
+        fullText = fullText.Trim();
+        if (fullText.EndsWith("-"))
+        {
+            // Fjern sidste tegn (bindestreg)
+            fullText = fullText.Substring(0, fullText.Length - 1).Trim();
+        }
+
+        // Forsøg at parse datoen. Den danske formattering forventer fx "dd. MMMM yyyy"
+        // men hvis du vil være mere fleksibel, kan du justere til "d. MMMM yyyy" eller bruge TryParseExact.
+        try
+        {
+            var daDk = CultureInfo.GetCultureInfo("da-DK");
+            // Eksempel: "20. december 2024" → day=20, month=december, year=2024
+            return DateTime.ParseExact(fullText, "dd. MMMM yyyy", daDk);
+        }
+        catch (FormatException)
+        {
+            // Hvis formateringen ikke passer, kan vi returnere null eller kaste en exception
+            return null;
+        }
+    }
 
     public void Dispose() => _driver?.Dispose();
 }
