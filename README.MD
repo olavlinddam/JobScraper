@@ -45,15 +45,7 @@ JobScraper/
 ### Setup
 
 1. Clone the repository
-2. Set up the database connection string in user secrets:
-   ```bash
-   [Jobscraper.Api]$ dotnet user-secrets set "ConnectionStrings:LocalDb" "your-connection-string"
-   ```
-3. Run database migrations:
-   ```bash
-   [Jobscraper.Infrastructure]$ dotnet ef database update
-   ```
-4. Start the application
+2. Needs to be updated
 
 ## API Endpoints
 
