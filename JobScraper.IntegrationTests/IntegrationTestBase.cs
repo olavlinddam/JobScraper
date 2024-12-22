@@ -1,10 +1,12 @@
+using JobScraper.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 using Testcontainers.PostgreSql;
 
 namespace JobScraper.IntegrationTests;
-
 public abstract class IntegrationTestBase : IAsyncDisposable
 {
     private readonly PostgreSqlContainer _dbContainer;
+    protected AppDbContext DbContext;
     protected string ConnectionString;
 
     protected IntegrationTestBase()
@@ -21,10 +23,19 @@ public abstract class IntegrationTestBase : IAsyncDisposable
     {
         await _dbContainer.StartAsync();
         ConnectionString = _dbContainer.GetConnectionString();
+        
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseNpgsql(ConnectionString)
+            .Options;
+            
+        DbContext = new AppDbContext(options);
+        
+        await DbContext.Database.MigrateAsync();
     }
 
     public async ValueTask DisposeAsync()
     {
+        await DbContext.DisposeAsync();
         await _dbContainer.DisposeAsync();
     }
 }
