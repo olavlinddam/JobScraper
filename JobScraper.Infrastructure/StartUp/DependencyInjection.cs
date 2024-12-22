@@ -1,8 +1,10 @@
 using JobScraper.Application.Common.Interfaces;
+using JobScraper.Application.Common.Interfaces.Repositories;
 using JobScraper.Application.Features.Scraping.Common;
-using JobScraper.Infrastructure.Builders;
+using JobScraper.Application.Features.Scraping.Scrapers;
 using JobScraper.Infrastructure.Persistence;
-using JobScraper.Infrastructure.Persistence.Websites;
+using JobScraper.Infrastructure.Persistence.Repositories;
+using JobScraper.Infrastructure.Scrapers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,13 +18,18 @@ public static class DependencyInjection
     {
         // Getting the connection string from the dotnet user-secrets management
         // https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-9.0&tabs=linux
-        
+
         services.AddDbContext<AppDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("LocalDb")));
-        
-        services.TryAddScoped<IWebScraperFactory, WebScraperFactory>();
-        
+
         services.TryAddScoped<IWebsiteRepository, WebsiteRepository>();
-        
+        services.TryAddScoped<IJobListingRepository, JobListingRepository>();
+        services.TryAddScoped<ICityRepository, CityRepository>();
+        services.TryAddScoped<ISearchTermRepository, SearchTermRepository>();
+
+
+        // Scrapers
+        services.TryAddScoped<IJobnetScraper, JobnetScraper>();
+
         return services;
     }
 }

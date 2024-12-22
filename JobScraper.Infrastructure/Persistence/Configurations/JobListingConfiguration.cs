@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using JobScraper.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -21,7 +20,6 @@ public class JobListingConfiguration : IEntityTypeConfiguration<JobListing>
 
         builder.Property(l => l.Description);
 
-        builder.Property(l => l.ContactInfo);
 
         builder.Property(l => l.ScrapedDate);
 

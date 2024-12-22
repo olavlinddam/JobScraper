@@ -17,19 +17,19 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddLogging(this IServiceCollection services, IConfiguration configuration) {
-
+    private static IServiceCollection AddLogging(this IServiceCollection services, IConfiguration configuration)
+    {
         Log.Logger = new LoggerConfiguration()
             .ReadFrom.Configuration(configuration)
             .Enrich.FromLogContext()
             .CreateLogger();
-        
+
         services.AddLogging(loggingBuilder =>
         {
             loggingBuilder.ClearProviders();
             loggingBuilder.AddSerilog(dispose: true);
         });
-        
+
         return services;
     }
 }

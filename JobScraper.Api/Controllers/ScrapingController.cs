@@ -1,7 +1,5 @@
-using System.Text.Json;
 using JobScraper.Application.Features.Scraping.Services;
 using JobScraper.Contracts.Requests.Scraping;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobScraper.Api.Controllers;
@@ -24,7 +22,7 @@ public class ScrapingController : ApiController
         var startedAt = DateTime.Now;
         CancellationToken cancellationToken = default;
         
-        var result = await _scrapingService.StartAllScrapers(cancellationToken);
+        var result = await _scrapingService.InitiateScrape(cancellationToken);
 
         return result.Match(
             success => Ok(new
