@@ -66,6 +66,7 @@ Not yet implemented
 - [ ] Implement deduplication logic
 - [ ] Add job search API endpoints
 - [ ] Add user interface for displaying job listings
+- [ ] Set up compose environment
 
 
 ### Phase 2
@@ -76,4 +77,5 @@ Not yet implemented
 - [ ] Create documentation for adding new scrapers
 - [ ] Add rate limiting middleware
 - [ ] Add global error handling middleware
+- [ ] Add health checks
 
