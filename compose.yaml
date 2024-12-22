@@ -1,50 +1,67 @@
-# Comments are provided throughout this file to help you get started.
-# If you need more help, visit the Docker Compose reference guide at
-# https://docs.docker.com/go/compose-spec-reference/
+version: '3.8'
 
-# Here the instructions define your application as a service called "server".
-# This service is built from the Dockerfile in the current directory.
-# You can add other services your application may depend on here, such as a
-# database or a cache. For examples, see the Awesome Compose repository:
-# https://github.com/docker/awesome-compose
 services:
-  server:
+  init:
+    image: busybox
+    command: sh -c "mkdir -p /init/data/postgres /init/data/logs && chown -R 1000:1000 /init/data"
+    volumes:
+      - .:/init
+    profiles:
+      - setup
+  
+  migrations:
     build:
       context: .
-      target: final
+      dockerfile: Dockerfile.migrations
+    environment:
+      - ConnectionStrings__LocalDb=Host=${DB_HOST};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
+    depends_on:
+      db:
+        condition: service_started
+  
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: .env.dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
+      - ConnectionStrings__LocalDb=Host=${DB_HOST};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
+      - SeleniumUrl=${SELENIUM_URL}
     ports:
-      - 5000:8080
+      - "5000:80"
+    volumes:
+      - ./data/logs:/app/logs
+    depends_on:
+      db:
+        condition: service_started
+      selenium:
+        condition: service_started
+      init:
+        condition: service_completed_successfully
 
-# The commented out section below is an example of how to define a PostgreSQL
-# database that your application can use. `depends_on` tells Docker Compose to
-# start the database before your application. The `db-data` volume persists the
-# database data between container restarts. The `db-password` secret is used
-# to set the database password. You must create `db/password.txt` and add
-# a password of your choosing to it before running `docker compose up`.
-#     depends_on:
-#       db:
-#         condition: service_healthy
-#   db:
-#     image: postgres
-#     restart: always
-#     user: postgres
-#     secrets:
-#       - db-password
-#     volumes:
-#       - db-data:/var/lib/postgresql/data
-#     environment:
-#       - POSTGRES_DB=example
-#       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
-#     expose:
-#       - 5432
-#     healthcheck:
-#       test: [ "CMD", "pg_isready" ]
-#       interval: 10s
-#       timeout: 5s
-#       retries: 5
-# volumes:
-#   db-data:
-# secrets:
-#   db-password:
-#     file: db/password.txt
+  selenium:
+    image: selenium/standalone-chrome:latest
+    shm_size: '2g'
+    ports:
+      - "4444:4444"
+      - "7900:7900"
 
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PWD}/data/postgres

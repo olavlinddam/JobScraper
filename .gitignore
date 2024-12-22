@@ -14,3 +14,4 @@ TestResults/
 
 # Project specific
 JobScraper.Api/logs/
+.env.dev
