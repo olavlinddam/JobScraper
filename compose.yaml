@@ -1,6 +1,5 @@
-version: '3.8'
-
 services:
+
   init:
     image: busybox
     command: sh -c "mkdir -p /init/data/postgres /init/data/logs && chown -R 1000:1000 /init/data"
@@ -9,25 +8,11 @@ services:
     profiles:
       - setup
   
-  migrations:
-    build:
-      context: .
-      dockerfile: Dockerfile.migrations
-    environment:
-      - ConnectionStrings__LocalDb=Host=${DB_HOST};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
-    depends_on:
-      db:
-        condition: service_started
-  
   api:
     build:
       context: .
       dockerfile: Dockerfile
-    env_file: .env.dev
-    environment:
-      - ASPNETCORE_ENVIRONMENT=${ASPNETCORE_ENVIRONMENT}
-      - ConnectionStrings__LocalDb=Host=${DB_HOST};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD}
-      - SeleniumUrl=${SELENIUM_URL}
+    env_file: .env
     ports:
       - "5000:80"
     volumes:
@@ -37,8 +22,6 @@ services:
         condition: service_started
       selenium:
         condition: service_started
-      init:
-        condition: service_completed_successfully
 
   selenium:
     image: selenium/standalone-chrome:latest
