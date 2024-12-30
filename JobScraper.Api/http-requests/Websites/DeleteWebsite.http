@@ -1,0 +1,1 @@
+DELETE http://localhost:5000/api/website/create/1

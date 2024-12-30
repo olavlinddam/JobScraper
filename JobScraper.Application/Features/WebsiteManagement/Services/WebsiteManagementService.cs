@@ -15,14 +15,17 @@ public class WebsiteManagementService : IWebsiteManagementService
 {
     private readonly ILogger<WebsiteManagementService> _logger;
     private readonly IWebsiteRepository _websiteRepository;
+    private readonly ISearchTermRepository _searchTermRepository;
     private readonly IValidator<UpdateWebsiteRequest> _updateWebsiteRequestValidator;
 
     public WebsiteManagementService(IWebsiteRepository websiteWebsiteRepository,
-        ILogger<WebsiteManagementService> logger, IValidator<UpdateWebsiteRequest> updateWebsiteRequestValidator)
+        ILogger<WebsiteManagementService> logger, IValidator<UpdateWebsiteRequest> updateWebsiteRequestValidator,
+        ISearchTermRepository searchTermRepository)
     {
         _websiteRepository = websiteWebsiteRepository;
         _logger = logger;
         _updateWebsiteRequestValidator = updateWebsiteRequestValidator;
+        _searchTermRepository = searchTermRepository;
     }
 
     public async Task<ErrorOr<GetWebsiteResponse>> CreateWebsiteAsync(AddWebsiteRequest request,
@@ -36,7 +39,8 @@ public class WebsiteManagementService : IWebsiteManagementService
                 return Error.Conflict("Website already exists");
             }
 
-            var createResult = WebsiteMapper.MapFromWebsiteRequestToWebsite(request);
+            var existingSearchTerms = await _searchTermRepository.GetAllAsync(cancellationToken);
+            var createResult = TryCreateWebsite(request, existingSearchTerms);
 
             if (createResult.IsError)
             {
@@ -60,6 +64,27 @@ public class WebsiteManagementService : IWebsiteManagementService
             _logger.LogError("An unexpected error occured while creating new website: {e}", e);
             throw;
         }
+    }
+
+    internal static ErrorOr<Website> TryCreateWebsite(AddWebsiteRequest request, List<SearchTerm> existingSearchTerms)
+    {
+        var matchingSearchTerms = existingSearchTerms.Where(existingSearchTerm =>
+            request.SearchTerms.Contains(existingSearchTerm.Value)).ToList();
+
+        ErrorOr<Website> createResult;
+
+        if (matchingSearchTerms.Count != 0)
+        {
+            createResult = WebsiteMapper.MapFromWebsiteRequestToWebsite(request, matchingSearchTerms);
+        }
+        else
+        {
+            createResult = WebsiteMapper.MapFromWebsiteRequestToWebsite(request);
+        }
+        if (createResult.IsError)
+            return createResult.Errors;
+        
+        return createResult.Value;
     }
 
     public async Task<ErrorOr<GetWebsiteResponse>> GetWebsiteAsync(int id, CancellationToken cancellationToken)
@@ -100,13 +125,13 @@ public class WebsiteManagementService : IWebsiteManagementService
 
                 return errors;
             }
-            
+
             var website = await _websiteRepository.GetByIdAsync(request.Id, cancellationToken);
             if (website == null)
                 return Error.NotFound($"Website with id: {request.Id} was not found");
-            
+
             website.UpdateWebsite(request.Url, request.ShortName, request.SearchTerms);
-            
+
             var websiteResponse = WebsiteMapper.MapToWebsiteResponse(website);
             return websiteResponse;
         }
@@ -121,7 +146,7 @@ public class WebsiteManagementService : IWebsiteManagementService
             throw;
         }
     }
-    
+
     public async Task<ErrorOr<Success>> DeleteWebsiteAsync(int id,
         CancellationToken cancellationToken)
     {

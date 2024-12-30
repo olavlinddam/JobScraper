@@ -12,6 +12,11 @@ public static class WebsiteMapper
         var result = Website.Create(request.Url, request.ShortName, request.SearchTerms);
         return result;
     }
+    public static ErrorOr<Website> MapFromWebsiteRequestToWebsite(AddWebsiteRequest request, List<SearchTerm> searchTerm)
+    {
+        var result = Website.Create(request.Url, request.ShortName, searchTerm);
+        return result;
+    }
 
     public static GetWebsiteResponse MapToWebsiteResponse(Website website)
     {

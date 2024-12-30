@@ -44,7 +44,7 @@ public class WebsiteController : ApiController
             Problem);
     }
 
-    [HttpGet("{id:int}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteWebsite(int id)
     {
         CancellationToken cancellationToken = default;
@@ -58,7 +58,7 @@ public class WebsiteController : ApiController
             Problem);
     }
 
-    [HttpDelete("{id:int}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetWebsite(int id)
     {
         CancellationToken cancellationToken = default;

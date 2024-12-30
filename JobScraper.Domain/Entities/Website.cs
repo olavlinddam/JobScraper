@@ -59,6 +59,26 @@ public class Website
         return website;
     }
 
+    public static ErrorOr<Website> Create(string url, string shortName, List<SearchTerm> searchTerms)
+    {
+        var errors = new List<Error>();
+
+        var urlValidationErrors = ValidateUrl(url);
+        if (urlValidationErrors.IsError)
+            errors.AddRange(urlValidationErrors.Errors);
+
+        var shortnameValidationErrors = ValidateShortName(shortName);
+        if (shortnameValidationErrors.IsError)
+            errors.AddRange(shortnameValidationErrors.Errors);
+
+        if (errors.Count != 0)
+        {
+            return errors;
+        }
+
+        var website = new Website(url, shortName, searchTerms);
+        return website;
+    }
     internal static ErrorOr<Success> ValidateShortName(string shortName)
     {
         var errors = new List<Error>();
@@ -163,4 +183,5 @@ public class Website
 
         return this;
     }
+
 }
