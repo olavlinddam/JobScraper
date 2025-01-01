@@ -28,7 +28,7 @@ public class JobnetScraper : IJobnetScraper
     {
         if (_driver != null) return _driver;
 
-        var seleniumUrl = _configuration["SeleniumUrl"] ??
+        var seleniumUrl = _configuration["SELENIUM_URL"] ??
                           throw new InvalidOperationException("SeleniumUrl not configured");
         var chromeOptions = new ChromeOptions();
         chromeOptions.AddArgument("--headless");

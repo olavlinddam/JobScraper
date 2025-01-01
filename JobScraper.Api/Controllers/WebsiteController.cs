@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobScraper.Api.Controllers;
 
-[Route("api/website")]
+[Route("api/[controller]")]
 public class WebsiteController : ApiController
 {
     private readonly IWebsiteManagementService _websiteManagementService;
@@ -37,10 +37,7 @@ public class WebsiteController : ApiController
         var result = await _websiteManagementService.UpdateWebsiteAsync(request, cancellationToken);
 
         return result.Match(
-            website => CreatedAtAction(
-                nameof(GetWebsite),
-                new { id = website.Id },
-                website),
+            website => Ok(website),
             Problem);
     }
 
@@ -65,10 +62,7 @@ public class WebsiteController : ApiController
         var result = await _websiteManagementService.GetWebsiteAsync(id, cancellationToken);
 
         return result.Match(
-            website => CreatedAtAction(
-                nameof(GetWebsite),
-                new { id = website.Id },
-                website),
+            website => Ok(website),
             Problem);
     }
 }

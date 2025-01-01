@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace JobScraper.Api.Controllers;
 
-[Route("api/scraping")]
+[Route("api/[controller]")]
 public class ScrapingController : ApiController
 {
     private readonly IScrapingService _scrapingService;

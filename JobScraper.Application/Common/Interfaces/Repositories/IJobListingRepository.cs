@@ -10,4 +10,5 @@ public interface IJobListingRepository
 
     Task<List<JobListing>> GetRecentListingsWithWebsitesAndSearchTerms(CancellationToken cancellationToken);
     Task UpdateRangeAsync(IEnumerable<JobListing> jobListings, CancellationToken cancellationToken);
+    Task<IEnumerable<JobListing>> GetAllWithCitiesAsync(CancellationToken cancellationToken);
 }

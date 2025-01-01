@@ -44,4 +44,11 @@ public class JobListingRepository : IJobListingRepository
         _context.Update(jobListings);
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<IEnumerable<JobListing>> GetAllWithCitiesAsync(CancellationToken cancellationToken)
+    {
+        return await _context.JobListings
+            .Include(l => l.City)
+            .ToListAsync(cancellationToken);
+    }
 }
