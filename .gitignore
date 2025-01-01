@@ -15,3 +15,6 @@ TestResults/
 # Project specific
 JobScraper.Api/logs/
 .env.dev
+
+# Database and logs
+data/
