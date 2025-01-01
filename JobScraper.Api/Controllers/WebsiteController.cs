@@ -65,4 +65,15 @@ public class WebsiteController : ApiController
             website => Ok(website),
             Problem);
     }
+    
+    [HttpGet("websites")]
+    public async Task<IActionResult> GetAllWebsites()
+    {
+        CancellationToken cancellationToken = default;
+        var result = await _websiteManagementService.GetAllWebsitesAsync(cancellationToken);
+
+        return result.Match(
+            websites => Ok(websites),
+            Problem);
+    }
 }

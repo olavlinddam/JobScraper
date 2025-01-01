@@ -81,9 +81,10 @@ public class WebsiteManagementService : IWebsiteManagementService
         {
             createResult = WebsiteMapper.MapFromWebsiteRequestToWebsite(request);
         }
+
         if (createResult.IsError)
             return createResult.Errors;
-        
+
         return createResult.Value;
     }
 
@@ -158,6 +159,28 @@ public class WebsiteManagementService : IWebsiteManagementService
 
             await _websiteRepository.DeleteAsync(website, cancellationToken);
             return Result.Success;
+        }
+        catch (DbException e)
+        {
+            _logger.LogError("A unexpected database error occured while fetching website: {e}", e);
+            throw;
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("An unexpected error occured while fetching website: {e}", e);
+            throw;
+        }
+    }
+
+    public async Task<ErrorOr<List<GetWebsiteResponse>>> GetAllWebsitesAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var websites = await _websiteRepository.GetAllAsync(cancellationToken);
+            if (websites.Count == 0)
+                return Error.NotFound($"No websites were found");
+
+            return websites.Select(website => WebsiteMapper.MapToWebsiteResponse(website)).ToList();
         }
         catch (DbException e)
         {
