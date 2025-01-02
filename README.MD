@@ -47,6 +47,7 @@ JobScraper/
 Clone the repository:
 
 ```git clone https://github.com/your-repo/job-scraper.git```
+
 ```cd job-scraper```
 
 Start the necessary services:
