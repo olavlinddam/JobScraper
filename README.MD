@@ -89,8 +89,8 @@ Not yet implemented
 
 
 ### Phase 1 (MVP)
-- [-] Complete JobnetScraper implementation (parsing and storing results)
-- [-] Implement deduplication logic
+- [x] Complete JobnetScraper implementation (parsing and storing results)
+- [x] Implement deduplication logic
 - [ ] Add job search API endpoints
 - [ ] Add user interface for displaying job listings
 - [ ] Set up compose environment
