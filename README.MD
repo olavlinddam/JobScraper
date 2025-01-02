@@ -78,10 +78,10 @@ The application is currently only set up to work with this specific website and 
 To initiate a scrape go to:
 ```http://localhost:5000/api/Scraping/StartAllScrapers```
 
-After the scrapea is finished go to:
+After the scrape is finished go to:
 ```http://localhost:5000/api/JobListing/job-listings```
 
-To fetch all listings.
+Note that scraper pagination has not been implemented so it currently only fetches the first page of jobnet.
 
 ## API Endpoints
 
