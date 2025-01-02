@@ -44,13 +44,6 @@ JobScraper/
 
 ### Setup
 
-
-1. Clone the repository
-2. ```bash 
-cd JobScraper
-docker compose up
-dotnet run --p JobScraper.Api```
-
 Clone the repository:
 
 ```git clone https://github.com/your-repo/job-scraper.git```
