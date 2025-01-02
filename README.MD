@@ -49,8 +49,7 @@ JobScraper/
 2. ```bash 
 cd JobScraper
 docker compose up
-dotnet run --p JobScraper.Api
-```
+dotnet run --p JobScraper.Api```
 
 ## API Endpoints
 
