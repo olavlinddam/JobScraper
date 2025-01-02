@@ -40,7 +40,7 @@ JobScraper/
 
 - .NET 8 SDK
 - PostgreSQL
-- User Secrets configured with connection string
+- Docker and Docker Compose (Docker desktop should be enough)
 
 ### Setup
 
