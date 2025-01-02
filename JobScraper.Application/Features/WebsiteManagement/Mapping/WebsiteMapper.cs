@@ -18,14 +18,23 @@ public static class WebsiteMapper
         return result;
     }
 
-    public static GetWebsiteResponse MapToWebsiteResponse(Website website)
-    {
+    public static GetWebsiteResponse MapToWebsiteResponse(Website website) {
         return new GetWebsiteResponse
         (
             Id: website.Id,
             ShortName: website.ShortName,
             Url: website.Url,
             LastScraped: website.LastScraped ?? null
+        );
+    }
+    public static GetWebsiteWithSearchTermsResponse MapToWebsiteWithSearchTermResponse(Website website) {
+        return new GetWebsiteWithSearchTermsResponse
+        (
+            Id: website.Id,
+            ShortName: website.ShortName,
+            Url: website.Url,
+            LastScraped: website.LastScraped ?? null,
+            SearchTerms: website.SearchTerms.Select(st => st.Value).ToList()
         );
     }
 }

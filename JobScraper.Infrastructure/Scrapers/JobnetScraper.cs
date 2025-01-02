@@ -26,6 +26,7 @@ public class JobnetScraper : IJobnetScraper
 
     private IWebDriver? GetDriver()
     {
+        _logger.LogInformation("Attempting to get driver");
         if (_driver != null) return _driver;
 
         var seleniumUrl = _configuration["SELENIUM_URL"] ??
@@ -49,6 +50,7 @@ public class JobnetScraper : IJobnetScraper
         var scrapingResultsFromAllSearchTerms = new List<ScrapingResult>();
         try
         {
+            _logger.LogInformation("Started jobnet scraper, scrapePageAsync");
             foreach (var searchTerm in scrapeRequest.SearchTerms)
             {
                 var url = BuildUrl(searchTerm, scrapeRequest.WebsiteBaseUrl);
@@ -110,13 +112,16 @@ public class JobnetScraper : IJobnetScraper
         var scrapingResults = new List<ScrapingResult>();
 
         var listings = await GetListings(url, cancellationToken);
+        _logger.LogInformation("Found {x} listings", listings.Count);
         if (listings.Count == 0)
         {
+            _logger.LogInformation("No listings found for {url}", url);
             var message = $"no job listings found for {url}";
             var failedScrape = CreateFailedScrape(message, null, "InvalidInput");
             scrapingResults.Add(failedScrape);
             return scrapingResults;
         }
+        _logger.LogInformation("Found {x} job listings", listings.Count);
 
         foreach (var listing in listings)
         {

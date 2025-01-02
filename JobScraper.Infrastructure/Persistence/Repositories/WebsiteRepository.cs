@@ -35,12 +35,20 @@ public class WebsiteRepository : IWebsiteRepository
 
     public async Task<Website?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        return await _context.Websites.FirstOrDefaultAsync(w => w.Id == id, cancellationToken);
+        return await _context.Websites
+            .Include(w => w.SearchTerms)
+            .FirstOrDefaultAsync(w => w.Id == id, cancellationToken);
     }
 
     public async Task DeleteAsync(Website website, CancellationToken cancellationToken)
     {
         _context.Websites.Remove(website);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdateAsync(Website website, CancellationToken cancellationToken)
+    {
+        _context.Update(website);
         await _context.SaveChangesAsync(cancellationToken);
     }
 }

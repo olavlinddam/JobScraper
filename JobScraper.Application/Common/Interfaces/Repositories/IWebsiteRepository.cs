@@ -9,4 +9,5 @@ public interface IWebsiteRepository
     Task<IEnumerable<Website>> GetWithSearchTerms(CancellationToken cancellationToken);
     Task<Website?> GetByIdAsync(int id, CancellationToken cancellationToken);
     Task DeleteAsync(Website website, CancellationToken cancellationToken);
+    Task UpdateAsync(Website matchingWebsite, CancellationToken cancellationToken);
 }

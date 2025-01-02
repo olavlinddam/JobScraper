@@ -35,14 +35,14 @@ try
             });
         }
 
-        app.UseHttpsRedirection();
+        // app.UseHttpsRedirection();
         app.MapControllers();
 
         using var scope = app.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var con = context.Database.GetDbConnection().ConnectionString;
         Console.WriteLine($"DB_HOST: {Environment.GetEnvironmentVariable("DB_HOST")}");
-        Console.WriteLine($"Selenium_Url: {Environment.GetEnvironmentVariable("SELENIUM_URL")}");
+        Console.WriteLine($"SELENIUM_URL: {Environment.GetEnvironmentVariable("SELENIUM_URL")}");
         Console.WriteLine(con);
         
         context.Database.Migrate();

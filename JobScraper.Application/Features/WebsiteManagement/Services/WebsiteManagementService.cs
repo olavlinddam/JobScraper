@@ -33,13 +33,44 @@ public class WebsiteManagementService : IWebsiteManagementService
     {
         try
         {
-            var existingWebsites = await _websiteRepository.GetAllAsync(cancellationToken);
-            if (existingWebsites.Select(w => w.Url).Contains(request.Url))
-            {
-                return Error.Conflict("Website already exists");
-            }
+            var existingWebsites = await _websiteRepository.GetWithSearchTerms(cancellationToken);
+            var matchingWebsite = existingWebsites.FirstOrDefault(x => x.Url == request.Url);
+            // if (existingWebsites.Select(w => w.Url).Contains(request.Url))
+            // {
+            //     return Error.Conflict("Website already exists");
+            // }
 
             var existingSearchTerms = await _searchTermRepository.GetAllAsync(cancellationToken);
+
+            if (matchingWebsite != null)
+            {
+                var matchingWebsiteSearchTerms = matchingWebsite.SearchTerms.Select(s => s.Value).ToList();
+                foreach (var requestSearchTerm in request.SearchTerms)
+                {
+                    if (matchingWebsiteSearchTerms.Contains(requestSearchTerm))
+                        return Error.Conflict("A website with the same search term already exists.");
+
+                    var matchingExistingSearchTerm =
+                        existingSearchTerms.FirstOrDefault(est => est.Value == requestSearchTerm);
+                    if (matchingExistingSearchTerm != null)
+                    {
+                        matchingWebsite.SearchTerms.Add(matchingExistingSearchTerm);
+                        await _websiteRepository.UpdateAsync(matchingWebsite, cancellationToken);
+
+                        return WebsiteMapper.MapToWebsiteResponse(matchingWebsite);
+                    }
+                    var createSearchTermResult = SearchTermMapper.MapToSearchTerm(requestSearchTerm);
+                    if (createSearchTermResult.IsError)
+                    {
+                        return createSearchTermResult.Errors.First();
+                    }
+                    matchingWebsite.SearchTerms.Add(createSearchTermResult.Value);
+                    await _websiteRepository.UpdateAsync(matchingWebsite, cancellationToken);
+                    return WebsiteMapper.MapToWebsiteResponse(matchingWebsite);
+                    
+                }
+            }
+
             var createResult = TryCreateWebsite(request, existingSearchTerms);
 
             if (createResult.IsError)
@@ -88,7 +119,7 @@ public class WebsiteManagementService : IWebsiteManagementService
         return createResult.Value;
     }
 
-    public async Task<ErrorOr<GetWebsiteResponse>> GetWebsiteAsync(int id, CancellationToken cancellationToken)
+    public async Task<ErrorOr<GetWebsiteWithSearchTermsResponse>> GetWebsiteAsync(int id, CancellationToken cancellationToken)
     {
         try
         {
@@ -96,7 +127,7 @@ public class WebsiteManagementService : IWebsiteManagementService
             if (website == null)
                 return Error.NotFound($"Website with id: {id} was not found");
 
-            return WebsiteMapper.MapToWebsiteResponse(website);
+            return WebsiteMapper.MapToWebsiteWithSearchTermResponse(website);
         }
         catch (DbException e)
         {

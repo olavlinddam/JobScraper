@@ -24,11 +24,19 @@ public class JobListingService
         _logger.LogInformation("Getting all job listings");
         try
         {
+            _logger.LogInformation("should call repo now");
             var jobListings = (await _jobListingRepository.GetAllWithCitiesAsync(cancellationToken)).ToList();
+            if (jobListings == null)
+            {
+                _logger.LogInformation("job listings was null");
+            }
 
+            _logger.LogInformation("returned {jobListings.Count} job listings", jobListings.Count);
+            _logger.LogInformation("should be done calling repo now");
             if (jobListings.Count == 0)
                 return Error.NotFound($"No job listings found");
             
+            _logger.LogInformation("should return all job listings");
             return JobListingsMapper.MapToJobListingsResponses(jobListings.ToList());
         }
         catch (DbException e)
