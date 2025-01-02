@@ -3,6 +3,8 @@ using JobScraper.Application;
 using JobScraper.Infrastructure;
 using JobScraper.Infrastructure.Persistence;
 using JobScraper.Infrastructure.StartUp;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Swashbuckle.AspNetCore.Swagger;
@@ -23,17 +25,17 @@ try
     {
         app.UseRouting();
         app.UseSwagger();
-        
+
         if (builder.Environment.IsDevelopment())
         {
-            app.UseSwaggerUI(options => 
+            app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
                 options.RoutePrefix = "swagger";
             });
         }
 
-        //app.UseHttpsRedirection();
+        app.UseHttpsRedirection();
         app.MapControllers();
 
         using var scope = app.Services.CreateScope();
@@ -42,6 +44,7 @@ try
         Console.WriteLine($"DB_HOST: {Environment.GetEnvironmentVariable("DB_HOST")}");
         Console.WriteLine($"Selenium_Url: {Environment.GetEnvironmentVariable("SELENIUM_URL")}");
         Console.WriteLine(con);
+        
         context.Database.Migrate();
 
         app.Run();
