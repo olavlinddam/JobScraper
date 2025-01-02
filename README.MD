@@ -58,6 +58,31 @@ Run the application:
 
 ```dotnet run --project JobScraper.Api```
 
+Navigate to: 
+```http://localhost:5000/swagger/index.html```
+
+Send the following json package to:
+```http://localhost:5000/api/Website/create```
+
+```json
+{
+  "url": "https://job.jobnet.dk/CV/FindWork?Offset=0&SortValue=BestMatch",
+  "shortName": "jobnet",
+  "searchTerms": [
+    "Systemudvikling, programmering og design"
+  ]
+}
+```
+The application is currently only set up to work with this specific website and shortname. Search terms can be changed but I have not yet tested with other than the provided.
+
+To initiate a scrape go to:
+```http://localhost:5000/api/Scraping/StartAllScrapers```
+
+After the scrapea is finished go to:
+```http://localhost:5000/api/JobListing/job-listings```
+
+To fetch all listings.
+
 ## API Endpoints
 
 Not yet implemented
