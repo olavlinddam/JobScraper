@@ -51,6 +51,19 @@ cd JobScraper
 docker compose up
 dotnet run --p JobScraper.Api```
 
+Clone the repository:
+
+```git clone https://github.com/your-repo/job-scraper.git```
+```cd job-scraper```
+
+Start the necessary services:
+
+```docker compose up```
+
+Run the application:
+
+```dotnet run --project JobScraper.Api```
+
 ## API Endpoints
 
 Not yet implemented
