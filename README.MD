@@ -44,14 +44,18 @@ JobScraper/
 
 ### Setup
 
+
 1. Clone the repository
-2. Needs to be updated
+2. ```bash 
+cd JobScraper
+docker compose up
+dotnet run --p JobScraper.Api
+```
 
 ## API Endpoints
 
 Not yet implemented
 
-## TODO
 
 ### Phase 1 (MVP)
 - [ ] Complete JobnetScraper implementation (parsing and storing results)
