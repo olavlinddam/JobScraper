@@ -8,6 +8,7 @@ using JobScraper.Contracts.Responses.Websites;
 using JobScraper.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Win32.SafeHandles;
 
 namespace JobScraper.Application.Features.WebsiteManagement.Services;
 
@@ -28,49 +29,17 @@ public class WebsiteManagementService : IWebsiteManagementService
         _searchTermRepository = searchTermRepository;
     }
 
-    public async Task<ErrorOr<GetWebsiteResponse>> CreateWebsiteAsync(AddWebsiteRequest request,
+    public async Task<ErrorOr<GetWebsiteWithSearchTermsResponse>> CreateWebsiteAsync(AddWebsiteRequest request,
         CancellationToken cancellationToken)
     {
         try
         {
             var existingWebsites = await _websiteRepository.GetWithSearchTerms(cancellationToken);
             var matchingWebsite = existingWebsites.FirstOrDefault(x => x.Url == request.Url);
-            // if (existingWebsites.Select(w => w.Url).Contains(request.Url))
-            // {
-            //     return Error.Conflict("Website already exists");
-            // }
+            if (matchingWebsite != null)
+                return Error.Conflict("Website already exists");
 
             var existingSearchTerms = await _searchTermRepository.GetAllAsync(cancellationToken);
-
-            if (matchingWebsite != null)
-            {
-                var matchingWebsiteSearchTerms = matchingWebsite.SearchTerms.Select(s => s.Value).ToList();
-                foreach (var requestSearchTerm in request.SearchTerms)
-                {
-                    if (matchingWebsiteSearchTerms.Contains(requestSearchTerm))
-                        return Error.Conflict("A website with the same search term already exists.");
-
-                    var matchingExistingSearchTerm =
-                        existingSearchTerms.FirstOrDefault(est => est.Value == requestSearchTerm);
-                    if (matchingExistingSearchTerm != null)
-                    {
-                        matchingWebsite.SearchTerms.Add(matchingExistingSearchTerm);
-                        await _websiteRepository.UpdateAsync(matchingWebsite, cancellationToken);
-
-                        return WebsiteMapper.MapToWebsiteResponse(matchingWebsite);
-                    }
-                    var createSearchTermResult = SearchTermMapper.MapToSearchTerm(requestSearchTerm);
-                    if (createSearchTermResult.IsError)
-                    {
-                        return createSearchTermResult.Errors.First();
-                    }
-                    matchingWebsite.SearchTerms.Add(createSearchTermResult.Value);
-                    await _websiteRepository.UpdateAsync(matchingWebsite, cancellationToken);
-                    return WebsiteMapper.MapToWebsiteResponse(matchingWebsite);
-                    
-                }
-            }
-
             var createResult = TryCreateWebsite(request, existingSearchTerms);
 
             if (createResult.IsError)
@@ -81,7 +50,7 @@ public class WebsiteManagementService : IWebsiteManagementService
             var website = createResult.Value;
 
             await _websiteRepository.AddAsync(website, cancellationToken);
-            var websiteResponse = WebsiteMapper.MapToWebsiteResponse(website);
+            var websiteResponse = WebsiteMapper.MapToWebsiteWithSearchTermResponse(website);
 
             return websiteResponse;
         }
@@ -97,29 +66,28 @@ public class WebsiteManagementService : IWebsiteManagementService
         }
     }
 
-    internal static ErrorOr<Website> TryCreateWebsite(AddWebsiteRequest request, List<SearchTerm> existingSearchTerms)
+    internal static ErrorOr<Website> TryCreateWebsite(AddWebsiteRequest request,
+        List<SearchTerm> existingSearchTerms)
     {
         var matchingSearchTerms = existingSearchTerms.Where(existingSearchTerm =>
             request.SearchTerms.Contains(existingSearchTerm.Value)).ToList();
 
         ErrorOr<Website> createResult;
 
-        if (matchingSearchTerms.Count != 0)
-        {
-            createResult = WebsiteMapper.MapFromWebsiteRequestToWebsite(request, matchingSearchTerms);
-        }
-        else
+        if (matchingSearchTerms.Count == 0)
         {
             createResult = WebsiteMapper.MapFromWebsiteRequestToWebsite(request);
         }
+        else
+        {
+            createResult = WebsiteMapper.MapFromWebsiteRequestToWebsite(request, matchingSearchTerms);
+        }
 
-        if (createResult.IsError)
-            return createResult.Errors;
-
-        return createResult.Value;
+        return createResult;
     }
 
-    public async Task<ErrorOr<GetWebsiteWithSearchTermsResponse>> GetWebsiteAsync(int id, CancellationToken cancellationToken)
+    public async Task<ErrorOr<GetWebsiteWithSearchTermsResponse>> GetWebsiteAsync(int id,
+        CancellationToken cancellationToken)
     {
         try
         {
@@ -146,21 +114,25 @@ public class WebsiteManagementService : IWebsiteManagementService
     {
         try
         {
-            var validationResult = await _updateWebsiteRequestValidator.ValidateAsync(request, cancellationToken);
-
-            if (!validationResult.IsValid)
-            {
-                var errors = validationResult.Errors.ConvertAll(
-                    failure => Error.Validation(
-                        failure.PropertyName,
-                        failure.ErrorMessage));
-
-                return errors;
-            }
+            var validationResult = ValidateWebsiteUpdateRequest(request);
+            if (validationResult.IsError)
+                return validationResult.Errors;
 
             var website = await _websiteRepository.GetByIdAsync(request.Id, cancellationToken);
             if (website == null)
                 return Error.NotFound($"Website with id: {request.Id} was not found");
+
+            
+            if (request.SearchTerms != null)
+            {
+                var existingSearchTerms = await _searchTermRepository.GetAllAsync(cancellationToken);
+                
+                var requestSearchTermsNotAssociatedWithWebsite = FindSearchTermsNotAssociatedWithWebsite(website, request.SearchTerms);
+                var requestSearchTermsNotInDb = GetSearchTermsExistingInDb(existingSearchTerms, requestSearchTermsNotAssociatedWithWebsite);
+                var newSearchTerms = TryCreateSearchTerms(requestSearchTermsNotInDb);
+                var existingSearchTermsToBeAddedToWebsite = GetSearchTermsNotExistingInDb(existingSearchTerms, requestSearchTermsNotAssociatedWithWebsite);
+                var searchTermsToBeAddedToWebsite = AddSearchTermsToWebsite(website, newSearchTerms, existingSearchTermsToBeAddedToWebsite);
+            }
 
             website.UpdateWebsite(request.Url, request.ShortName, request.SearchTerms);
 
@@ -177,6 +149,60 @@ public class WebsiteManagementService : IWebsiteManagementService
             _logger.LogError("An unexpected error occured while fetching website: {e}", e);
             throw;
         }
+    }
+
+    private List<SearchTerm> GetSearchTermsNotExistingInDb(List<SearchTerm> existingSearchTerms, List<string> requestSearchTermsNotAssociatedWithWebsite)
+    {
+        return existingSearchTerms.Where(x => requestSearchTermsNotAssociatedWithWebsite.Contains(x.Value)).ToList();
+    }
+
+    private List<string> GetSearchTermsExistingInDb(List<SearchTerm> existingSearchTerms, List<string> requestSearchTermsNotAssociatedWithWebsite)
+    {
+        return requestSearchTermsNotAssociatedWithWebsite.Where(x => !existingSearchTerms.Any(y => y.Value == x)).ToList();
+    }
+
+    private ErrorOr<List<SearchTerm>> TryCreateSearchTerms(List<string> requestSearchTerms)
+    {
+        var searchTerms = new List<SearchTerm>();
+        foreach (var requestSearchTerm in requestSearchTerms)
+        {
+            var newSearchTermResult = SearchTermMapper.MapToSearchTerm(requestSearchTerm);
+            if (newSearchTermResult.IsError)
+                return newSearchTermResult.Errors;
+            
+            searchTerms.Add(newSearchTermResult.Value);
+        }
+        return searchTerms;
+    }
+
+    private List<SearchTerm> AddSearchTermsToWebsite(Website website, List<SearchTerm> newSearchTerms, List<SearchTerm> existingSearchTermsToBeAddedToWebsite)
+    {
+        List<SearchTerm> searchTermsToBeAddedToWebsite = newSearchTerms.AddRange(existingSearchTermsToBeAddedToWebsite);
+    }
+
+    private List<string> FindSearchTermsNotAssociatedWithWebsite(Website website, List<string> requestSearchTerms)
+    {
+        var associatedSearchTerms = new List<string>();
+        foreach (var requestSearchTerm in requestSearchTerms)
+        {
+            var matchingSearchTerm = website.SearchTerms.FirstOrDefault(x => x.Value == requestSearchTerm);
+            if (matchingSearchTerm != null)
+                associatedSearchTerms.Add(matchingSearchTerm.Value);
+        }
+        return associatedSearchTerms;
+    }
+
+    private ErrorOr<Success> ValidateWebsiteUpdateRequest(UpdateWebsiteRequest request)
+    {
+        var validationResult = _updateWebsiteRequestValidator.Validate(request);
+        if (validationResult.IsValid)
+            return Result.Success;
+
+        var errors = validationResult.Errors.ConvertAll(
+            failure => Error.Validation(
+                failure.PropertyName,
+                failure.ErrorMessage));
+        return errors;
     }
 
     public async Task<ErrorOr<Success>> DeleteWebsiteAsync(int id,

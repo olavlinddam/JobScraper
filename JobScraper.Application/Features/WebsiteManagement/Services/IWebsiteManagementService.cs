@@ -7,7 +7,8 @@ namespace JobScraper.Application.Features.WebsiteManagement.Services;
 
 public interface IWebsiteManagementService
 {
-    Task<ErrorOr<GetWebsiteResponse>> CreateWebsiteAsync(AddWebsiteRequest request, CancellationToken cancellationToken);
+    Task<ErrorOr<GetWebsiteWithSearchTermsResponse>> CreateWebsiteAsync(AddWebsiteRequest request,
+        CancellationToken cancellationToken);
     
     Task<ErrorOr<GetWebsiteWithSearchTermsResponse>> GetWebsiteAsync(int id, CancellationToken cancellationToken);
 

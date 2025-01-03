@@ -79,17 +79,19 @@ public class Website
         var website = new Website(url, shortName, searchTerms);
         return website;
     }
+
     internal static ErrorOr<Success> ValidateShortName(string shortName)
     {
         var errors = new List<Error>();
-        
+
         if (string.IsNullOrWhiteSpace(shortName))
             errors.Add(Error.Validation(code: "Website.InvalidShortName", description: "ShortName cannot be empty."));
-        
+
         var match = Regex.Match(shortName, @"^[a-zA-Z0-9_\-\.]+$");
         if (!match.Success)
-            errors.Add(Error.Validation(code: "Website.InvalidShortName", description: $"ShortName is invalid {match.Value}"));
-        
+            errors.Add(Error.Validation(code: "Website.InvalidShortName",
+                description: $"ShortName is invalid {match.Value}"));
+
         if (errors.Count != 0)
             return errors;
 
@@ -148,6 +150,40 @@ public class Website
         return Result.Success;
     }
 
+    public ErrorOr<Website> UpdateWebsite(string? newUrl, string? newShortName, List<SearchTerm>? newSearchTerms)
+    {
+        var errors = new List<Error>();
+
+        if (newUrl != null)
+        {
+            var urlValidationErrors = ValidateUrl(newUrl);
+            if (urlValidationErrors.IsError)
+                errors.AddRange(urlValidationErrors.Errors);
+        }
+
+        if (newShortName != null)
+        {
+            var shortnameValidationErrors = ValidateShortName(newShortName);
+            if (shortnameValidationErrors.IsError)
+                errors.AddRange(shortnameValidationErrors.Errors);
+        }
+
+        if (newSearchTerms != null)
+        {
+            foreach (var newSearchTerm in newSearchTerms)
+            {
+                SearchTerms.Add(newSearchTerm);
+            }
+        }
+
+        if (errors.Count != 0)
+        {
+            return errors;
+        }
+
+        return this;
+    }
+
     public ErrorOr<Website> UpdateWebsite(string? newUrl, string? newShortName, List<string>? newSearchTerms)
     {
         var errors = new List<Error>();
@@ -183,5 +219,4 @@ public class Website
 
         return this;
     }
-
 }
