@@ -41,7 +41,7 @@ public class JobListingRepository : IJobListingRepository
 
     public async Task UpdateRangeAsync(IEnumerable<JobListing> jobListings, CancellationToken cancellationToken)
     {
-        _context.Update(jobListings);
+        _context.UpdateRange(jobListings);
         await _context.SaveChangesAsync(cancellationToken);
     }
 

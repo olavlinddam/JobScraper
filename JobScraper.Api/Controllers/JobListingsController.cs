@@ -24,8 +24,5 @@ public class JobListingController : ApiController
             return Ok(result.Value);
         }
         return BadRequest(result.Errors);
-        // return result.Match(
-        //     Ok,
-        //     Problem(result.ErrorsOrEmptyList));
     }
 }

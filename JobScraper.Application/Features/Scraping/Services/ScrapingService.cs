@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace JobScraper.Application.Features.Scraping.Services;
 
-public class ScrapingService : BackgroundService, IScrapingService
+public class ScrapingService : IScrapingService
 {
     private readonly ILogger<ScrapingService> _logger;
     private readonly IWebsiteRepository _websiteRepository;
@@ -32,34 +32,6 @@ public class ScrapingService : BackgroundService, IScrapingService
         _searchTermRepository = searchTermRepository;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
-    {
-        try
-        {
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                _logger.LogInformation("ScrapingService initialized");
-
-                var scrapingResults = await InitiateScrape(cancellationToken);
-
-                _logger.LogInformation("Finished scraping for all websites");
-
-                await Task.Delay(TimeSpan.FromMinutes(120), cancellationToken); // TODO: NOT HARDCODE THE TIMER
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogInformation("Scraping jobs cancelled");
-        }
-        catch (KeyNotFoundException e)
-        {
-            _logger.LogError("Initializing web scraper failed due to {e}:", e.Message);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("An unexpected error occured while scraping for jobs: {e}", e);
-        }
-    }
 
     public async Task<ErrorOr<Success>> InitiateScrape(CancellationToken cancellationToken)
     {
@@ -160,7 +132,7 @@ public class ScrapingService : BackgroundService, IScrapingService
         foreach (var (scrapedListing, existingListing) in existingScrapedListings)
         {
             if (existingListing.SearchTerms.Select(s => s.Value).Contains(scrapedListing.SearchTerm)) continue;
-            
+
             var searchTermToBeAddedToExistingListing = existingListing.Website.SearchTerms.FirstOrDefault(
                 st => st.Value == scrapedListing.SearchTerm);
 
@@ -222,6 +194,7 @@ public class ScrapingService : BackgroundService, IScrapingService
             scrapingResultsForAllWebsites.AddRange(result);
             _logger.LogInformation("Finished scraping website {website}", website.ShortName);
         }
+
         return scrapingResultsForAllWebsites;
     }
 }

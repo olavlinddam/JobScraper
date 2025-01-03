@@ -36,7 +36,7 @@ public class WebsiteManagementService : IWebsiteManagementService
             var existingWebsites = await _websiteRepository.GetWithSearchTerms(cancellationToken);
             var matchingWebsite = existingWebsites.FirstOrDefault(x => x.Url == request.Url);
             if (matchingWebsite != null)
-                return Error.Conflict("Website already exists");
+                return Error.Conflict("DuplicateWebsiteUrl", $"Website with url {request.Url} already exists");
 
             var existingSearchTerms = await _searchTermRepository.GetAllAsync(cancellationToken);
             var createResult = TryCreateWebsite(request, existingSearchTerms);
@@ -92,7 +92,9 @@ public class WebsiteManagementService : IWebsiteManagementService
         {
             var website = await _websiteRepository.GetByIdAsync(id, cancellationToken);
             if (website == null)
-                return Error.NotFound($"Website with id: {id} was not found");
+                return Error.NotFound(
+                    code: "Website.NotFound",
+                    description: $"Website with id: '{id}' was not found");
 
             return WebsiteMapper.MapToWebsiteWithSearchTermResponse(website);
         }
@@ -109,79 +111,81 @@ public class WebsiteManagementService : IWebsiteManagementService
     }
 
 
-    public async Task<ErrorOr<GetWebsiteWithSearchTermsResponse>> UpdateWebsiteAsync(UpdateWebsiteRequest request,
+    public async Task<ErrorOr<GetWebsiteWithSearchTermsResponse>> UpdateWebsiteAsync(
+        UpdateWebsiteRequest request,
         CancellationToken cancellationToken)
     {
         try
         {
-            // Get website and verify it exists
             var website = await _websiteRepository.GetByIdAsync(request.Id, cancellationToken);
             if (website is null)
-                return Error.NotFound($"Website with id: {request.Id} was not found");
+                return Error.NotFound(
+                    code: "Website.NotFound",
+                    description: $"Website with id: '{request.Id}' was not found");
 
             var validationResult = ValidateWebsiteUpdateRequest(request);
             if (validationResult.IsError)
                 return validationResult.Errors;
-            
-            // If no search terms to update, simple update
+
+            // Update basic details
+            var updateDetailsResult = website.UpdateWebsiteDetails(request.Url, request.ShortName);
+            if (updateDetailsResult.IsError)
+                return updateDetailsResult.Errors;
+
+            // If no search terms to update, we're done
             if (request.SearchTerms is null)
             {
-                var updateResult = website.UpdateWebsite(request.Url, request.ShortName, website.SearchTerms.ToList());
-
-                if (updateResult.IsError)
-                    return updateResult.Errors;
-
                 await _websiteRepository.UpdateAsync(website, cancellationToken);
-                return WebsiteMapper.MapToWebsiteWithSearchTermResponse(website); // Note: Changed to MapToWebsiteResponse
+                return WebsiteMapper.MapToWebsiteWithSearchTermResponse(website);
             }
 
-            // Handle search terms update
+            // Prepare search terms
             var existingSearchTerms = await _searchTermRepository.GetAllAsync(cancellationToken);
-            var searchTermsResult = UpdateSearchTerms(website, request.SearchTerms, existingSearchTerms);
-            if (searchTermsResult.IsError)
-                return searchTermsResult.Errors;
+            var newSearchTerms = PrepareSearchTermsForUpdate(request.SearchTerms, existingSearchTerms);
+            if (newSearchTerms.IsError)
+                return newSearchTerms.Errors;
 
-            var updateWithTermsResult = website.UpdateWebsite(request.Url, request.ShortName, searchTermsResult.Value);
-
-            if (updateWithTermsResult.IsError)
-                return updateWithTermsResult.Errors;
+            // Update search terms (domain logic handles validation)
+            var updateSearchTermsResult = website.UpdateSearchTerms(newSearchTerms.Value);
+            if (updateSearchTermsResult.IsError)
+                return updateSearchTermsResult.Errors;
 
             await _websiteRepository.UpdateAsync(website, cancellationToken);
-            return WebsiteMapper.MapToWebsiteWithSearchTermResponse(website); // Note: Changed to MapToWebsiteResponse
-        }
-        catch (DbException e)
-        {
-            _logger.LogError("A unexpected database error occured while fetching website: {e}", e);
-            throw;
+            return WebsiteMapper.MapToWebsiteWithSearchTermResponse(website);
         }
         catch (Exception e)
         {
-            _logger.LogError("An unexpected error occured while fetching website: {e}", e);
+            _logger.LogError("An unexpected error occurred while updating website: {e}", e);
             throw;
         }
     }
 
-    internal static ErrorOr<List<SearchTerm>> UpdateSearchTerms(
-        Website website,
+    internal static ErrorOr<List<SearchTerm>> PrepareSearchTermsForUpdate(
         List<string> requestedTerms,
         List<SearchTerm> existingSearchTerms)
     {
-        var newTerms = requestedTerms
-            .Except(website.SearchTerms.Select(x => x.Value))
-            .Except(existingSearchTerms.Select(x => x.Value))
-            .ToList();
+        var searchTerms = new List<SearchTerm>();
 
-        var searchTermsToAdd = existingSearchTerms
-            .Except(website.SearchTerms.Where(websiteSearchTerm => requestedTerms.Contains(websiteSearchTerm.Value)))
-            .Where(existingSearchTerm => requestedTerms.Contains(existingSearchTerm.Value))
-            .ToList();
+        foreach (var term in requestedTerms)
+        {
+            var existingTerm = existingSearchTerms.FirstOrDefault(x =>
+                x.Value.Equals(term, StringComparison.OrdinalIgnoreCase));
 
-        var newSearchTermsResult = SearchTermMapper.MapRequestSearchTermsToSearchTerms(newTerms);
-        if (newSearchTermsResult.IsError)
-            return newSearchTermsResult.Errors;
+            if (existingTerm != null)
+            {
+                searchTerms.Add(existingTerm);
+            }
+            else
+            {
+                var searchTermCreateResult = SearchTermMapper.MapToSearchTerm(term);
+                if (searchTermCreateResult.IsError)
+                    return searchTermCreateResult.Errors;
 
-        searchTermsToAdd.AddRange(newSearchTermsResult.Value);
-        return searchTermsToAdd;
+                searchTerms.Add(searchTermCreateResult.Value);
+            }
+        }
+
+        return searchTerms;
     }
 
     private ErrorOr<Success> ValidateWebsiteUpdateRequest(UpdateWebsiteRequest request)
@@ -197,14 +201,15 @@ public class WebsiteManagementService : IWebsiteManagementService
         return errors;
     }
 
-    public async Task<ErrorOr<Success>> DeleteWebsiteAsync(int id,
-        CancellationToken cancellationToken)
+    public async Task<ErrorOr<Success>> DeleteWebsiteAsync(int id, CancellationToken cancellationToken)
     {
         try
         {
             var website = await _websiteRepository.GetByIdAsync(id, cancellationToken);
             if (website == null)
-                return Error.NotFound($"Website with id: {id} was not found");
+                return Error.NotFound(
+                    code: $"Website.NotFound",
+                    description: $"Website with id: '{id}' was not found");
 
             await _websiteRepository.DeleteAsync(website, cancellationToken);
             return Result.Success;
@@ -227,7 +232,9 @@ public class WebsiteManagementService : IWebsiteManagementService
         {
             var websites = await _websiteRepository.GetAllAsync(cancellationToken);
             if (websites.Count == 0)
-                return Error.NotFound($"No websites were found");
+                return Error.NotFound(
+                    code: "Website.NotFound",
+                    description: "No websites were found");
 
             return websites.Select(website => WebsiteMapper.MapToWebsiteResponse(website)).ToList();
         }
@@ -240,27 +247,6 @@ public class WebsiteManagementService : IWebsiteManagementService
         {
             _logger.LogError("An unexpected error occured while fetching website: {e}", e);
             throw;
-        }
-    }
-
-    private async Task<ErrorOr<T>> ExecuteDbOperation<T>(
-        Func<CancellationToken, Task<ErrorOr<T>>> operation,
-        CancellationToken cancellationToken,
-        string operationName)
-    {
-        try
-        {
-            return await operation(cancellationToken);
-        }
-        catch (DbException e)
-        {
-            _logger.LogError("Database error during {operation}: {error}", operationName, e);
-            return Error.Failure("DatabaseError", e.Message);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Unexpected error during {operation}: {error}", operationName, e);
-            return Error.Failure("UnexpectedError", e.Message);
         }
     }
 }

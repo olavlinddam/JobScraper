@@ -150,10 +150,66 @@ public class Website
         return Result.Success;
     }
 
-    public ErrorOr<Website> UpdateWebsite(string? newUrl, string? newShortName, List<SearchTerm>? newSearchTerms)
+    public ErrorOr<Success> UpdateSearchTerms(List<SearchTerm> newSearchTerms)
+    {
+        var searchTermsToRemove = SearchTerms.Where(existingSearchTerm => !newSearchTerms.Contains(existingSearchTerm)).ToList();
+        
+        if (searchTermsToRemove.Count != 0)
+        {
+            foreach (var term in searchTermsToRemove)
+                SearchTerms.Remove(term);
+        }
+            
+        var searchTermsToAdd = newSearchTerms.Where(newSearchTerm => !SearchTerms.Contains(newSearchTerm)).ToList();
+        if (searchTermsToAdd.Count != 0)
+        {
+            foreach (var term in searchTermsToAdd)
+            {
+                SearchTerms.Add(term);
+            }
+        }
+        
+        if (SearchTerms.Count == 0)
+            return Error.Validation(
+                code: "Website.NoSearchTerms",
+                description: $"This operation would result in the website {ShortName} not having any search terms.");
+        
+        SearchTerms = newSearchTerms;
+        return Result.Success;
+    }
+
+    public ErrorOr<Success> UpdateWebsiteDetails(string? newUrl, string? newShortName)
+    {
+        if (newUrl == null && newShortName == null)
+            return Result.Success;
+        
+        var errors = new List<Error>();
+        
+        if (newUrl != null)
+        {
+            var urlValidationErrors = ValidateUrl(newUrl);
+            if (urlValidationErrors.IsError)
+                errors.AddRange(urlValidationErrors.Errors);
+            Url = newUrl;
+        }
+
+        if (newShortName != null)
+        {
+            var shortnameValidationErrors = ValidateShortName(newShortName);
+            if (shortnameValidationErrors.IsError)
+                errors.AddRange(shortnameValidationErrors.Errors);
+            ShortName = newShortName;
+        }
+
+        if (errors.Count != 0)
+            return errors;
+        
+        return Result.Success;
+    }
+
+    public ErrorOr<Website> UpdateWebsite(string? newUrl, string? newShortName, List<SearchTerm> newSearchTerms)
     {
         var errors = new List<Error>();
-
         if (newUrl != null)
         {
             var urlValidationErrors = ValidateUrl(newUrl);
@@ -168,12 +224,34 @@ public class Website
                 errors.AddRange(shortnameValidationErrors.Errors);
         }
 
-        if (newSearchTerms != null)
+        foreach (var newSearchTerm in newSearchTerms)
         {
-            foreach (var newSearchTerm in newSearchTerms)
-            {
-                SearchTerms.Add(newSearchTerm);
-            }
+            SearchTerms.Add(newSearchTerm);
+        }
+
+        if (errors.Count != 0)
+        {
+            return errors;
+        }
+
+        return this;
+    }
+
+    public ErrorOr<Website> UpdateWebsite(string? newUrl, string? newShortName)
+    {
+        var errors = new List<Error>();
+        if (newUrl != null)
+        {
+            var urlValidationErrors = ValidateUrl(newUrl);
+            if (urlValidationErrors.IsError)
+                errors.AddRange(urlValidationErrors.Errors);
+        }
+
+        if (newShortName != null)
+        {
+            var shortnameValidationErrors = ValidateShortName(newShortName);
+            if (shortnameValidationErrors.IsError)
+                errors.AddRange(shortnameValidationErrors.Errors);
         }
 
         if (errors.Count != 0)
@@ -187,7 +265,6 @@ public class Website
     public ErrorOr<Website> UpdateWebsite(string? newUrl, string? newShortName, List<string>? newSearchTerms)
     {
         var errors = new List<Error>();
-
         if (newUrl != null)
         {
             var urlValidationErrors = ValidateUrl(newUrl);
@@ -204,13 +281,14 @@ public class Website
 
         if (newSearchTerms != null)
         {
-            var searchTermValidationResult = ValidateSearchTerms(newSearchTerms);
-            if (searchTermValidationResult.IsError)
-                errors.AddRange(searchTermValidationResult.Errors);
-            var validSearchTerms = searchTermValidationResult.Value;
-            SearchTerms.Clear();
-            SearchTerms = validSearchTerms;
         }
+
+        var searchTermValidationResult = ValidateSearchTerms(newSearchTerms);
+        if (searchTermValidationResult.IsError)
+            errors.AddRange(searchTermValidationResult.Errors);
+        var validSearchTerms = searchTermValidationResult.Value;
+        SearchTerms.Clear();
+        SearchTerms = validSearchTerms;
 
         if (errors.Count != 0)
         {

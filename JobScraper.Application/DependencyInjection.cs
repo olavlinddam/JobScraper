@@ -8,6 +8,7 @@ using JobScraper.Application.Features.WebsiteManagement.Services;
 using JobScraper.Application.Features.WebsiteManagement.Validation;
 using JobScraper.Contracts.Requests.Websites;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 namespace JobScraper.Application;
 
@@ -18,9 +19,8 @@ public static class DependencyInjection
         services.TryAddScoped<IScrapingService, ScrapingService>();
         services.TryAddScoped<IWebsiteManagementService, WebsiteManagementService>();
         services.TryAddScoped<JobListingService>();
-        
+
         services.TryAddScoped<IWebScraperFactory, WebScraperFactory>();
-        
 
         services.AddValidatorsFromAssemblyContaining<AddWebsiteRequestValidator>();
         return services;

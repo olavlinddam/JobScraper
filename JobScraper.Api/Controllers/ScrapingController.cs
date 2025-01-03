@@ -21,16 +21,14 @@ public class ScrapingController : ApiController
     {
         var startedAt = DateTime.Now;
         CancellationToken cancellationToken = default;
-        
-        var result = await _scrapingService.InitiateScrape(cancellationToken);
 
-        return result.Match(
-            success => Ok(new
-            {
-                message = "Scraping successful!",
-                startedAt,
-                forceRun = request.ForceRun
-            }),
-            Problem);
+        await _scrapingService.InitiateScrape(cancellationToken);
+
+        return Ok(new
+        {
+            message = "Scrape cycle initiated",
+            startedAt,
+            forceRun = request.ForceRun
+        });
     }
 }
