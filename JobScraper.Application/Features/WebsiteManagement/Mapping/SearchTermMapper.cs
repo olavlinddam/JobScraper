@@ -12,4 +12,15 @@ public static class SearchTermMapper
         var result = SearchTerm.Create(searchTerm);
         return result;
     }
+    public static ErrorOr<List<SearchTerm>> MapRequestSearchTermsToSearchTerms(List<string> searchTerms)
+    {
+        var newSearchTerms = new List<SearchTerm>();
+        foreach (var result in searchTerms.Select(SearchTerm.Create))
+        {
+            if (result.IsError)
+                return result.Errors;
+            newSearchTerms.Add(result.Value);
+        }
+        return newSearchTerms;
+    }
 }

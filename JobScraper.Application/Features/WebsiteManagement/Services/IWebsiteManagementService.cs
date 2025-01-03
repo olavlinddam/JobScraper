@@ -12,7 +12,7 @@ public interface IWebsiteManagementService
     
     Task<ErrorOr<GetWebsiteWithSearchTermsResponse>> GetWebsiteAsync(int id, CancellationToken cancellationToken);
 
-    Task<ErrorOr<GetWebsiteResponse>> UpdateWebsiteAsync(UpdateWebsiteRequest request, CancellationToken cancellationToken);
+    Task<ErrorOr<GetWebsiteWithSearchTermsResponse>> UpdateWebsiteAsync(UpdateWebsiteRequest request, CancellationToken cancellationToken);
 
     Task<ErrorOr<Success>> DeleteWebsiteAsync(int id, CancellationToken cancellationToken);
     Task<ErrorOr<List<GetWebsiteResponse>>> GetAllWebsitesAsync(CancellationToken cancellationToken);

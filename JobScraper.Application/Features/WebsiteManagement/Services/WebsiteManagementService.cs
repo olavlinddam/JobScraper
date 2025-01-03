@@ -8,7 +8,6 @@ using JobScraper.Contracts.Responses.Websites;
 using JobScraper.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Win32.SafeHandles;
 
 namespace JobScraper.Application.Features.WebsiteManagement.Services;
 
@@ -109,35 +108,46 @@ public class WebsiteManagementService : IWebsiteManagementService
         }
     }
 
-    public async Task<ErrorOr<GetWebsiteResponse>> UpdateWebsiteAsync(UpdateWebsiteRequest request,
+
+    public async Task<ErrorOr<GetWebsiteWithSearchTermsResponse>> UpdateWebsiteAsync(UpdateWebsiteRequest request,
         CancellationToken cancellationToken)
     {
         try
         {
+            // Get website and verify it exists
+            var website = await _websiteRepository.GetByIdAsync(request.Id, cancellationToken);
+            if (website is null)
+                return Error.NotFound($"Website with id: {request.Id} was not found");
+
             var validationResult = ValidateWebsiteUpdateRequest(request);
             if (validationResult.IsError)
                 return validationResult.Errors;
-
-            var website = await _websiteRepository.GetByIdAsync(request.Id, cancellationToken);
-            if (website == null)
-                return Error.NotFound($"Website with id: {request.Id} was not found");
-
             
-            if (request.SearchTerms != null)
+            // If no search terms to update, simple update
+            if (request.SearchTerms is null)
             {
-                var existingSearchTerms = await _searchTermRepository.GetAllAsync(cancellationToken);
-                
-                var requestSearchTermsNotAssociatedWithWebsite = FindSearchTermsNotAssociatedWithWebsite(website, request.SearchTerms);
-                var requestSearchTermsNotInDb = GetSearchTermsExistingInDb(existingSearchTerms, requestSearchTermsNotAssociatedWithWebsite);
-                var newSearchTerms = TryCreateSearchTerms(requestSearchTermsNotInDb);
-                var existingSearchTermsToBeAddedToWebsite = GetSearchTermsNotExistingInDb(existingSearchTerms, requestSearchTermsNotAssociatedWithWebsite);
-                var searchTermsToBeAddedToWebsite = AddSearchTermsToWebsite(website, newSearchTerms, existingSearchTermsToBeAddedToWebsite);
+                var updateResult = website.UpdateWebsite(request.Url, request.ShortName, website.SearchTerms.ToList());
+
+                if (updateResult.IsError)
+                    return updateResult.Errors;
+
+                await _websiteRepository.UpdateAsync(website, cancellationToken);
+                return WebsiteMapper.MapToWebsiteWithSearchTermResponse(website); // Note: Changed to MapToWebsiteResponse
             }
 
-            website.UpdateWebsite(request.Url, request.ShortName, request.SearchTerms);
+            // Handle search terms update
+            var existingSearchTerms = await _searchTermRepository.GetAllAsync(cancellationToken);
+            var searchTermsResult = UpdateSearchTerms(website, request.SearchTerms, existingSearchTerms);
+            if (searchTermsResult.IsError)
+                return searchTermsResult.Errors;
 
-            var websiteResponse = WebsiteMapper.MapToWebsiteResponse(website);
-            return websiteResponse;
+            var updateWithTermsResult = website.UpdateWebsite(request.Url, request.ShortName, searchTermsResult.Value);
+
+            if (updateWithTermsResult.IsError)
+                return updateWithTermsResult.Errors;
+
+            await _websiteRepository.UpdateAsync(website, cancellationToken);
+            return WebsiteMapper.MapToWebsiteWithSearchTermResponse(website); // Note: Changed to MapToWebsiteResponse
         }
         catch (DbException e)
         {
@@ -151,45 +161,26 @@ public class WebsiteManagementService : IWebsiteManagementService
         }
     }
 
-    private List<SearchTerm> GetSearchTermsNotExistingInDb(List<SearchTerm> existingSearchTerms, List<string> requestSearchTermsNotAssociatedWithWebsite)
+    internal static ErrorOr<List<SearchTerm>> UpdateSearchTerms(
+        Website website,
+        List<string> requestedTerms,
+        List<SearchTerm> existingSearchTerms)
     {
-        return existingSearchTerms.Where(x => requestSearchTermsNotAssociatedWithWebsite.Contains(x.Value)).ToList();
-    }
+        var newTerms = requestedTerms
+            .Except(website.SearchTerms.Select(x => x.Value))
+            .Except(existingSearchTerms.Select(x => x.Value))
+            .ToList();
 
-    private List<string> GetSearchTermsExistingInDb(List<SearchTerm> existingSearchTerms, List<string> requestSearchTermsNotAssociatedWithWebsite)
-    {
-        return requestSearchTermsNotAssociatedWithWebsite.Where(x => !existingSearchTerms.Any(y => y.Value == x)).ToList();
-    }
+        var searchTermsToAdd = existingSearchTerms
+            .Where(x => requestedTerms.Contains(x.Value))
+            .ToList();
 
-    private ErrorOr<List<SearchTerm>> TryCreateSearchTerms(List<string> requestSearchTerms)
-    {
-        var searchTerms = new List<SearchTerm>();
-        foreach (var requestSearchTerm in requestSearchTerms)
-        {
-            var newSearchTermResult = SearchTermMapper.MapToSearchTerm(requestSearchTerm);
-            if (newSearchTermResult.IsError)
-                return newSearchTermResult.Errors;
-            
-            searchTerms.Add(newSearchTermResult.Value);
-        }
-        return searchTerms;
-    }
+        var newSearchTermsResult = SearchTermMapper.MapRequestSearchTermsToSearchTerms(newTerms);
+        if (newSearchTermsResult.IsError)
+            return newSearchTermsResult.Errors;
 
-    private List<SearchTerm> AddSearchTermsToWebsite(Website website, List<SearchTerm> newSearchTerms, List<SearchTerm> existingSearchTermsToBeAddedToWebsite)
-    {
-        List<SearchTerm> searchTermsToBeAddedToWebsite = newSearchTerms.AddRange(existingSearchTermsToBeAddedToWebsite);
-    }
-
-    private List<string> FindSearchTermsNotAssociatedWithWebsite(Website website, List<string> requestSearchTerms)
-    {
-        var associatedSearchTerms = new List<string>();
-        foreach (var requestSearchTerm in requestSearchTerms)
-        {
-            var matchingSearchTerm = website.SearchTerms.FirstOrDefault(x => x.Value == requestSearchTerm);
-            if (matchingSearchTerm != null)
-                associatedSearchTerms.Add(matchingSearchTerm.Value);
-        }
-        return associatedSearchTerms;
+        searchTermsToAdd.AddRange(newSearchTermsResult.Value);
+        return searchTermsToAdd;
     }
 
     private ErrorOr<Success> ValidateWebsiteUpdateRequest(UpdateWebsiteRequest request)
@@ -248,6 +239,27 @@ public class WebsiteManagementService : IWebsiteManagementService
         {
             _logger.LogError("An unexpected error occured while fetching website: {e}", e);
             throw;
+        }
+    }
+
+    private async Task<ErrorOr<T>> ExecuteDbOperation<T>(
+        Func<CancellationToken, Task<ErrorOr<T>>> operation,
+        CancellationToken cancellationToken,
+        string operationName)
+    {
+        try
+        {
+            return await operation(cancellationToken);
+        }
+        catch (DbException e)
+        {
+            _logger.LogError("Database error during {operation}: {error}", operationName, e);
+            return Error.Failure("DatabaseError", e.Message);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Unexpected error during {operation}: {error}", operationName, e);
+            return Error.Failure("UnexpectedError", e.Message);
         }
     }
 }
