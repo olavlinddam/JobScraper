@@ -17,18 +17,18 @@ public class ScrapingController : ApiController
 
     [Route("StartAllScrapers")]
     [HttpPost]
-    public async Task<IActionResult> StartAllScrapers(StartAllScrapersRequest request)
+    public async Task<IActionResult> StartAllScrapers()
     {
         var startedAt = DateTime.Now;
         CancellationToken cancellationToken = default;
 
         await _scrapingService.InitiateScrape(cancellationToken);
-
+        
         return Ok(new
         {
-            message = "Scrape cycle initiated",
+            message = "Scrape cycle complete",
             startedAt,
-            forceRun = request.ForceRun
+            finished = DateTime.Now
         });
     }
 }
