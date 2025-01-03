@@ -172,7 +172,8 @@ public class WebsiteManagementService : IWebsiteManagementService
             .ToList();
 
         var searchTermsToAdd = existingSearchTerms
-            .Where(x => requestedTerms.Contains(x.Value))
+            .Except(website.SearchTerms.Where(websiteSearchTerm => requestedTerms.Contains(websiteSearchTerm.Value)))
+            .Where(existingSearchTerm => requestedTerms.Contains(existingSearchTerm.Value))
             .ToList();
 
         var newSearchTermsResult = SearchTermMapper.MapRequestSearchTermsToSearchTerms(newTerms);
