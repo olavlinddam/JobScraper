@@ -54,14 +54,7 @@ Start the necessary services:
 
 ```docker compose up```
 
-Run the application:
-
-```dotnet run --project JobScraper.Api```
-
-Navigate to: 
-```http://localhost:5000/swagger/index.html```
-
-Send the following json package to:
+To create a new website send the following json package to:
 ```http://localhost:5000/api/Website/create```
 
 ```json
@@ -75,17 +68,13 @@ Send the following json package to:
 ```
 The application is currently only set up to work with this specific website and shortname. Search terms can be changed but I have not yet tested with other than the provided.
 
-To initiate a scrape go to:
+To initiate a scrape send the following json package to:
 ```http://localhost:5000/api/Scraping/StartAllScrapers```
 
 After the scrape is finished go to:
 ```http://localhost:5000/api/JobListing/job-listings```
 
 Note that scraper pagination has not been implemented so it currently only fetches the first page of jobnet.
-
-## API Endpoints
-
-Not yet implemented
 
 
 ### Phase 1 (MVP)
