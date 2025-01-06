@@ -5,7 +5,7 @@ using JobScraper.Domain.Enums;
 
 namespace JobScraper.Application.Features.Scraping.Mapping;
 
-public static class ScrapeResultMapper 
+public static class ScrapeResultMapper
 {
     public static List<JobListing> MapToJobListings(List<ScrapedJobData> scrapedJobs, List<City> cities,
         List<Website> websites, List<SearchTerm> searchTerms)
@@ -14,20 +14,30 @@ public static class ScrapeResultMapper
         foreach (var scrapedJob in scrapedJobs)
         {
             var website = websites.FirstOrDefault(x => x.Url == scrapedJob.WebsiteBaseUrl);
-            var city = cities.FirstOrDefault(city => city.Zip == LocationParser.ExtractZipCode(scrapedJob.Location));
-            if (website == null || city == null)
+            if (website == null)
             {
                 continue;
             }
-            
+
+            var scrapedJobCityZip = LocationParser.ExtractZipCode(scrapedJob.Location);
+            var scrapedJobCityName = LocationParser.ExtractCityName(scrapedJob.Location);
+
+            var city = cities.FirstOrDefault(c => c.Zip == scrapedJobCityZip) ?? cities.FirstOrDefault(city => city.Name == scrapedJobCityName);
+
+            if (city == null)
+            {
+                city = MapToCity(scrapedJob);
+                cities.Add(city);
+            }
+
             var jobListing = new JobListing
             {
                 Title = scrapedJob.Title,
                 CompanyName = scrapedJob.CompanyName,
-                PostedDate = (scrapedJob.DatePublished.HasValue 
+                PostedDate = (scrapedJob.DatePublished.HasValue
                     ? DateTime.SpecifyKind(scrapedJob.DatePublished.Value, DateTimeKind.Utc)
                     : DateTime.UtcNow),
-                ExpirationDate = (scrapedJob.ExpirationDate.HasValue 
+                ExpirationDate = (scrapedJob.ExpirationDate.HasValue
                     ? DateTime.SpecifyKind(scrapedJob.ExpirationDate.Value, DateTimeKind.Utc)
                     : DateTime.UtcNow.AddDays(30)), // Placeholder her indtil en bedre ide om hvad vi så gør kommer 
                 Url = scrapedJob.Url,
@@ -40,6 +50,7 @@ public static class ScrapeResultMapper
             };
             jobListings.Add(jobListing);
         }
+
         return jobListings;
     }
 
@@ -62,7 +73,7 @@ public static class ScrapeResultMapper
     //     return newSearchTerm;
     // }
 
-    public static City MapToCities(ScrapedJobData scrapedJobData)
+    public static City MapToCity(ScrapedJobData scrapedJobData)
     {
         return new City
         {
@@ -80,7 +91,7 @@ public static class ScrapeResultMapper
             "deltid" => JobType.PartTime,
             "midlertidig" => JobType.Temporary,
             "praktik" => JobType.Internship,
-            _ => JobType.FullTime  // default
+            _ => JobType.FullTime // default
         };
     }
 }

@@ -78,8 +78,7 @@ public class ScrapingService : IScrapingService
 
         var existingScrapedListings = UpdateExistingListingsSearchTerms(existingScrapedListingsDict);
 
-        var newListings =
-            ScrapeResultMapper.MapToJobListings(scrapedListingsNotInDb, cities, websites, searchTerms);
+        var newListings = ScrapeResultMapper.MapToJobListings(scrapedListingsNotInDb, cities, websites, searchTerms);
 
         if (existingScrapedListings.Count > 0)
         {
@@ -96,7 +95,7 @@ public class ScrapingService : IScrapingService
 
     private async Task HandleNewCities(List<ScrapedJobData?> successfulScrapes, CancellationToken cancellationToken)
     {
-        var citiesFromScrape = successfulScrapes.Select(scrapedJob => ScrapeResultMapper.MapToCities(scrapedJob))
+        var citiesFromScrape = successfulScrapes.Select(scrapedJob => ScrapeResultMapper.MapToCity(scrapedJob))
             .ToList();
         var existingCities = await _cityRepository.GetAll(cancellationToken);
         var newCities = ExtractNewCities(existingCities, citiesFromScrape);
