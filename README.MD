@@ -38,8 +38,8 @@ JobScraper/
 
 ### Prerequisites
 
-- .NET 8 SDK
-- PostgreSQL
+- .NET 8 SDK (If you want to work with the code)
+- .NET 8 Runtime if you want to run the application without Docker
 - Docker and Docker Compose (Docker desktop should be enough)
 
 ### Setup
