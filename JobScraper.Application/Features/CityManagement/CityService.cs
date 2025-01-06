@@ -1,6 +1,8 @@
 using JobScraper.Application.Common.Interfaces.Repositories;
 using JobScraper.Domain.Entities;
 using ErrorOr;
+using JobScraper.Application.Features.CityManagement.Mapping;
+using JobScraper.Contracts.Responses.Cities;
 using Microsoft.Extensions.Logging;
 
 namespace JobScraper.Application.Features.CityManagement;
@@ -38,7 +40,7 @@ public class CityService
             throw;
         }
     }
-    public async Task<ErrorOr<List<City>>> GetAllCitiesWithListings(CancellationToken cancellationToken)
+    public async Task<ErrorOr<List<CityWithListingsResponse>>> GetAllCitiesWithListings(CancellationToken cancellationToken)
     {
         try
         {
@@ -46,7 +48,7 @@ public class CityService
             var cities = await _cityRepository.GetAllWithListings(cancellationToken);
 
             if (cities.Count != 0)
-                return cities;
+                return CityMapper.MapToCitiesWithListings(cities);
 
             _logger.LogError("No cities found in database");
             
