@@ -34,4 +34,13 @@ public class CityRepository : ICityRepository
     {
         return await _context.Cities.Include(c => c.JobListings).ToListAsync(cancellationToken);
     }
+
+    public async Task DeleteAll(CancellationToken cancellationToken)
+    {
+        foreach (var city in _context.Cities)
+        {
+            _context.Remove(city);
+        }
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }

@@ -10,4 +10,5 @@ public interface ICityRepository
 
     Task<List<City>> GetAll(CancellationToken cancellationToken);
     Task<List<City>> GetAllWithListings(CancellationToken cancellationToken);
+    Task DeleteAll(CancellationToken cancellationToken);
 }

@@ -16,10 +16,8 @@ public class CityController : ApiController
     }
 
     [HttpGet("cities")]
-    public async Task<IActionResult> GetCities()
+    public async Task<IActionResult> GetCities(CancellationToken cancellationToken)
     {
-        CancellationToken cancellationToken = default;
-        
         var result = await _cityService.GetAllCities(cancellationToken);
         return result.Match(
             cities => Ok(cities),
@@ -27,8 +25,7 @@ public class CityController : ApiController
     }
  
     [HttpGet("cities/with-jobs")]
-    public async Task<IActionResult> GetCitiesWithJobs(
-        CancellationToken cancellationToken = default)
+    public async Task<IActionResult> GetCitiesWithJobs(CancellationToken cancellationToken)
     {
         var result = await _cityService.GetAllCitiesWithListings(cancellationToken);
         return result.Match(
@@ -36,6 +33,12 @@ public class CityController : ApiController
             Problem);
     }   
 
+    // [HttpDelete("cities")]
+    // public async Task<IActionResult> DeleteCities(CancellationToken cancellationToken)
+    // {
+    //     await _cityService.DeleteCities(cancellationToken);
+    //     return Ok();
+    // }   
     // [HttpGet("cities/with-jobs")]
     // public async Task<IActionResult> GetCitiesWithJobs(
     //     [FromQuery] int? page,

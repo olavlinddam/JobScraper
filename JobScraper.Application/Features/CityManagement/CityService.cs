@@ -62,4 +62,19 @@ public class CityService
             throw;
         }
     }
+
+    public async Task DeleteCities(CancellationToken cancellationToken)
+    {
+        try
+        {
+            _logger.LogInformation("Deleting cities from database");
+            await _cityRepository.DeleteAll(cancellationToken);
+            _logger.LogInformation("Deleted cities from database");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("An unexpected error occured while deleting cities: {e}", e);
+            throw;
+        }
+    }
 }
