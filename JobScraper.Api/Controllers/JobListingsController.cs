@@ -19,10 +19,8 @@ public class JobListingController : ApiController
         CancellationToken cancellationToken = default;
         var result = await _jobListingService.GetJobListings(cancellationToken);
 
-        if (!result.IsError)
-        {
-            return Ok(result.Value);
-        }
-        return BadRequest(result.Errors);
+        return result.Match(
+            listings => Ok(listings),
+            Problem);
     }
 }

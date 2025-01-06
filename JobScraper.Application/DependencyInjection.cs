@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using FluentValidation;
 using JobScraper.Application.Common.Interfaces;
+using JobScraper.Application.Features.CityManagement;
 using JobScraper.Application.Features.JobListings;
 using JobScraper.Application.Features.Scraping.Common;
 using JobScraper.Application.Features.Scraping.Services;
@@ -19,6 +20,7 @@ public static class DependencyInjection
         services.TryAddScoped<IScrapingService, ScrapingService>();
         services.TryAddScoped<IWebsiteManagementService, WebsiteManagementService>();
         services.TryAddScoped<JobListingService>();
+        services.TryAddScoped<CityService>();
 
         services.TryAddScoped<IWebScraperFactory, WebScraperFactory>();
 
