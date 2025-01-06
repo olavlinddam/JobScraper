@@ -53,16 +53,22 @@ public class ScrapingService : IScrapingService
                 return Error.NotFound("No scraping results found");
             }
 
-            await HandleNewCities(successfulScrapes, cancellationToken);
             await HandleScrapedListings(successfulScrapes, websites, cancellationToken);
+            await UpdateWebsites(websites, cancellationToken);
 
             return Result.Success;
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError("An unexpected error occured while scraping websites: [{e}]", e);
             throw;
         }
+    }
+
+    private async Task UpdateWebsites(List<Website> websites, CancellationToken cancellationToken)
+    {
+        websites.ForEach(w => w.LastScraped = DateTime.UtcNow);
+        await _websiteRepository.UpdateRangeAsync(websites, cancellationToken);
     }
 
     private async Task HandleScrapedListings(List<ScrapedJobData?> successfulScrapes,
@@ -92,38 +98,6 @@ public class ScrapingService : IScrapingService
             await _jobListingRepository.AddRangeAsync(newListings, cancellationToken);
         }
     }
-
-    private async Task HandleNewCities(List<ScrapedJobData?> successfulScrapes, CancellationToken cancellationToken)
-    {
-        var citiesFromScrape = successfulScrapes.Select(scrapedJob => ScrapeResultMapper.MapToCity(scrapedJob))
-            .ToList();
-        var existingCities = await _cityRepository.GetAll(cancellationToken);
-        var newCities = ExtractNewCities(existingCities, citiesFromScrape);
-        if (newCities.Count == 0)
-        {
-            return;
-        }
-
-        if (successfulScrapes.Count == 0)
-        {
-            return;
-        }
-
-        await _cityRepository.AddRangeAsync(newCities, cancellationToken);
-    }
-
-    internal static List<City> ExtractNewCities(List<City> existingCities, List<City> citiesFromScrape)
-    {
-        if (existingCities.Count == 0)
-        {
-            return citiesFromScrape;
-        }
-
-        var existingZipCodes = existingCities.Select(existingCity => existingCity.Zip);
-        var newCities = citiesFromScrape.Where(scrapedCity => !existingZipCodes.Contains(scrapedCity.Zip)).ToList();
-        return newCities;
-    }
-
 
     private List<JobListing> UpdateExistingListingsSearchTerms(
         Dictionary<ScrapedJobData, JobListing> existingScrapedListings)

@@ -51,4 +51,10 @@ public class WebsiteRepository : IWebsiteRepository
         _context.Update(website);
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task UpdateRangeAsync(List<Website> websites, CancellationToken cancellationToken)
+    {
+        _context.UpdateRange(websites);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }

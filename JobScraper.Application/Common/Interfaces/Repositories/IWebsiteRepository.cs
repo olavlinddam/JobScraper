@@ -10,4 +10,5 @@ public interface IWebsiteRepository
     Task<Website?> GetByIdAsync(int id, CancellationToken cancellationToken);
     Task DeleteAsync(Website website, CancellationToken cancellationToken);
     Task UpdateAsync(Website matchingWebsite, CancellationToken cancellationToken);
+    Task UpdateRangeAsync(List<Website> websites, CancellationToken cancellationToken);
 }
