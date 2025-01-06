@@ -14,9 +14,8 @@ public class JobListingController : ApiController
     }
 
     [HttpGet("job-listings")]
-    public async Task<IActionResult> GetJobListings()
+    public async Task<IActionResult> GetJobListings(CancellationToken cancellationToken)
     {
-        CancellationToken cancellationToken = default;
         var result = await _jobListingService.GetJobListings(cancellationToken);
 
         return result.Match(

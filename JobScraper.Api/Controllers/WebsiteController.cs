@@ -16,9 +16,8 @@ public class WebsiteController : ApiController
 
     [Route("create")]
     [HttpPost]
-    public async Task<IActionResult> CreateWebsite(AddWebsiteRequest request)
+    public async Task<IActionResult> CreateWebsite(AddWebsiteRequest request, CancellationToken cancellationToken)
     {
-        CancellationToken cancellationToken = default;
         var result = await _websiteManagementService.CreateWebsiteAsync(request, cancellationToken);
 
         return result.Match(
@@ -31,9 +30,8 @@ public class WebsiteController : ApiController
 
     [Route("update")]
     [HttpPut]
-    public async Task<IActionResult> UpdateWebsite(UpdateWebsiteRequest request)
+    public async Task<IActionResult> UpdateWebsite(UpdateWebsiteRequest request, CancellationToken cancellationToken)
     {
-        CancellationToken cancellationToken = default;
         var result = await _websiteManagementService.UpdateWebsiteAsync(request, cancellationToken);
 
         return result.Match(
@@ -42,9 +40,8 @@ public class WebsiteController : ApiController
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> DeleteWebsite(int id)
+    public async Task<IActionResult> DeleteWebsite(int id, CancellationToken cancellationToken)
     {
-        CancellationToken cancellationToken = default;
         var result = await _websiteManagementService.DeleteWebsiteAsync(id, cancellationToken);
 
         return result.Match(
@@ -56,9 +53,8 @@ public class WebsiteController : ApiController
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetWebsite(int id)
+    public async Task<IActionResult> GetWebsite(int id, CancellationToken cancellationToken)
     {
-        CancellationToken cancellationToken = default;
         var result = await _websiteManagementService.GetWebsiteAsync(id, cancellationToken);
 
         return result.Match(
@@ -67,9 +63,8 @@ public class WebsiteController : ApiController
     }
     
     [HttpGet("websites")]
-    public async Task<IActionResult> GetAllWebsites()
+    public async Task<IActionResult> GetAllWebsites(CancellationToken cancellationToken)
     {
-        CancellationToken cancellationToken = default;
         var result = await _websiteManagementService.GetAllWebsitesAsync(cancellationToken);
 
         return result.Match(
