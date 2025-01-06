@@ -38,4 +38,26 @@ public class CityService
             throw;
         }
     }
+    public async Task<ErrorOr<List<City>>> GetAllCitiesWithListings(CancellationToken cancellationToken)
+    {
+        try
+        {
+            _logger.LogInformation("Getting all cities with listings from database");
+            var cities = await _cityRepository.GetAllWithListings(cancellationToken);
+
+            if (cities.Count != 0)
+                return cities;
+
+            _logger.LogError("No cities found in database");
+            
+            return Error.NotFound(
+                code: "City.NotFound",
+                description: "No cities found");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("An unexpected error occured while fetching cities: {e}", e);
+            throw;
+        }
+    }
 }

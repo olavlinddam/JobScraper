@@ -25,4 +25,26 @@ public class CityController : ApiController
             cities => Ok(cities),
             Problem);
     }
+ 
+    [HttpGet("cities/with-jobs")]
+    public async Task<IActionResult> GetCitiesWithJobs(
+        CancellationToken cancellationToken = default)
+    {
+        var result = await _cityService.GetAllCitiesWithListings(cancellationToken);
+        return result.Match(
+            citiesWithJobs => Ok(citiesWithJobs),
+            Problem);
+    }   
+
+    // [HttpGet("cities/with-jobs")]
+    // public async Task<IActionResult> GetCitiesWithJobs(
+    //     [FromQuery] int? page,
+    //     [FromQuery] int? pageSize,
+    //     CancellationToken cancellationToken = default)
+    // {
+    //     var result = await _cityService.GetAllCitiesWithJobs(page ?? 1, pageSize ?? 10, cancellationToken);
+    //     return result.Match(
+    //         citiesWithJobs => Ok(citiesWithJobs),
+    //         Problem);
+    // }
 }

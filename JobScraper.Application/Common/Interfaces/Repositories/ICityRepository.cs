@@ -9,4 +9,5 @@ public interface ICityRepository
     Task AddRangeAsync(IEnumerable<City> cities, CancellationToken cancellationToken);
 
     Task<List<City>> GetAll(CancellationToken cancellationToken);
+    Task<List<City>> GetAllWithListings(CancellationToken cancellationToken);
 }

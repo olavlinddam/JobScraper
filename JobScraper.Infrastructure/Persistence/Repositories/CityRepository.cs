@@ -29,4 +29,9 @@ public class CityRepository : ICityRepository
     {
         return await _context.Cities.ToListAsync(cancellationToken);
     }
+
+    public async Task<List<City>> GetAllWithListings(CancellationToken cancellationToken)
+    {
+        return await _context.Cities.Include(c => c.JobListings).ToListAsync(cancellationToken);
+    }
 }
