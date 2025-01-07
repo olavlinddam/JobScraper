@@ -22,4 +22,13 @@ public class JobListingController : ApiController
             listings => Ok(listings),
             Problem);
     }
+    [HttpGet("job-listings/{city}")]
+    public async Task<IActionResult> GetJobListingsForCity(string city, CancellationToken cancellationToken)
+    {
+        var result = await _jobListingService.GetJobListingsForCity(city, cancellationToken);
+
+        return result.Match(
+            listings => Ok(listings),
+            Problem);
+    }
 }

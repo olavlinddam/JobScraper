@@ -53,8 +53,7 @@ public class JobnetScraper : IJobnetScraper
             _logger.LogInformation("Started jobnet scraper, scrapePageAsync");
             foreach (var searchTerm in scrapeRequest.SearchTerms)
             {
-                var url = BuildUrl(searchTerm, scrapeRequest.WebsiteBaseUrl);
-                var scrapingResultForSpecificSearchTerm = await StartScrapeAsync(url, cancellationToken);
+                var scrapingResultForSpecificSearchTerm = await StartScrapeAsync(searchTerm, scrapeRequest.WebsiteBaseUrl, cancellationToken);
                 scrapingResultForSpecificSearchTerm =
                     AddSearchTermAndBaseUrlToScrapingResult(scrapingResultForSpecificSearchTerm,
                         scrapeRequest.WebsiteBaseUrl, searchTerm);
@@ -107,35 +106,65 @@ public class JobnetScraper : IJobnetScraper
         return scrapingResultForSpecificSearchTerm;
     }
 
-    private async Task<ErrorOr<List<ScrapingResult>>> StartScrapeAsync(string url, CancellationToken cancellationToken)
+    private async Task<ErrorOr<List<ScrapingResult>>> StartScrapeAsync(string searchTerm, string scrapeRequestWebsiteBaseUrl,
+        CancellationToken cancellationToken)
     {
         var scrapingResults = new List<ScrapingResult>();
+        bool hasNextPage;
+        var offset = 0;
 
-        var listings = await GetListings(url, cancellationToken);
-        _logger.LogInformation("Found {x} listings", listings.Count);
-        if (listings.Count == 0)
+        do
         {
-            _logger.LogInformation("No listings found for {url}", url);
-            var message = $"no job listings found for {url}";
-            var failedScrape = CreateFailedScrape(message, null, "InvalidInput");
-            scrapingResults.Add(failedScrape);
-            return scrapingResults;
-        }
-        _logger.LogInformation("Found {x} job listings", listings.Count);
+            var url = BuildUrl(searchTerm, scrapeRequestWebsiteBaseUrl, offset);
+            var listings = await GetListings(url, cancellationToken);
+            if (listings.Count == 0)
+            {
+                _logger.LogInformation("No listings found for {url}", url);
+                var message = $"no job listings found for {url}";
+                var failedScrape = CreateFailedScrape(message, null, "InvalidInput");
+                scrapingResults.Add(failedScrape);
+                return scrapingResults;
+            }
 
-        foreach (var listing in listings)
-        {
-            var scrapingResult = ParseListing(listing);
-            scrapingResults.Add(scrapingResult);
-        }
+            scrapingResults.AddRange(listings.Select(listing => ParseListing(listing)));
+
+            if (listings.Count < 20) // jobnet always has a listings count of 20 per page
+            {
+                hasNextPage = false;
+                continue;
+            }
+            var paginationElement = _driver.FindElement(By.CssSelector(".paging.ng-isolate-scope"));
+            if (paginationElement == null)
+            {
+                hasNextPage = false;
+                _logger.LogWarning("Pagination element not found. Stopping pagination.");
+                continue;
+            }
+
+            var nextPageElement = paginationElement.FindElements(By.CssSelector("li a")).FirstOrDefault();
+            if (nextPageElement == null)
+            {
+                hasNextPage = false;
+                _logger.LogWarning("Pagination element not found. Stopping pagination.");
+            }
+            else
+            {
+                hasNextPage = true;
+                offset += 20;
+            }
+        } while (hasNextPage && !cancellationToken.IsCancellationRequested);
 
         return scrapingResults;
     }
 
-    internal static string BuildUrl(string searchTerm, string baseUrl)
+    internal static string BuildUrl(string searchTerm, string baseUrl, int offset)
     {
-        var parameter = $"SearchString={EncodeSearchTerm(searchTerm)}";
-        var url = $"{baseUrl}&{string.Join("&", parameter)}";
+        // jobnet:  https://job.jobnet.dk/CV/FindWork?SearchString=Systemudvikling,%2520programmering%2520og%2520design&Offset=0&SortValue=BestMatch
+        // min:     https://job.jobnet.dk/CV/FindWork?Offset=0&SortValue=BestMatch&SearchString=%22Systemudvikling,%20programmering%20og%20design%22
+
+        var encodedSearchTerm = $"SearchString={EncodeSearchTerm(searchTerm)}";
+        var jobnetAdditionalParameters = $"&Offset={offset}&SortValue=BestMatch";
+        var url = $"{baseUrl}&{string.Join("&", encodedSearchTerm)}{jobnetAdditionalParameters}";
         return url;
     }
 
@@ -169,10 +198,12 @@ public class JobnetScraper : IJobnetScraper
     {
         var driver = GetDriver();
         await driver.Navigate().GoToUrlAsync(url).WaitAsync(cancellationToken); // null check is in GetDriver()
+        _logger.LogInformation("Resolved driver. Getting listings for {url}", url);
         HandleCookiePopUp(cancellationToken);
         cancellationToken.ThrowIfCancellationRequested();
 
         var listings = driver.FindElements(By.ClassName("job-ad-summary"));
+        _logger.LogInformation("Found {x} listings", listings.Count);
         return listings;
     }
 
@@ -273,28 +304,29 @@ public class JobnetScraper : IJobnetScraper
             }
         };
 
-internal static DateTime? ParseExpirationDate(string fullText)
-{
-    var split = fullText.Split(':');
-
-    if (split.Length <= 1) return null;
-    
-    var datePart = split[1].Trim();
-    var daDk = CultureInfo.GetCultureInfo("da-DK");
-        
-    var possibleFormats = new[] { "dd. MMMM yyyy", "d. MMMM yyyy" };
-        
-    if (DateTime.TryParseExact(
-            datePart, 
-            possibleFormats, 
-            daDk, 
-            DateTimeStyles.None, 
-            out var parsedDate))
+    internal static DateTime? ParseExpirationDate(string fullText)
     {
-        return parsedDate;
+        var split = fullText.Split(':');
+
+        if (split.Length <= 1) return null;
+
+        var datePart = split[1].Trim();
+        var daDk = CultureInfo.GetCultureInfo("da-DK");
+
+        var possibleFormats = new[] { "dd. MMMM yyyy", "d. MMMM yyyy" };
+
+        if (DateTime.TryParseExact(
+                datePart,
+                possibleFormats,
+                daDk,
+                DateTimeStyles.None,
+                out var parsedDate))
+        {
+            return parsedDate;
+        }
+
+        return null;
     }
-    return null;
-}
 
     internal static DateTime? ParseDatePublished(string fullText)
     {
