@@ -31,4 +31,14 @@ public class JobListingController : ApiController
             listings => Ok(listings),
             Problem);
     }
+
+    [HttpGet("job-listings/{searchText}")]
+    public async Task<IActionResult> GetJobListings(string searchText, CancellationToken cancellationToken)
+    {
+        var result = await _jobListingService.GetJobListingsBySearchText(searchText, cancellationToken);
+        
+        return result.Match(
+            listings => Ok(listings),
+            Problem);
+    }
 }

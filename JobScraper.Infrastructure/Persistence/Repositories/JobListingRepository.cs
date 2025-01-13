@@ -35,7 +35,7 @@ public class JobListingRepository : IJobListingRepository
             .OrderByDescending(l => l.ScrapedDate)
             .Take(100)
             .ToListAsync(cancellationToken);
-        
+
         return latestListings;
     }
 
@@ -48,6 +48,16 @@ public class JobListingRepository : IJobListingRepository
     public async Task<IEnumerable<JobListing>> GetAllWithCitiesAsync(CancellationToken cancellationToken)
     {
         return await _context.JobListings
+            .Include(l => l.City)
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IEnumerable<JobListing>> GetBySearchTextAsync(string searchText, CancellationToken cancellationToken)
+    {
+        return await _context.JobListings
+            .Where(l => l.Description.ToLower().Contains(searchText.ToLower()) ||
+                        l.Title.ToLower().Contains(searchText.ToLower()) ||
+                        l.ExpirationDate > DateTime.UtcNow)
             .Include(l => l.City)
             .ToListAsync(cancellationToken);
     }

@@ -1,11 +1,14 @@
 using ErrorOr;
+using JobScraper.Application.Common.ExceptionExtension;
 using JobScraper.Application.Common.Interfaces.Repositories;
+using JobScraper.Application.Features.ClaudeIntegration;
+using JobScraper.Application.Features.ClaudeIntegration.ClaudeDtos;
 using JobScraper.Application.Features.Scraping.Common;
 using JobScraper.Application.Features.Scraping.Mapping;
 using JobScraper.Contracts.Requests.Scraping;
 using JobScraper.Domain.Entities;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using ReverseMarkdown;
 
 namespace JobScraper.Application.Features.Scraping.Services;
 
@@ -16,13 +19,16 @@ public class ScrapingService : IScrapingService
     private readonly IJobListingRepository _jobListingRepository;
     private readonly ICityRepository _cityRepository;
     private readonly ISearchTermRepository _searchTermRepository;
+    private readonly ITechnologyTagRepository _technologyTagRepository;
+    private readonly IClaudeApiClient _claudeApiClient;
 
     private readonly IWebScraperFactory _webScraperFactory;
 
 
     public ScrapingService(ILogger<ScrapingService> logger, IWebsiteRepository websiteRepository,
         IWebScraperFactory webScraperFactory, IJobListingRepository jobListingRepository,
-        ICityRepository cityRepository, ISearchTermRepository searchTermRepository)
+        ICityRepository cityRepository, ISearchTermRepository searchTermRepository, IClaudeApiClient claudeApiClient,
+        ITechnologyTagRepository technologyTagRepository)
     {
         _logger = logger;
         _websiteRepository = websiteRepository;
@@ -30,6 +36,8 @@ public class ScrapingService : IScrapingService
         _jobListingRepository = jobListingRepository;
         _cityRepository = cityRepository;
         _searchTermRepository = searchTermRepository;
+        _claudeApiClient = claudeApiClient;
+        _technologyTagRepository = technologyTagRepository;
     }
 
 
@@ -53,7 +61,7 @@ public class ScrapingService : IScrapingService
                 return Error.NotFound("No scraping results found");
             }
 
-            await HandleScrapedListings(successfulScrapes, websites, cancellationToken);
+            await HandleSuccessfulScrapes(successfulScrapes, websites, cancellationToken);
             await UpdateWebsites(websites, cancellationToken);
 
             return Result.Success;
@@ -71,20 +79,23 @@ public class ScrapingService : IScrapingService
         await _websiteRepository.UpdateRangeAsync(websites, cancellationToken);
     }
 
-    private async Task HandleScrapedListings(List<ScrapedJobData?> successfulScrapes,
+    private async Task HandleSuccessfulScrapes(List<ScrapedJobData?> successfulScrapes,
         List<Website> websites, CancellationToken cancellationToken)
     {
         // Fetch required entities from db
         var cities = await _cityRepository.GetAll(cancellationToken);
         var recentExistingListings = await _jobListingRepository.GetRecentListingsWithWebsitesAndSearchTerms(cancellationToken);
         var searchTerms = await _searchTermRepository.GetAllAsync(cancellationToken);
+        var technologyTags = await _technologyTagRepository.GetAllAsync(cancellationToken);
 
         var (scrapedListingsNotInDb, existingScrapedListingsDict) =
             SeparateNewAndExistingListings(successfulScrapes, recentExistingListings);
 
         var existingScrapedListings = UpdateExistingListingsSearchTerms(existingScrapedListingsDict);
 
-        var newListings = ScrapeResultMapper.MapToJobListings(scrapedListingsNotInDb, cities, websites, searchTerms);
+        var scrapedNewListingsWithClaudeResponseResult = await AddClaudeResponse(scrapedListingsNotInDb, technologyTags);
+
+        var newListings = ScrapeResultMapper.MapToJobListings(scrapedNewListingsWithClaudeResponseResult, cities, websites, searchTerms);
 
         if (existingScrapedListings.Count > 0)
         {
@@ -97,6 +108,72 @@ public class ScrapingService : IScrapingService
             _logger.LogInformation("Found {count} existing listings", newListings.Count);
             await _jobListingRepository.AddRangeAsync(newListings, cancellationToken);
         }
+    }
+
+    private async Task<List<ScrapedJobData>> AddClaudeResponse(List<ScrapedJobData> scrapedListingsNotInDb, List<TechnologyTag> technologyTags)
+    {
+        try
+        {
+            var analysisRequests = CreateAnalysisRequests(scrapedListingsNotInDb, technologyTags);
+            var claudeResponses = await _claudeApiClient.AnalyzeJobListingsBatch(analysisRequests);
+            scrapedListingsNotInDb = UpdateListingsWithResponses(scrapedListingsNotInDb, claudeResponses);
+            return scrapedListingsNotInDb;
+        }
+        catch (ClaudeApiIntegrationException e)
+        {
+            _logger.LogError("Claude API integration failed while processing job listings: [{message}].", e.Message);
+            throw;
+        }
+        catch (UpdateScrapedJobException e)
+        {
+            _logger.LogError("Scraping Service failed while updating scraped jobs with Claude API responses: [{message}].", e.Message);
+            throw;
+        }
+    }
+
+    internal static List<ScrapedJobData> UpdateListingsWithResponses(List<ScrapedJobData> scrapedListingsNotInDb,
+        List<ClaudeApiJobListingAnalysis> claudeResponses)
+    {
+        try
+        {
+            for (var i = 0; i < scrapedListingsNotInDb.Count; i++)
+            {
+                var listing = scrapedListingsNotInDb[i];
+                var claudeResponse = claudeResponses.FirstOrDefault(r => r.Index == i);
+                if (claudeResponse == null)
+                    throw new UpdateScrapedJobException($"Could not find matching claude response to listing: [{listing.Url}]");
+
+                if (claudeResponse.IsSuccess == false)
+                {
+                    listing.LanguageCode = "Invalid";
+                    listing.Tags = [];
+                    listing.YearsOfExperience = -1;
+                }
+
+                listing.YearsOfExperience = claudeResponse.ApiAnalysisResponse.YearsOfExperience;
+                listing.Tags = claudeResponse.ApiAnalysisResponse.tags;
+                listing.LanguageCode = claudeResponse.ApiAnalysisResponse.LanguageCode;
+                listing.Description = claudeResponse.ApiAnalysisResponse.Summary;
+            }
+
+            return scrapedListingsNotInDb;
+        }
+        catch (Exception e)
+        {
+            throw new UpdateScrapedJobException(e.Message, e.InnerException);
+        }
+    }
+
+    private List<ClaudeApiAnalysisRequest> CreateAnalysisRequests(List<ScrapedJobData> scrapedListingsNotInDb,
+        List<TechnologyTag> technologyTags)
+    {
+        var converter = new Converter();
+        return scrapedListingsNotInDb.Select((l, index) => new ClaudeApiAnalysisRequest
+        {
+            ArticleMarkdown = converter.Convert(l.ArticleHtml),
+            Index = index,
+            Tags = technologyTags.Select(t => t.Name).ToList()
+        }).ToList();
     }
 
     private List<JobListing> UpdateExistingListingsSearchTerms(

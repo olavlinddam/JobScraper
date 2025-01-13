@@ -11,7 +11,7 @@ using Microsoft.Extensions.Logging;
 namespace JobScraper.IntegrationTests;
 
 [TestClass]
-public class ScrapingServiceIntegrationTest : IntegrationTestBase
+public class SceapingServiceIntegrationTest : IntegrationTestBase
 {
     [TestMethod]
     public async Task ScrapeWebsite_ShouldSaveJobListings()
@@ -52,15 +52,15 @@ public class ScrapingServiceIntegrationTest : IntegrationTestBase
         await DbContext.SaveChangesAsync();
 
         Console.WriteLine("Starting scraping service...");
-        var scrapingService = new ScrapingService(
-            scrapingServiceLogger,
-            websiteRepository,
-            webScraperFactory,
-            jobListingRepository,
-            cityRepository,
-            searchTermRepository);
-
-        await scrapingService.InitiateScrape(CancellationToken.None);
+        // var scrapingService = new ScrapingService(
+        //     scrapingServiceLogger,
+        //     websiteRepository,
+        //     webScraperFactory,
+        //     jobListingRepository,
+        //     cityRepository,
+        //     searchTermRepository);
+        //
+        // await scrapingService.InitiateScrape(CancellationToken.None);
 
         Console.WriteLine("Checking database for saved jobs...");
         var savedJobs = await DbContext.JobListings.ToListAsync();

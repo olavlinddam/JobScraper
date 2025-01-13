@@ -12,6 +12,7 @@ public class JobListing
     public DateTime ExpirationDate { get; set; }
     public string Url { get; set; }
     public string Description { get; set; }
+    public int YearsOfExperience { get; set; }
     public DateTime ScrapedDate { get; set; }
     public JobType JobType { get; set; }
     
@@ -22,6 +23,8 @@ public class JobListing
     
     public int CityId { get; set; }
     public City City { get; set; }
+    
+    public List<TechnologyTag> TechnologyTags { get; set; }
     public ICollection<SearchTerm> SearchTerms { get; set; }
     
 }

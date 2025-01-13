@@ -20,6 +20,10 @@ public class ScrapedJobData
     public string Location { get; set; }
     public string SearchTerm { get; set; }
     public DateTime ScrapedDate { get; set; }
+    public string ArticleHtml { get; set; }
+    public int YearsOfExperience { get; set; }
+    public List<string> Tags { get; set; }
+    public string LanguageCode { get; set; }
 }
 
 public class FailedJobScrape

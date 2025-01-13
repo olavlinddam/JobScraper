@@ -80,9 +80,9 @@ Note that scraper pagination has not been implemented so it currently only fetch
 ### Phase 1 (MVP)
 - [x] Complete JobnetScraper implementation (parsing and storing results)
 - [x] Implement deduplication logic
+- [x] Set up compose environment
 - [ ] Add job search API endpoints
 - [ ] Add user interface for displaying job listings
-- [ ] Set up compose environment
 
 
 ### Phase 2
@@ -94,4 +94,6 @@ Note that scraper pagination has not been implemented so it currently only fetch
 - [ ] Add rate limiting middleware
 - [ ] Add global error handling middleware
 - [ ] Add health checks
+- [ ] Add proximity based job listing search functionality
+- [ ] Automatic language detection of job listings to allow enhanced full-text search
 

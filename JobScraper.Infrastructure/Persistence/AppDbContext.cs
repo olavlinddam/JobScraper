@@ -16,6 +16,7 @@ public class AppDbContext : DbContext
     public DbSet<ScrapingError> ScrapingErrors { get; set; }
     public DbSet<SearchTerm> SearchTerms { get; set; }
     public DbSet<Website> Websites { get; set; }
+    public DbSet<TechnologyTag> TechnologyTags { get; set; }
     
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

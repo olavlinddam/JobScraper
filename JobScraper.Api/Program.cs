@@ -38,13 +38,9 @@ try
         // app.UseHttpsRedirection();
         app.MapControllers();
 
+        // Ensure migration
         using var scope = app.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var con = context.Database.GetDbConnection().ConnectionString;
-        Console.WriteLine($"DB_HOST: {Environment.GetEnvironmentVariable("DB_HOST")}");
-        Console.WriteLine($"SELENIUM_URL: {Environment.GetEnvironmentVariable("SELENIUM_URL")}");
-        Console.WriteLine(con);
-        
         context.Database.Migrate();
 
         app.Run();

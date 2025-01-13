@@ -25,6 +25,9 @@ public class JobListingConfiguration : IEntityTypeConfiguration<JobListing>
 
         builder.Property(l => l.JobType);
 
+        builder.HasMany(l => l.TechnologyTags)
+            .WithMany(t => t.JobListings);
+
         builder.HasOne(l => l.City)
             .WithMany(c => c.JobListings)
             .HasForeignKey(l => l.CityId)
