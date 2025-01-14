@@ -87,6 +87,8 @@ public class ScrapingService : IScrapingService
         var recentExistingListings = await _jobListingRepository.GetRecentListingsWithWebsitesAndSearchTerms(cancellationToken);
         var searchTerms = await _searchTermRepository.GetAllAsync(cancellationToken);
         var technologyTags = await _technologyTagRepository.GetAllAsync(cancellationToken);
+        
+        
 
         var (scrapedListingsNotInDb, existingScrapedListingsDict) =
             SeparateNewAndExistingListings(successfulScrapes, recentExistingListings);
@@ -172,7 +174,7 @@ public class ScrapingService : IScrapingService
         {
             ArticleMarkdown = converter.Convert(l.ArticleHtml),
             Index = index,
-            Tags = technologyTags.Select(t => t.Name).ToList()
+            Tags = technologyTags.Select(t => t.Name).ToList() 
         }).ToList();
     }
 

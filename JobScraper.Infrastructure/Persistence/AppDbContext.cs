@@ -28,21 +28,28 @@ public class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 }
-
 public class AppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 {
     public AppDbContext CreateDbContext(string[] args)
     {
-        // Build configuration
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddUserSecrets<AppDbContextFactory>()
-            .Build();
-
-        // Configure DbContext options
+        // Debug: Print environment variables
+        var host = Environment.GetEnvironmentVariable("DB_HOST");
+        var database = Environment.GetEnvironmentVariable("DB_NAME");
+        var username = Environment.GetEnvironmentVariable("DB_USER");
+        var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
+        
+        Console.WriteLine($"DB_HOST: {host ?? "null"}");
+        Console.WriteLine($"DB_NAME: {database ?? "null"}");
+        Console.WriteLine($"DB_USER: {username ?? "null"}");
+        // Don't print the actual password, just whether it's null
+        Console.WriteLine($"DB_PASSWORD is null: {password == null}");
+        
+        var connectionString = $"Host={host};Database={database};Username={username};Password={password}";
+        Console.WriteLine($"Connection string: {connectionString}");
+        
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-        optionsBuilder.UseNpgsql(configuration.GetConnectionString("LocalDb"));
-
+        optionsBuilder.UseNpgsql(connectionString);
+        
         return new AppDbContext(optionsBuilder.Options);
     }
 }

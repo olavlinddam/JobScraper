@@ -126,14 +126,20 @@ public class JobnetScraper : IJobnetScraper
                 return scrapingResults;
             }
 
-            scrapingResults.AddRange(listings.Select(listing => ParseListing(listing)));
+            foreach (var listing in listings)
+            {
+                var scrapingResult = await ParseListing(listing);
+                scrapingResults.Add(scrapingResult);
+            }
 
             if (listings.Count < 20) // jobnet always has a listings count of 20 per page
             {
                 hasNextPage = false;
                 continue;
             }
-            var paginationElement = _driver.FindElement(By.CssSelector(".paging.ng-isolate-scope"));
+
+            var paginationElement = _driver.FindElement(By.CssSelector("nav.paging.ng-isolate-scope"));
+
             if (paginationElement == null)
             {
                 hasNextPage = false;
@@ -159,9 +165,6 @@ public class JobnetScraper : IJobnetScraper
 
     internal static string BuildUrl(string searchTerm, string baseUrl, int offset)
     {
-        // jobnet:  https://job.jobnet.dk/CV/FindWork?SearchString=Systemudvikling,%2520programmering%2520og%2520design&Offset=0&SortValue=BestMatch
-        // min:     https://job.jobnet.dk/CV/FindWork?Offset=0&SortValue=BestMatch&SearchString=%22Systemudvikling,%20programmering%20og%20design%22
-
         var encodedSearchTerm = $"SearchString={EncodeSearchTerm(searchTerm)}";
         var jobnetAdditionalParameters = $"&Offset={offset}&SortValue=BestMatch";
         var url = $"{baseUrl}&{string.Join("&", encodedSearchTerm)}{jobnetAdditionalParameters}";
@@ -248,7 +251,7 @@ public class JobnetScraper : IJobnetScraper
         }
     }
 
-    internal static ScrapingResult ParseListing(IWebElement listing)
+    private async Task<ScrapingResult> ParseListing(IWebElement listing)
     {
         try
         {
@@ -266,6 +269,7 @@ public class JobnetScraper : IJobnetScraper
                 .Text;
             var expirationDate = jobAdDetails.FindElement(By.CssSelector("div.job-ad-ansogningsfrist")).Text;
             var location = jobAdDetails.FindElement(By.ClassName("job-ad-location")).Text;
+            var listingRawHtmlBody = await GetListingRawHtmlBody(href);
 
             return new ScrapingResult()
             {
@@ -279,7 +283,8 @@ public class JobnetScraper : IJobnetScraper
                     ExpirationDate = ParseExpirationDate(expirationDate),
                     WorkHours = workHours,
                     Url = href,
-                    ScrapedDate = DateTime.Today
+                    ScrapedDate = DateTime.Today,
+                    ArticleHtml = listingRawHtmlBody
                 },
                 FailedJobScrape = null
             };
@@ -288,6 +293,14 @@ public class JobnetScraper : IJobnetScraper
         {
             return CreateFailedScrape(e.Message, e.StackTrace, "ParseError");
         }
+    }
+
+    private async Task<string> GetListingRawHtmlBody(string href)
+    {
+        var driver = GetDriver();
+        await driver!.Navigate().GoToUrlAsync(href);
+        var rawBody = driver.FindElement(By.TagName("body"));
+        return rawBody.Text;
     }
 
     internal static ScrapingResult CreateFailedScrape(string message, string? stackTrace, string type) =>

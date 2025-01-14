@@ -1,6 +1,8 @@
 using JobScraper.Api;
 using JobScraper.Application;
+using JobScraper.Application.Features.ClaudeIntegration;
 using JobScraper.Infrastructure;
+using JobScraper.Infrastructure.ClaudeApi;
 using JobScraper.Infrastructure.Persistence;
 using JobScraper.Infrastructure.StartUp;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -19,6 +21,8 @@ try
         builder.Services.AddApplication();
         builder.Services.AddInfrastructure(builder.Configuration);
         builder.Services.AddSwaggerGen();
+
+        builder.Services.AddHttpClient<IClaudeApiClient, ClaudeApiClient>();
     }
 
     var app = builder.Build();

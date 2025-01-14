@@ -1,7 +1,7 @@
-using JobScraper.Application.Common.Interfaces;
 using JobScraper.Application.Common.Interfaces.Repositories;
-using JobScraper.Application.Features.Scraping.Common;
+using JobScraper.Application.Features.ClaudeIntegration;
 using JobScraper.Application.Features.Scraping.Scrapers;
+using JobScraper.Infrastructure.ClaudeApi;
 using JobScraper.Infrastructure.Persistence;
 using JobScraper.Infrastructure.Persistence.Repositories;
 using JobScraper.Infrastructure.Scrapers;
@@ -16,8 +16,6 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        // services.AddDbContext<AppDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("LocalDb")));
-
         var host = Environment.GetEnvironmentVariable("DB_HOST");
         var database = Environment.GetEnvironmentVariable("DB_NAME");
         var username = Environment.GetEnvironmentVariable("DB_USER");
@@ -30,7 +28,10 @@ public static class DependencyInjection
         services.TryAddScoped<IJobListingRepository, JobListingRepository>();
         services.TryAddScoped<ICityRepository, CityRepository>();
         services.TryAddScoped<ISearchTermRepository, SearchTermRepository>();
+        services.TryAddScoped<ITechnologyTagRepository, TechnologyTagRepository>();
 
+        // Claude
+        services.TryAddScoped<IClaudeApiClient, ClaudeApiClient>();
 
         // Scrapers
         services.TryAddScoped<IJobnetScraper, JobnetScraper>();
