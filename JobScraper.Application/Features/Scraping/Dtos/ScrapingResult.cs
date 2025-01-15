@@ -1,12 +1,12 @@
-namespace JobScraper.Contracts.Requests.Scraping;
+namespace JobScraper.Application.Features.Scraping.Dtos;
 
 public class ScrapingResult
 {
-    public ScrapedJobData? ScrapedJobData { get; set; }
+    public SuccessFullScrape? SuccessFullScrape { get; set; }
     public FailedJobScrape? FailedJobScrape { get; set; }
 }
 
-public class ScrapedJobData
+public class SuccessFullScrape
 {
     public string Title { get; set; }
     public string CompanyName { get; set; }
@@ -32,5 +32,4 @@ public class FailedJobScrape
     public DateTime TimeStamp { get; set; }
     public string Message { get; set; }
     public string? StackTrace { get; set; }
-    public string Type { get; set; }
 }

@@ -25,6 +25,8 @@ public class JobListingConfiguration : IEntityTypeConfiguration<JobListing>
 
         builder.Property(l => l.JobType);
 
+        builder.Property(l => l.LanguageCode);
+
         builder.HasMany(l => l.TechnologyTags)
             .WithMany(t => t.JobListings);
 

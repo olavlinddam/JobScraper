@@ -5,6 +5,7 @@ using JobScraper.Infrastructure.ClaudeApi;
 using JobScraper.Infrastructure.Persistence;
 using JobScraper.Infrastructure.Persistence.Repositories;
 using JobScraper.Infrastructure.Scrapers;
+using JobScraper.Infrastructure.Scraping;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,8 +35,9 @@ public static class DependencyInjection
         services.TryAddScoped<IClaudeApiClient, ClaudeApiClient>();
 
         // Scrapers
+        services.TryAddScoped<WebDriverFactory>();
         services.TryAddScoped<IJobnetScraper, JobnetScraper>();
-
+        
         return services;
     }
 }

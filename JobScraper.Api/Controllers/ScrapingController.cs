@@ -1,5 +1,4 @@
 using JobScraper.Application.Features.Scraping.Services;
-using JobScraper.Contracts.Requests.Scraping;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JobScraper.Api.Controllers;

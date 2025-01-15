@@ -13,6 +13,7 @@ public class JobListing
     public string Url { get; set; }
     public string Description { get; set; }
     public int YearsOfExperience { get; set; }
+    public string LanguageCode { get; set; }
     public DateTime ScrapedDate { get; set; }
     public JobType JobType { get; set; }
     

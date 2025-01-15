@@ -1,5 +1,5 @@
 using JobScraper.Application.Features.Scraping.Common;
-using JobScraper.Contracts.Requests.Scraping;
+using JobScraper.Application.Features.Scraping.Dtos;
 using JobScraper.Domain.Entities;
 using JobScraper.Domain.Enums;
 
@@ -7,7 +7,7 @@ namespace JobScraper.Application.Features.Scraping.Mapping;
 
 public static class ScrapeResultMapper
 {
-    public static List<JobListing> MapToJobListings(List<ScrapedJobData> scrapedJobs, List<City> cities,
+    public static List<JobListing> MapToJobListings(List<SuccessFullScrape> scrapedJobs, List<City> cities,
         List<Website> websites, List<SearchTerm> searchTerms)
     {
         var jobListings = new List<JobListing>();
@@ -43,6 +43,7 @@ public static class ScrapeResultMapper
                 Url = scrapedJob.Url,
                 Description = scrapedJob.Description,
                 ScrapedDate = DateTime.SpecifyKind(scrapedJob.ScrapedDate, DateTimeKind.Utc),
+                LanguageCode = scrapedJob.LanguageCode,
                 JobType = ParseJobType(scrapedJob.WorkHours),
                 Website = website,
                 City = city,
@@ -73,12 +74,12 @@ public static class ScrapeResultMapper
     //     return newSearchTerm;
     // }
 
-    public static City MapToCity(ScrapedJobData scrapedJobData)
+    public static City MapToCity(SuccessFullScrape successFullScrape)
     {
         return new City
         {
-            Name = LocationParser.ExtractCityName(scrapedJobData.Location),
-            Zip = LocationParser.ExtractZipCode(scrapedJobData.Location),
+            Name = LocationParser.ExtractCityName(successFullScrape.Location),
+            Zip = LocationParser.ExtractZipCode(successFullScrape.Location),
             Country = "Denmark",
         };
     }
