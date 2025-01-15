@@ -46,7 +46,7 @@ JobScraper/
 
 Clone the repository:
 
-```git clone https://github.com/your-repo/job-scraper.git```
+```https://github.com/olavlinddam/JobScraper.git```
 
 ```cd job-scraper```
 
