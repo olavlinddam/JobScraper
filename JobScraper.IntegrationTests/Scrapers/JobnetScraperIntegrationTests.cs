@@ -1,13 +1,9 @@
 using JobScraper.Application.Features.Scraping.Dtos;
-using JobScraper.Domain.Entities;
-using JobScraper.Infrastructure.ClaudeApi;
 using JobScraper.Infrastructure.Scrapers;
 using JobScraper.Infrastructure.Scraping;
-using JobScraper.IntegrationTests;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
-using NuGet.Frameworks;
 
 namespace JobScraper.IntegrationTests.Scrapers;
 
@@ -33,7 +29,7 @@ public class JobnetScraperIntegrationTests : IntegrationTestBase
                         configuration, webDriverFactoryLoggerMock), jobnetScraperLoggerMock);
                 var scrapingRequest = new ScrapeRequest("https://job.jobnet.dk/CV/FindWork?",
                         "Systemudvikling, programmering og design",
-                        "https://zebon.dk/om-zebon/job/udvikler/"); // specific url taken from the website, not the best idea...
+                        "https://www.solita.fi/positions/erfaren-software-udvikler-med-lead-potentiale-til-vejle-eller-aalborg-5962233003/"); // specific url taken from the website, not the best idea...
                 
 
                 CancellationToken ct = default;

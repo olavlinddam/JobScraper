@@ -22,7 +22,7 @@ public class AddWebsiteRequestValidatorTests
         var request = new AddWebsiteRequest(
             url,
             "shortname",
-            new List<string> { "searchterm" });
+            ["searchterm"]);
 
         // Act
         var result = _validator.Validate(request);
@@ -39,7 +39,7 @@ public class AddWebsiteRequestValidatorTests
         var request = new AddWebsiteRequest(
             "http://valid.com",
             "shortname",
-            new List<string> { "searchterm" });
+            ["searchterm"]);
 
         // Act
         var result = _validator.Validate(request);

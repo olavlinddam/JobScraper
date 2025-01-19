@@ -1,10 +1,7 @@
-using Anthropic.SDK;
-using JobScraper.Application.Features.ClaudeIntegration;
 using JobScraper.Application.Features.ClaudeIntegration.ClaudeDtos;
 using JobScraper.Infrastructure.ClaudeApi;
 using Microsoft.Extensions.Logging;
 using Moq;
-using ReverseMarkdown.Converters;
 
 namespace JobScraper.IntegrationTests;
 

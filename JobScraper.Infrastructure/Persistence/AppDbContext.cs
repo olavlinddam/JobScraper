@@ -1,7 +1,6 @@
 using JobScraper.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 
 namespace JobScraper.Infrastructure.Persistence;
 

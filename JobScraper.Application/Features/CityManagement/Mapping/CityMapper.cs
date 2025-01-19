@@ -1,5 +1,4 @@
 using JobScraper.Contracts.Responses.Cities;
-using ErrorOr;
 using JobScraper.Domain.Entities;
 
 namespace JobScraper.Application.Features.CityManagement.Mapping;

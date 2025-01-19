@@ -1,16 +1,12 @@
+using System.Collections;
 using JobScraper.Api;
 using JobScraper.Application;
 using JobScraper.Application.Features.ClaudeIntegration;
-using JobScraper.Infrastructure;
 using JobScraper.Infrastructure.ClaudeApi;
 using JobScraper.Infrastructure.Persistence;
 using JobScraper.Infrastructure.StartUp;
-using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using Swashbuckle.AspNetCore.Swagger;
-using Serilog.Settings.Configuration;
 
 try
 {

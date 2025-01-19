@@ -254,6 +254,7 @@ public class ScrapingService : IScrapingService
                         var result = await ScrapeSearchTerm(website, searchTerm, cancellationToken);
                         scrapingResultsForAllWebsites.AddRange(result);
                 }
+
                 _logger.LogInformation("Finished scraping website {website}", website.ShortName);
                 return scrapingResultsForAllWebsites;
         }
@@ -272,6 +273,7 @@ public class ScrapingService : IScrapingService
                 var latestListing = website.JobsListings
                         .Where(l => l.SearchTerms.Select(s => s.Value).Contains(searchTerm.Value))
                         .OrderByDescending(l => l.PostedDate).FirstOrDefault();
-                return new ScrapeRequest(website.Url, searchTerm.Value, latestListing?.Url);
+                return new ScrapeRequest(website.Url, searchTerm.Value,
+                        "https://job.jobnet.dk/CV/FindWork/Details/114b7b1a-e508-498a-a938-8eddf13d8890");
         }
 }

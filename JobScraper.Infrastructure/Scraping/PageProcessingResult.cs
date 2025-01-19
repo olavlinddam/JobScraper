@@ -1,5 +1,4 @@
 using JobScraper.Application.Features.Scraping.Dtos;
-using JobScraper.Infrastructure.Scraping;
 
 namespace JobScraper.Infrastructure.Scrapers;
 

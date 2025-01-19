@@ -1,4 +1,3 @@
-using ErrorOr;
 using JobScraper.Application.Features.ClaudeIntegration.ClaudeDtos;
 
 namespace JobScraper.Application.Features.ClaudeIntegration;

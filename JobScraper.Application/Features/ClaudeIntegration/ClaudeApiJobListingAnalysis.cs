@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using JobScraper.Application.Features.ClaudeIntegration.ClaudeDtos;
 
 namespace JobScraper.Application.Features.ClaudeIntegration;

@@ -72,6 +72,7 @@ public class JobnetScraper : IJobnetScraper
                         hasNextPage = pageResult.HasNextPage &&
                                       !HasFoundExistingListing(pageResult.ScrapingResults, request.LatestScrapedUrl);
                         offset += 20;
+                        hasNextPage = false;
                 }
 
                 return scrapingResults;
@@ -131,8 +132,8 @@ public class JobnetScraper : IJobnetScraper
                         try
                         {
                                 await driver.Navigate().GoToUrlAsync(listingProcessingResult.Href).WaitAsync(cancellationToken);
-                                var html = driver.PageSource;
-                                scrapingResults.Add(CreateSuccessFullScrape(listingProcessingResult, html));
+                                var body = GetBodyAfterJsLoads(driver);
+                                scrapingResults.Add(CreateSuccessFullScrape(listingProcessingResult, body));
                         }
                         catch (Exception e)
                         {
@@ -144,10 +145,28 @@ public class JobnetScraper : IJobnetScraper
                 return scrapingResults;
         }
 
+        private static string GetBodyAfterJsLoads(IWebDriver driver)
+        {
+                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+                wait.Until(driver => ((IJavaScriptExecutor)driver)
+                        .ExecuteScript("return document.readyState").Equals("complete"));
+
+                IWebElement body = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementExists(By.TagName("body")));
+
+                string bodyContent = (string)((IJavaScriptExecutor)driver)
+                        .ExecuteScript("return document.getElementsByTagName('body')[0].innerHTML;");
+                return bodyContent;
+        }
+
         private ListingProcessingResult ExtractListingData(IWebElement pageListing)
         {
                 var href = pageListing.FindElement(By.TagName("a")).GetAttribute("href");
                 var title = pageListing.FindElement(By.TagName("h2")).Text;
+                if (title.StartsWith("Nyt"))
+                {
+                        title = title.Replace("Nyt jobforslag: \n", "");
+                }
+
                 var company = pageListing.FindElement(By.TagName("h3")).Text;
                 var jobAdDetails = pageListing.FindElement(By.ClassName("job-ad-deadlines-inside"));
                 var expirationDate = jobAdDetails.FindElement(By.CssSelector("div.job-ad-ansogningsfrist")).Text;
