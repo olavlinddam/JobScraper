@@ -6,15 +6,9 @@
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
+      "applicationUrl": "http://localhost:5000",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "DB_HOST": "localhost",
-        "DB_NAME": "JobScraperDb",
-        "DB_USER": "user",
-        "DB_PASSWORD": "password",
-        "SELENIUM_URL": "http://localhost:4444/wd/hub"
-      },
-      "applicationUrl": "http://localhost:5000"
+        "ASPNETCORE_ENVIRONMENT": "Development"
     },
     "https": {
       "commandName": "Project",

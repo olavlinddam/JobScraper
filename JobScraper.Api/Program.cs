@@ -1,4 +1,3 @@
-using System.Collections;
 using JobScraper.Api;
 using JobScraper.Application;
 using JobScraper.Application.Features.ClaudeIntegration;
@@ -7,9 +6,12 @@ using JobScraper.Infrastructure.Persistence;
 using JobScraper.Infrastructure.StartUp;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using DotNetEnv;
+using JobScraper.Infrastructure.Persistence.Configurations;
 
 try
 {
+    Env.Load("../local.env");
     Log.Information("Starting web host");
     var builder = WebApplication.CreateBuilder(args);
     {

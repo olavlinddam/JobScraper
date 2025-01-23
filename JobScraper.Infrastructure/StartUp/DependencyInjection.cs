@@ -1,8 +1,10 @@
+using System.Runtime.CompilerServices;
 using JobScraper.Application.Common.Interfaces.Repositories;
 using JobScraper.Application.Features.ClaudeIntegration;
 using JobScraper.Application.Features.Scraping.Scrapers;
 using JobScraper.Infrastructure.ClaudeApi;
 using JobScraper.Infrastructure.Persistence;
+using JobScraper.Infrastructure.Persistence.Configurations;
 using JobScraper.Infrastructure.Persistence.Repositories;
 using JobScraper.Infrastructure.Scrapers;
 using JobScraper.Infrastructure.Scraping;
@@ -17,19 +19,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        var host = Environment.GetEnvironmentVariable("DB_HOST");
-        var database = Environment.GetEnvironmentVariable("DB_NAME");
-        var username = Environment.GetEnvironmentVariable("DB_USER");
-        var password = Environment.GetEnvironmentVariable("DB_PASSWORD");
-
-        var connectionString = $"Host={host};Database={database};Username={username};Password={password}";
-
-        services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
-        services.TryAddScoped<IWebsiteRepository, WebsiteRepository>();
-        services.TryAddScoped<IJobListingRepository, JobListingRepository>();
-        services.TryAddScoped<ICityRepository, CityRepository>();
-        services.TryAddScoped<ISearchTermRepository, SearchTermRepository>();
-        services.TryAddScoped<ITechnologyTagRepository, TechnologyTagRepository>();
+        AddPersistence(services);
 
         // Claude
         services.TryAddScoped<IClaudeApiClient, ClaudeApiClient>();
@@ -37,7 +27,34 @@ public static class DependencyInjection
         // Scrapers
         services.TryAddScoped<WebDriverFactory>();
         services.TryAddScoped<IJobnetScraper, JobnetScraper>();
-        
+
+        return services;
+    }
+
+    private static IServiceCollection AddPersistence(this IServiceCollection services)
+    {
+        // Create DatabaseSettings from environment variables
+        var dbSettings = new DatabaseSettings
+        {
+            Host = Environment.GetEnvironmentVariable("DB_HOST"),
+            Name = Environment.GetEnvironmentVariable("DB_NAME"),
+            User = Environment.GetEnvironmentVariable("DB_USER"),
+            Password = Environment.GetEnvironmentVariable("DB_PASSWORD")
+        };
+
+        // Validate required settings
+        if (string.IsNullOrEmpty(dbSettings.Host) || string.IsNullOrEmpty(dbSettings.Name) ||
+            string.IsNullOrEmpty(dbSettings.User) || string.IsNullOrEmpty(dbSettings.Password))
+        {
+            throw new InvalidOperationException("Database environment variables are missing or invalid.");
+        }
+
+        services.AddDbContext<AppDbContext>(options => options.UseNpgsql(dbSettings.ConnectionString));
+        services.TryAddScoped<IWebsiteRepository, WebsiteRepository>();
+        services.TryAddScoped<IJobListingRepository, JobListingRepository>();
+        services.TryAddScoped<ICityRepository, CityRepository>();
+        services.TryAddScoped<ISearchTermRepository, SearchTermRepository>();
+        services.TryAddScoped<ITechnologyTagRepository, TechnologyTagRepository>();
         return services;
     }
 }

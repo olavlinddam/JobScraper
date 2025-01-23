@@ -11,7 +11,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    env_file: .env
+    env_file: compose.env
     ports:
       - "5000:8080"
     volumes:

@@ -1,0 +1,14 @@
+{
+  "env_file": "local.env",
+  "launch_settings": "Properties/launchSettings.json",
+  "debugger_path": {
+    "windows": "C:\\Users\\marni\\scoop\\shims\\netcoredbg",
+    "linux": "/usr/local/netcoredbg",
+    "darwin": "/usr/local/netcoredbg"
+  },
+  "dll_path_format": {
+    "windows": "\\bin\\Debug\\net8.0\\",
+    "linux": "/bin/Debug/net8.0/",
+    "darwin": "/bin/Debug/net8.0/"
+  }
+}
