@@ -7,7 +7,6 @@ using JobScraper.Infrastructure.StartUp;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using DotNetEnv;
-using JobScraper.Infrastructure.Persistence.Configurations;
 
 try
 {

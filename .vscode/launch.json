@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": ".NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/JobScraper.Api/bin/Debug/net8.0/JobScraper.Api.dll",
+            "args": [],
+            "cwd": "${fileDirname}",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        }
+    ]
+}
