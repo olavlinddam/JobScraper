@@ -1,9 +1,9 @@
 using System.Data.Common;
-using JobScraper.Application.Common.Interfaces.Repositories;
-using JobScraper.Domain.Entities;
 using ErrorOr;
+using JobScraper.Application.Common.Interfaces.Repositories;
 using JobScraper.Application.Features.JobListings.Mapping;
 using JobScraper.Contracts.Responses.JobListings;
+using JobScraper.Domain.Entities;
 using Microsoft.Extensions.Logging;
 
 namespace JobScraper.Application.Features.JobListings;
@@ -13,27 +13,35 @@ public class JobListingService
     private readonly ILogger<JobListingService> _logger;
     private readonly IJobListingRepository _jobListingRepository;
 
-    public JobListingService(IJobListingRepository jobListingRepository, ILogger<JobListingService> logger)
+    public JobListingService(
+        IJobListingRepository jobListingRepository,
+        ILogger<JobListingService> logger
+    )
     {
         _jobListingRepository = jobListingRepository;
         _logger = logger;
     }
 
-    public async Task<ErrorOr<List<GetJobListingsResponse>>> GetJobListings(CancellationToken cancellationToken)
+    public async Task<ErrorOr<List<GetJobListingsResponse>>> GetJobListings(
+        CancellationToken cancellationToken
+    )
     {
         _logger.LogInformation("Getting all job listings");
         try
         {
-            var jobListings = (await _jobListingRepository.GetAllWithCitiesAsync(cancellationToken)).ToList();
+            var jobListings = (
+                await _jobListingRepository.GetAllWithCitiesAsync(cancellationToken)
+            ).ToList();
             if (jobListings == null)
             {
-                _logger.LogInformation("job listings was null");
+                _logger.LogInformation("Job listings was null");
+                return Error.NotFound("Job listings was null");
             }
             _logger.LogInformation("Found {jobListings.Count} job listings", jobListings.Count);
             if (jobListings.Count == 0)
                 return Error.NotFound($"No job listings found");
-            
-            return JobListingsMapper.MapToJobListingsResponses(jobListings.ToList());
+
+            return JobListingsMapper.MapToJobListingsResponses(jobListings);
         }
         catch (DbException e)
         {
@@ -46,16 +54,24 @@ public class JobListingService
             throw;
         }
     }
-    public async Task<ErrorOr<List<GetJobListingsResponse>>> GetJobListingsForCity(string city, CancellationToken cancellationToken)
+
+    public async Task<ErrorOr<List<GetJobListingsResponse>>> GetJobListingsForCity(
+        string city,
+        CancellationToken cancellationToken
+    )
     {
         _logger.LogInformation("Getting all job listings");
         try
         {
-            var jobListings = (await _jobListingRepository.GetAllWithCitiesAsync(cancellationToken)).ToList();
-            var citySpecificListings = jobListings.Where(l => l.City.Name.ToLower() == city.ToLower()).ToList();
+            var jobListings = (
+                await _jobListingRepository.GetAllWithCitiesAsync(cancellationToken)
+            ).ToList();
+            var citySpecificListings = jobListings
+                .Where(l => l.City.Name.ToLower() == city.ToLower())
+                .ToList();
             if (citySpecificListings.Count == 0)
                 return Error.NotFound($"No job listings found");
-            
+
             return JobListingsMapper.MapToJobListingsResponses(citySpecificListings.ToList());
         }
         catch (DbException e)

@@ -19,26 +19,22 @@ public class CityController : ApiController
     public async Task<IActionResult> GetCities(CancellationToken cancellationToken)
     {
         var result = await _cityService.GetAllCities(cancellationToken);
-        return result.Match(
-            cities => Ok(cities),
-            Problem);
+        return result.Match(Ok, Problem);
     }
- 
+
     [HttpGet("cities/with-jobs")]
     public async Task<IActionResult> GetCitiesWithJobs(CancellationToken cancellationToken)
     {
         var result = await _cityService.GetAllCitiesWithListings(cancellationToken);
-        return result.Match(
-            citiesWithJobs => Ok(citiesWithJobs),
-            Problem);
-    }   
+        return result.Match(citiesWithJobs => Ok(citiesWithJobs), Problem);
+    }
 
     // [HttpDelete("cities")]
     // public async Task<IActionResult> DeleteCities(CancellationToken cancellationToken)
     // {
     //     await _cityService.DeleteCities(cancellationToken);
     //     return Ok();
-    // }   
+    // }
     // [HttpGet("cities/with-jobs")]
     // public async Task<IActionResult> GetCitiesWithJobs(
     //     [FromQuery] int? page,
